@@ -216,7 +216,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .chat-panel { flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; }
 .chat-header { padding:12px 20px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:12px; background:#fafafa; flex-shrink:0; }
 .chat-header .chat-name { font-weight:700; font-size:15px; }
-.chat-header .chat-status { font-size:12px; color:#22c55e; }
+.chat-header .chat-status { font-size:12px; color:#888; }
+.chat-header .chat-status.online { color:#22c55e; font-weight:600; }
+.presence-wrap { position: relative; display: inline-flex; flex-shrink: 0; }
+.presence-dot {
+    position: absolute; bottom: 1px; right: 1px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #22c55e; border: 2px solid white;
+    box-shadow: 0 0 0 1px rgba(34,197,94,0.3);
+}
+.presence-dot.offline { background: #9ca3af; box-shadow: none; }
+.presence-dot.sm { width: 10px; height: 10px; bottom: 0; right: 0; }
 .chat-messages { flex:1; overflow-y:auto; padding:20px; background:#f8f9fb; display:flex; flex-direction:column; gap:10px; min-height: 0; }
 .message { max-width:65%; padding:8px 14px; border-radius:16px; font-size:14px; line-height:1.4; word-wrap:break-word; }
 .message.sent { align-self:flex-end; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border-bottom-right-radius:4px; }
@@ -417,12 +427,63 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .auth-loading.active { display: flex; }
 .auth-loading .spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
 
+/* ============ NOTIFICATIONS ============ */
+.notif-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px; background: white; border-radius: 10px;
+    margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    cursor: pointer; transition: background 0.15s;
+}
+.notif-item:hover { background: #f8f9fa; }
+.notif-item.unread { background: #eef2ff; border-left: 3px solid #667eea; }
+.notif-item .n-body { flex: 1; min-width: 0; }
+.notif-item .n-text { font-size: 14px; line-height: 1.4; color: #1a1a2e; }
+.notif-item .n-text strong { font-weight: 700; }
+.notif-item .n-time { font-size: 12px; color: #888; margin-top: 4px; }
+.notif-item .n-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.notif-mark-all {
+    background: none; border: none; color: #667eea; font-weight: 700;
+    font-size: 13px; cursor: pointer; padding: 6px 0;
+}
+.notif-mark-all:hover { text-decoration: underline; }
+
+/* ============ PEOPLE YOU MAY KNOW ============ */
+.pymk-strip {
+    background: white; border-radius: 12px; padding: 16px;
+    margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.pymk-strip h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #1a1a2e; }
+.pymk-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+.pymk-card {
+    flex-shrink: 0; width: 140px; background: #f8f9fa; border-radius: 12px;
+    padding: 14px 12px; text-align: center; border: 1px solid #eee;
+}
+.pymk-card .pymk-name {
+    font-weight: 700; font-size: 13px; margin-top: 8px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+}
+.pymk-card .pymk-uni {
+    font-size: 11px; color: #888; margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pymk-card .btn-follow { margin-top: 10px; width: 100%; }
+
+/* Mobile chat back button */
+.chat-back-btn {
+    display: none; background: none; border: none; font-size: 20px;
+    cursor: pointer; padding: 4px 8px; border-radius: 8px; margin-right: 4px;
+}
+.chat-back-btn:hover { background: #f0f2f5; }
+
 /* ============ RESPONSIVE ============ */
 @media (max-width:1000px) { .right-sidebar { display:none; } }
 @media (max-width:800px) {
     .left-sidebar { display:none; }
     .conversations-panel { width:100%; }
     .chat-panel { display:none; }
+    .messages-layout.chat-open .conversations-panel { display:none; }
+    .messages-layout.chat-open .chat-panel { display:flex; width:100%; }
+    .chat-back-btn { display: flex !important; align-items: center; justify-content: center; }
     .profile-cover { height:150px; }
     .avatar-profile-big { width:110px; height:110px; font-size:40px; }
     .profile-avatar-container { margin-top:-55px; }
@@ -433,6 +494,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     .main-layout { padding:0 10px; margin:10px auto; }
     .auth-box { padding:25px; }
     .message { max-width:85%; }
+    .messages-layout { height: calc(100vh - 100px); min-height: 400px; border-radius: 0; }
 }
 </style>
 </head>
@@ -559,6 +621,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             <button class="nav-icon-btn" onclick="showPage('requests')" title="Friend Requests">
                 👥<span class="badge" id="navReqBadge" style="display:none;">0</span>
             </button>
+            <button class="nav-icon-btn" onclick="showPage('notifications')" title="Notifications">
+                🔔<span class="badge" id="navNotifBadge" style="display:none;">0</span>
+            </button>
             <button class="nav-icon-btn" onclick="showPage('groups')" title="Groups">
                 👪<span class="badge" id="navGrpBadge" style="display:none;">0</span>
             </button>
@@ -590,6 +655,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div class="sidebar-link active" onclick="showPage('feed')"><span class="icon">📰</span> Feed</div>
                 <div class="sidebar-link" onclick="showPage('messages')"><span class="icon">💬</span> Messages<span class="link-badge" id="sideMsgBadge" style="display:none;">0</span></div>
                 <div class="sidebar-link" onclick="showPage('requests')"><span class="icon">👥</span> Friend Requests<span class="link-badge" id="sideReqBadge" style="display:none;">0</span></div>
+                <div class="sidebar-link" onclick="showPage('notifications')"><span class="icon">🔔</span> Notifications<span class="link-badge" id="sideNotifBadge" style="display:none;">0</span></div>
                 <div class="sidebar-link" onclick="showPage('groups')"><span class="icon">👪</span> Groups<span class="link-badge" id="sideGrpBadge" style="display:none;">0</span></div>
                 <div class="sidebar-link" onclick="showPage('students')"><span class="icon">🌍</span> Discover Students</div>
                 <div class="sidebar-link" onclick="showPage('profile')"><span class="icon">👤</span> My Profile</div>
@@ -616,6 +682,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                     <div id="liveStripCards" style="display:flex;gap:10px;overflow-x:auto;"></div>
                 </div>
                 <div class="stories-strip" id="storiesStrip"></div>
+                <div class="pymk-strip" id="pymkStrip">
+                    <h3>👥 People you may know</h3>
+                    <div class="pymk-scroll" id="pymkScroll"></div>
+                </div>
                 <div class="create-post">
                     <div class="post-input-row">
                         <div class="avatar avatar-44" id="createAvatar">U</div>
@@ -664,6 +734,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                     <div class="tab" id="tab-friends" onclick="switchReqTab('friends')">My Friends</div>
                 </div>
                 <div id="requestsContent"></div>
+            </div>
+
+            <!-- NOTIFICATIONS PAGE -->
+            <div class="page" id="page-notifications">
+                <div class="sidebar-card" style="padding:16px 18px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                        <h3 style="margin:0;font-size:16px;text-transform:none;letter-spacing:0;color:#1a1a2e;">🔔 Notifications</h3>
+                        <button class="notif-mark-all" onclick="markAllNotificationsRead()">Mark all read</button>
+                    </div>
+                    <div id="notificationsList"></div>
+                </div>
             </div>
 
             <!-- GROUPS PAGE -->
@@ -1062,7 +1143,7 @@ const MAX_VIDEO_DURATION = 30;
    STATE
    ============================================================ */
 let currentUser = null;
-let users = [], posts = [], messages = [], groups = [], stories = [], lives = [];
+let users = [], posts = [], messages = [], groups = [], stories = [], lives = [], notifications = [];
 let activePage = 'feed';
 let activeConversation = null;
 let activeGroup = null;
@@ -1106,6 +1187,68 @@ function timeAgo(ts) {
     const days = Math.floor(h / 24);
     if (days < 7) return days + 'd ago';
     return Math.floor(days / 7) + 'w ago';
+}
+/* Presence: online if lastSeen within ONLINE_THRESHOLD ms, or online flag is true and recent */
+const ONLINE_THRESHOLD = 90 * 1000; // 90 seconds
+let presenceHeartbeat = null;
+function isUserOnline(user) {
+    if (!user) return false;
+    const last = user.lastSeen || user.lastLogin || 0;
+    if (Date.now() - last > ONLINE_THRESHOLD) return false;
+    return user.online === true || (Date.now() - last < ONLINE_THRESHOLD);
+}
+function lastSeenText(user) {
+    if (!user) return '';
+    if (isUserOnline(user)) return 'Online';
+    const last = user.lastSeen || user.lastLogin;
+    if (!last) return 'Offline';
+    return 'Last seen ' + timeAgo(last);
+}
+function presenceAvatarHtml(user, size) {
+    const online = isUserOnline(user);
+    return '<div class="presence-wrap">' +
+        userAvatarHtml(user, size) +
+        '<span class="presence-dot' + (online ? '' : ' offline') + (size <= 40 ? ' sm' : '') + '" title="' + (online ? 'Online' : 'Offline') + '"></span>' +
+    '</div>';
+}
+async function setMyPresence(online) {
+    if (!currentUser || !currentUser.id) return;
+    try {
+        await fbDb.collection('users').doc(currentUser.id).update({
+            online: !!online,
+            lastSeen: Date.now()
+        });
+    } catch (e) { /* ignore */ }
+}
+function startPresence() {
+    stopPresence();
+    setMyPresence(true);
+    presenceHeartbeat = setInterval(() => setMyPresence(true), 45000);
+    document.addEventListener('visibilitychange', onVisibilityPresence);
+    window.addEventListener('pagehide', onPageHidePresence);
+    window.addEventListener('beforeunload', onPageHidePresence);
+}
+function stopPresence() {
+    if (presenceHeartbeat) { clearInterval(presenceHeartbeat); presenceHeartbeat = null; }
+    document.removeEventListener('visibilitychange', onVisibilityPresence);
+    window.removeEventListener('pagehide', onPageHidePresence);
+    window.removeEventListener('beforeunload', onPageHidePresence);
+}
+function onVisibilityPresence() {
+    if (document.visibilityState === 'visible') setMyPresence(true);
+    else setMyPresence(false);
+}
+function onPageHidePresence() {
+    // Best-effort offline mark (may not always complete)
+    if (currentUser && currentUser.id) {
+        try {
+            // Use sendBeacon-style via a quick update; Firestore client may not finish on unload
+            fbDb.collection('users').doc(currentUser.id).update({
+                online: false,
+                lastSeen: Date.now()
+            });
+        } catch (e) {}
+    }
 }
 function showToast(msg) {
     const t = document.getElementById('toast');
@@ -1439,6 +1582,8 @@ async function handleRecoveryLookup() {
 }
 async function handleLogout() {
     try {
+        await setMyPresence(false);
+        stopPresence();
         stopListeners();
         await fbAuth.signOut();
     } catch (e) { console.error(e); }
@@ -1448,12 +1593,13 @@ async function handleLogout() {
    AUTH STATE LISTENER
    ============================================================ */
 let unsubUsers, unsubPosts, unsubMessagesTo, unsubMessagesFrom;
-let unsubGroups, unsubStories, unsubLives, unsubMyDoc;
+let unsubGroups, unsubStories, unsubLives, unsubMyDoc, unsubNotifications;
 
 fbAuth.onAuthStateChanged(async (u) => {
     setBusy(true);
     try {
         if (!u) {
+            stopPresence();
             currentUser = null;
             stopListeners();
             document.getElementById('authScreen').style.display = 'flex';
@@ -1499,6 +1645,7 @@ fbAuth.onAuthStateChanged(async (u) => {
         document.getElementById('authScreen').style.display = 'none';
         document.getElementById('appScreen').classList.add('active');
         await startListeners();
+        startPresence();
         updateProfileUI();
         updateAdminVisibility();
         showPage('feed');
@@ -1513,10 +1660,22 @@ fbAuth.onAuthStateChanged(async (u) => {
 async function startListeners() {
     unsubUsers = fbDb.collection('users').limit(500).onSnapshot(s => {
         users = s.docs.map(d => d.data());
-        renderStudents(); renderSuggestions(); renderConversations(); renderRequests();
+        renderStudents(); renderSuggestions(); renderPymk(); renderConversations(); renderRequests();
         renderTrending(); renderSuggestedGroups(); updateBadges(); renderAdminIfVisible();
         const me = users.find(x => x.id === currentUser.id);
         if (me) { currentUser = me; updateProfileUI(); updateAdminVisibility(); }
+        // Refresh chat header presence if a conversation is open
+        if (activeConversation && activePage === 'messages') {
+            const statusEl = document.querySelector('.chat-header .chat-status');
+            if (statusEl) {
+                const u = users.find(x => x.id === activeConversation);
+                if (u) {
+                    const online = isUserOnline(u);
+                    statusEl.className = 'chat-status' + (online ? ' online' : '');
+                    statusEl.textContent = lastSeenText(u);
+                }
+            }
+        }
     });
     unsubPosts = fbDb.collection('posts').orderBy('timestamp','desc').limit(200).onSnapshot(s => {
         posts = s.docs.map(d => ({ ...d.data(), id: d.id }));
@@ -1541,14 +1700,36 @@ async function startListeners() {
         lives = s.docs.map(d => ({ ...d.data(), id: d.id }));
         renderLiveStrip();
     }, e => console.warn('lives', e));
+    unsubNotifications = fbDb.collection('notifications')
+        .where('to', '==', uid)
+        .orderBy('timestamp', 'desc')
+        .limit(50)
+        .onSnapshot(s => {
+            notifications = s.docs.map(d => ({ ...d.data(), id: d.id }));
+            renderNotifications();
+            updateBadges();
+        }, e => {
+            // Fallback without orderBy if composite index missing
+            console.warn('notifications ordered query failed, using simple query', e);
+            if (unsubNotifications) try { unsubNotifications(); } catch(_){}
+            unsubNotifications = fbDb.collection('notifications')
+                .where('to', '==', uid)
+                .limit(50)
+                .onSnapshot(s2 => {
+                    notifications = s2.docs.map(d => ({ ...d.data(), id: d.id }))
+                        .sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+                    renderNotifications();
+                    updateBadges();
+                }, e2 => console.warn('notifications', e2));
+        });
 }
 function stopListeners() {
     [unsubUsers, unsubPosts, unsubMessagesTo, unsubMessagesFrom,
-     unsubGroups, unsubStories, unsubLives, unsubMyDoc].forEach(u => {
+     unsubGroups, unsubStories, unsubLives, unsubMyDoc, unsubNotifications].forEach(u => {
         try { u && u(); } catch(e){}
     });
     unsubUsers = unsubPosts = unsubMessagesTo = unsubMessagesFrom = null;
-    unsubGroups = unsubStories = unsubLives = unsubMyDoc = null;
+    unsubGroups = unsubStories = unsubLives = unsubMyDoc = unsubNotifications = null;
 }
 async function reloadMessages() {
     const uid = currentUser.id;
@@ -1624,22 +1805,29 @@ function showPage(page) {
             (page === 'feed' && txt.includes('feed')) ||
             (page === 'messages' && txt.includes('messages')) ||
             (page === 'requests' && txt.includes('friend requests')) ||
+            (page === 'notifications' && txt.includes('notifications')) ||
             (page === 'groups' && txt.includes('groups')) ||
             (page === 'students' && txt.includes('discover')) ||
             (page === 'profile' && txt.includes('my profile')) ||
             (page === 'admin' && txt.includes('admin'))
         ) l.classList.add('active');
     });
+    // Reset mobile chat view when leaving messages
+    const msgLayout = document.querySelector('.messages-layout');
+    if (msgLayout && page !== 'messages') msgLayout.classList.remove('chat-open');
     if (page === 'profile') renderProfilePosts();
     if (page === 'students') renderStudents();
     if (page === 'messages') {
         renderConversations();
         if (activeConversation) { _lastRenderedConvo = null; openConversation(activeConversation); }
+        else if (msgLayout) msgLayout.classList.remove('chat-open');
     }
     if (page === 'requests') renderRequests();
+    if (page === 'notifications') renderNotifications();
     if (page === 'groups') renderGroupsDirectory();
     if (page === 'group-detail' && activeGroup) renderGroupDetail(activeGroup);
     if (page === 'admin') renderAdminIfVisible();
+    if (page === 'feed') renderPymk();
 }
 
 /* ============================================================
@@ -1692,7 +1880,7 @@ async function createPost() {
     if (!content && !pendingPostMedia) return;
     setBusy(true);
     try {
-        await fbDb.collection('posts').add({
+        const ref = await fbDb.collection('posts').add({
             userId: currentUser.id,
             content: content,
             media: pendingPostMedia ? pendingPostMedia.data : null,
@@ -1701,6 +1889,18 @@ async function createPost() {
             likes: [], comments: [],
             timestamp: Date.now()
         });
+        // Notify friends about the new post
+        const friends = currentUser.friends || [];
+        const preview = content
+            ? (content.length > 80 ? content.slice(0, 80) + '…' : content)
+            : (pendingPostMedia ? (pendingPostMedia.type === 'image' ? '📷 Photo' : '🎥 Video') : 'New post');
+        await Promise.all(friends.slice(0, 40).map(fid =>
+            createNotification(fid, 'friend_post', {
+                fromId: currentUser.id,
+                postId: ref.id,
+                text: preview
+            })
+        ));
         document.getElementById('postContent').value = '';
         clearPostMedia();
         document.getElementById('postBtn').disabled = true;
@@ -2019,11 +2219,15 @@ function renderConversations() {
             if (p.last.media) content = (p.last.mediaType === 'image' ? '📷 Photo' : '🎥 Video') + (content ? ' — ' + content : '');
             prev = prefix + content;
         }
+        const online = isUserOnline(p.user);
         return '<div class="conversation-item ' + (activeConversation === p.user.id ? 'active' : '') + '" onclick="startConversation(\'' + p.user.id + '\')">' +
-            userAvatarHtml(p.user, 46) +
+            presenceAvatarHtml(p.user, 46) +
             '<div class="c-info">' +
                 '<div class="c-name">' + displayName(p.user) + '</div>' +
-                '<div class="c-preview">' + escapeHtml(prev) + '</div>' +
+                '<div class="c-preview">' +
+                    (online ? '<span style="color:#22c55e;font-weight:600;">Online</span> · ' : '') +
+                    escapeHtml(prev) +
+                '</div>' +
             '</div>' +
             '<div class="c-meta">' +
                 '<div class="c-time">' + (p.last ? timeAgo(p.last.timestamp) : '') + '</div>' +
@@ -2032,10 +2236,24 @@ function renderConversations() {
         '</div>';
     }).join('');
 }
+function closeMobileChat() {
+    const layout = document.querySelector('.messages-layout');
+    if (layout) layout.classList.remove('chat-open');
+    activeConversation = null;
+    _lastRenderedConvo = null;
+    const panel = document.getElementById('chatPanel');
+    if (panel) {
+        panel.innerHTML = '<div class="chat-empty"><div class="emoji">💬</div><p>Select a conversation to start chatting</p></div>';
+    }
+    renderConversations();
+}
 function openConversation(id) {
     const user = users.find(u => u.id === id);
     if (!user) return;
     activeConversation = id;
+    // Show chat panel on mobile
+    const layout = document.querySelector('.messages-layout');
+    if (layout) layout.classList.add('chat-open');
     messages.forEach(m => {
         if (m.from === id && m.to === currentUser.id && !m.read) {
             fbDb.collection('messages').doc(m.id).update({ read: true }).catch(()=>{});
@@ -2054,13 +2272,14 @@ function openConversation(id) {
     const html = convo.length === 0
         ? '<div style="text-align:center;color:#aaa;font-size:13px;margin:20px 0;">Say hi to ' + escapeHtml(user.name) + '! 👋</div>'
         : convo.map(m => renderMessageBubble(m)).join('');
-    const isF = (currentUser.friends||[]).includes(id);
+    const online = isUserOnline(user);
     document.getElementById('chatPanel').innerHTML =
         '<div class="chat-header">' +
-            userAvatarHtml(user, 40) +
-            '<div><div class="chat-name">' + displayName(user) + '</div>' +
-            '<div class="chat-status">' + (isF ? '● Friend' : escapeHtml(user.university||'')) + '</div></div>' +
-            '<div style="margin-left:auto;display:flex;gap:6px;">' +
+            '<button class="chat-back-btn" onclick="closeMobileChat()" title="Back">←</button>' +
+            presenceAvatarHtml(user, 40) +
+            '<div style="min-width:0;flex:1;"><div class="chat-name">' + displayName(user) + '</div>' +
+            '<div class="chat-status' + (online ? ' online' : '') + '">' + lastSeenText(user) + '</div></div>' +
+            '<div style="display:flex;gap:6px;flex-shrink:0;">' +
                 '<button class="btn-call audio" onclick="startCall(\'' + user.id + '\', \'audio\')" style="padding:6px 12px;">📞</button>' +
                 '<button class="btn-call video" onclick="startCall(\'' + user.id + '\', \'video\')" style="padding:6px 12px;">🎥</button>' +
             '</div>' +
@@ -2161,10 +2380,131 @@ async function sendMessage() {
             timestamp: Date.now(),
             read: false
         });
+        // Light notification for recipient
+        createNotification(activeConversation, 'message', {
+            fromId: currentUser.id,
+            text: text ? (text.length > 60 ? text.slice(0, 60) + '…' : text) : (pendingChatMedia ? '📎 Media' : '')
+        });
         i.value = '';
         i.focus();
         clearChatMedia();
     } catch (e) { console.error(e); }
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+async function createNotification(toId, type, extra) {
+    if (!toId || toId === currentUser.id) return;
+    try {
+        await fbDb.collection('notifications').add({
+            to: toId,
+            from: (extra && extra.fromId) || currentUser.id,
+            type: type,
+            postId: (extra && extra.postId) || null,
+            text: (extra && extra.text) || '',
+            read: false,
+            timestamp: Date.now()
+        });
+    } catch (e) {
+        console.warn('createNotification failed', e);
+    }
+}
+function renderNotifications() {
+    const c = document.getElementById('notificationsList');
+    if (!c || !currentUser) return;
+    if (!notifications.length) {
+        c.innerHTML = '<div class="empty-state" style="padding:40px 20px;"><div class="emoji">🔔</div><p>No notifications yet.</p></div>';
+        return;
+    }
+    c.innerHTML = notifications.map(n => {
+        const from = getUser(n.from);
+        let text = '';
+        let click = '';
+        if (n.type === 'friend_request') {
+            text = '<strong>' + escapeHtml(from.name) + '</strong> sent you a friend request';
+            click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'requests\')"';
+        } else if (n.type === 'friend_accepted') {
+            text = '<strong>' + escapeHtml(from.name) + '</strong> accepted your friend request';
+            click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"';
+        } else if (n.type === 'friend_post') {
+            const preview = n.text ? ': “' + escapeHtml(n.text) + '”' : '';
+            text = '<strong>' + escapeHtml(from.name) + '</strong> posted something' + preview;
+            click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'feed\')"';
+        } else if (n.type === 'message') {
+            text = '<strong>' + escapeHtml(from.name) + '</strong> sent you a message';
+            click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"';
+        } else {
+            text = escapeHtml(n.text || 'New notification');
+            click = 'onclick="markNotificationRead(\'' + n.id + '\')"';
+        }
+        return '<div class="notif-item' + (n.read ? '' : ' unread') + '" ' + click + '>' +
+            userAvatarHtml(from, 44) +
+            '<div class="n-body">' +
+                '<div class="n-text">' + text + '</div>' +
+                '<div class="n-time">' + timeAgo(n.timestamp) + '</div>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+async function markNotificationRead(id) {
+    try {
+        await fbDb.collection('notifications').doc(id).update({ read: true });
+    } catch (e) { console.warn(e); }
+}
+async function markAllNotificationsRead() {
+    const unread = notifications.filter(n => !n.read);
+    if (!unread.length) { showToast('All caught up!'); return; }
+    try {
+        await Promise.all(unread.map(n =>
+            fbDb.collection('notifications').doc(n.id).update({ read: true })
+        ));
+        showToast('All marked as read');
+    } catch (e) { console.error(e); }
+}
+
+/* ============================================================
+   PEOPLE YOU MAY KNOW
+   ============================================================ */
+function renderPymk() {
+    const scroll = document.getElementById('pymkScroll');
+    const strip = document.getElementById('pymkStrip');
+    if (!scroll || !currentUser) return;
+    const fids = new Set(currentUser.friends || []);
+    const sent = new Set(currentUser.sentRequests || []);
+    const incoming = new Set(currentUser.friendRequests || []);
+    // Prefer same university / country, then others
+    let candidates = users.filter(u =>
+        u.id !== currentUser.id &&
+        !fids.has(u.id) &&
+        u.status !== 'suspended' &&
+        u.status !== 'banned'
+    );
+    candidates.sort((a, b) => {
+        const score = (u) => {
+            let s = 0;
+            if (u.university && u.university === currentUser.university) s += 3;
+            if (u.country && u.country === currentUser.country) s += 2;
+            if (u.course && u.course === currentUser.course) s += 1;
+            return s;
+        };
+        return score(b) - score(a);
+    });
+    candidates = candidates.slice(0, 12);
+    if (candidates.length === 0) {
+        if (strip) strip.style.display = 'none';
+        return;
+    }
+    if (strip) strip.style.display = 'block';
+    scroll.innerHTML = candidates.map(u => {
+        const b = friendBtnState(u.id);
+        return '<div class="pymk-card">' +
+            '<div onclick="openUserProfile(\'' + u.id + '\')" style="cursor:pointer;">' + userAvatarHtml(u, 52) + '</div>' +
+            '<div class="pymk-name" onclick="openUserProfile(\'' + u.id + '\')">' + displayName(u) + '</div>' +
+            '<div class="pymk-uni">' + escapeHtml(u.university || u.country || '') + '</div>' +
+            '<button class="btn-follow ' + b.cls + '" onclick="handleFriendBtn(\'' + u.id + '\')">' + b.label + '</button>' +
+        '</div>';
+    }).join('');
 }
 
 /* ============================================================
@@ -2174,6 +2514,7 @@ function updateBadges() {
     if (!currentUser) return;
     const u = messages.filter(m => m.to === currentUser.id && !m.read).length;
     const r = (currentUser.friendRequests||[]).length;
+    const n = notifications.filter(x => !x.read).length;
     let gb = 0;
     groups.forEach(g => {
         if ((g.admins||[]).includes(currentUser.id)) gb += (g.joinRequests||[]).length;
@@ -2185,6 +2526,10 @@ function updateBadges() {
     ['navReqBadge','sideReqBadge'].forEach(id => {
         const el = document.getElementById(id);
         if (el) { el.textContent = r; el.style.display = r > 0 ? 'inline-block' : 'none'; }
+    });
+    ['navNotifBadge','sideNotifBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = n; el.style.display = n > 0 ? 'inline-block' : 'none'; }
     });
     ['navGrpBadge','sideGrpBadge'].forEach(id => {
         const el = document.getElementById(id);
@@ -2285,6 +2630,7 @@ async function sendFriendRequest(toId) {
         }
         await fbDb.collection('users').doc(currentUser.id).update({ sentRequests: FV.arrayUnion(toId) });
         await fbDb.collection('users').doc(toId).update({ friendRequests: FV.arrayUnion(currentUser.id) });
+        await createNotification(toId, 'friend_request', { fromId: currentUser.id });
         showToast('Request sent! 🤝');
     } catch (e) {
         console.error(e);
@@ -2313,6 +2659,7 @@ async function acceptFriendRequest(fromId) {
             sentRequests: FV.arrayRemove(currentUser.id),
             friends: FV.arrayUnion(currentUser.id)
         });
+        await createNotification(fromId, 'friend_accepted', { fromId: currentUser.id });
         showToast('Friends! 🎉');
     } catch (e) {
         console.error(e);

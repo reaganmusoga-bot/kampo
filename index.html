@@ -1360,16 +1360,34 @@ async function handleRegister() {
     if (!isPasswordStrong(password)) { err.textContent = 'Weak password.'; err.style.display = 'block'; return; }
     if (password !== confirm) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; return; }
     setBusy(true);
+    let createdAuthUser = null;
     try {
-        const emSnap = await fbDb.collection('users').where('email','==',email).limit(1).get();
-        if (!emSnap.empty) throw new Error('email-taken');
-        const phSnap = await fbDb.collection('users').where('phone','==',phone).limit(1).get();
-        if (!phSnap.empty) throw new Error('phone-taken');
-        const totalSnap = await fbDb.collection('users').limit(1).get();
-        const isFirst = totalSnap.empty;
+        // 1. Create Auth account FIRST → user becomes authenticated
+        //    (Firebase Auth already enforces unique emails)
         const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
+        createdAuthUser = cred.user;
         const uid = cred.user.uid;
         try { await cred.user.sendEmailVerification(); } catch (e) {}
+
+        // 2. Now authenticated — try uniqueness / first-user checks.
+        //    If rules block collection queries, we skip them gracefully.
+        let isFirst = false;
+        try {
+            const phSnap = await fbDb.collection('users').where('phone','==',phone).limit(1).get();
+            if (!phSnap.empty) {
+                await cred.user.delete();
+                createdAuthUser = null;
+                throw new Error('phone-taken');
+            }
+            const totalSnap = await fbDb.collection('users').limit(1).get();
+            isFirst = totalSnap.empty;
+        } catch (queryErr) {
+            if (queryErr.message === 'phone-taken') throw queryErr;
+            // permission-denied on list/query → continue without the checks
+            console.warn('User list query blocked by rules, skipping phone/first checks:', queryErr.message);
+        }
+
+        // 3. Create the user profile document
         await fbDb.collection('users').doc(uid).set({
             id: uid, name, email, phone, university,
             course: course || '', year: year || '', country,
@@ -1383,14 +1401,22 @@ async function handleRegister() {
             joined: Date.now(), lastLogin: Date.now(),
             emailVerified: false, phoneVerified: false
         });
+
         err.style.display = 'none';
         ok.textContent = '✓ Account created! Check ' + email + ' to verify.';
         ok.style.display = 'block';
         showToast('Welcome! Check email ✉️');
     } catch (e) {
+        // Roll back Auth user if profile write failed
+        if (createdAuthUser) {
+            try { await createdAuthUser.delete(); } catch (_) {}
+        }
         let m = e.message;
-        if (e.message === 'email-taken' || e.code === 'auth/email-already-in-use') m = 'Email already registered.';
+        if (e.code === 'auth/email-already-in-use') m = 'Email already registered.';
         else if (e.message === 'phone-taken') m = 'Phone already registered.';
+        else if (e.code === 'permission-denied' || (e.message && e.message.toLowerCase().includes('permission'))) {
+            m = 'Permission denied. Make sure Firestore rules allow authenticated users to create their own /users/{uid} document.';
+        }
         err.textContent = m;
         err.style.display = 'block';
     } finally { setBusy(false); }

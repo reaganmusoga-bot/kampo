@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kampo — Connect with University Students Worldwide</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+img { max-width:100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f0f2f5; color:#1a1a2e; min-height:100vh; }
+
+/* AVATAR */
+.avatar { position: relative; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; overflow: hidden; flex-shrink: 0; padding: 0; }
+.avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+.avatar-32 { width:32px; height:32px; font-size:13px; }
+.avatar-36 { width:36px; height:36px; font-size:14px; }
+.avatar-40 { width:40px; height:40px; font-size:16px; }
+.avatar-44 { width:44px; height:44px; font-size:18px; }
+.avatar-46 { width:46px; height:46px; font-size:18px; }
+.avatar-52 { width:52px; height:52px; font-size:20px; }
+.avatar-80 { width:80px; height:80px; font-size:32px; }
+.avatar-100 { width:100px; height:100px; font-size:36px; }
+.avatar-nav { width:38px; height:38px; font-size:16px; }
+.avatar-profile-big { width:140px; height:140px; font-size:52px; border:5px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+/* AUTH */
+.auth-container { display:flex; justify-content:center; align-items:center; min-height:100vh; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); padding:20px; }
+.auth-box { background:white; border-radius:20px; padding:40px; width:100%; max-width:440px; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:95vh; overflow-y:auto; }
+.auth-box .logo { text-align:center; font-size:42px; font-weight:800; background:linear-gradient(135deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.auth-box .tagline { text-align:center; color:#666; font-size:14px; margin-bottom:25px; }
+.auth-box h2 { font-size:22px; margin-bottom:20px; }
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:5px; color:#444; }
+.form-group input, .form-group select, .form-group textarea { width:100%; padding:11px 15px; border:2px solid #e0e0e0; border-radius:10px; font-size:15px; transition:all 0.3s; outline:none; background:#f8f9fa; font-family:inherit; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#667eea; background:white; box-shadow:0 0 0 4px rgba(102,126,234,0.1); }
+.form-group small { color:#888; font-size:12px; display:block; margin-top:4px; }
+.btn { width:100%; padding:13px; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:5px; }
+.btn-primary { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 25px rgba(102,126,234,0.4); }
+.btn-secondary { background:#e4e6eb; color:#1a1a2e; }
+.btn-secondary:hover { background:#d0d2d6; }
+.btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
+.auth-switch { text-align:center; margin-top:18px; font-size:14px; color:#666; }
+.auth-switch a { color:#667eea; font-weight:700; cursor:pointer; text-decoration:none; }
+.auth-switch a:hover { text-decoration:underline; }
+.error-msg { color:#e74c3c; font-size:13px; margin-top:5px; display:none; padding:8px 12px; background:#fde8e8; border-radius:8px; }
+.success-msg { color:#059669; font-size:13px; margin-top:5px; display:none; padding:8px 12px; background:#d1fae5; border-radius:8px; }
+
+/* PASSWORD */
+.password-wrap { position: relative; }
+.password-wrap input { padding-right: 46px; }
+.pw-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; padding: 6px 8px; border-radius: 6px; color: #888; }
+.pw-toggle:hover { background: #f0f2f5; }
+.pw-strength { margin-top: 8px; }
+.pw-bar { height: 6px; background: #e4e6eb; border-radius: 3px; overflow: hidden; }
+.pw-bar-fill { height: 100%; width: 0%; background: #e74c3c; transition: all 0.3s ease; border-radius: 3px; }
+.pw-label { font-size: 12px; font-weight: 600; color: #888; margin-top: 5px; }
+.pw-label.weak { color: #e74c3c; }
+.pw-label.medium { color: #f39c12; }
+.pw-label.strong { color: #22c55e; }
+.pw-label.very-strong { color: #16a34a; }
+.pw-rules { list-style: none; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+.pw-rules li { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+.pw-rules li span { color: #ccc; font-size: 10px; }
+.pw-rules li.pass { color: #22c55e; }
+.pw-rules li.pass span { color: #22c55e; }
+.pw-match { font-size: 12px; margin-top: 6px; font-weight: 600; min-height: 16px; }
+.pw-match.good { color: #22c55e; }
+.pw-match.bad { color: #e74c3c; }
+
+/* APP */
+.app-container { display:none; min-height:100vh; flex-direction:column; }
+.app-container.active { display:flex; }
+.navbar { background:white; padding:10px 20px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.08); position:sticky; top:0; z-index:100; }
+.nav-logo { font-size:26px; font-weight:800; background:linear-gradient(135deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; cursor:pointer; }
+.nav-search { flex:1; max-width:400px; margin:0 20px; }
+.nav-search input { width:100%; padding:10px 18px; border:none; border-radius:25px; background:#f0f2f5; font-size:14px; outline:none; }
+.nav-search input:focus { background:#e4e6eb; box-shadow:0 0 0 3px rgba(102,126,234,0.15); }
+.nav-actions { display:flex; align-items:center; gap:8px; }
+.nav-icon-btn { background:none; border:none; font-size:20px; cursor:pointer; padding:8px; border-radius:50%; transition:background 0.2s; position:relative; display:flex; align-items:center; justify-content:center; }
+.nav-icon-btn:hover { background:#f0f2f5; }
+.badge { position:absolute; top:2px; right:2px; background:#e74c3c; color:white; font-size:10px; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-weight:700; padding:0 5px; border:2px solid white; }
+.main-layout { display:flex; max-width:1300px; margin:20px auto; padding:0 20px; gap:20px; width:100%; flex:1; }
+.left-sidebar { width:260px; flex-shrink:0; }
+.right-sidebar { width:300px; flex-shrink:0; }
+.sidebar-card { background:white; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.sidebar-card h3 { font-size:13px; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; }
+.sidebar-link { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:500; font-size:15px; position:relative; }
+.sidebar-link:hover { background:#f0f2f5; }
+.sidebar-link.active { background:linear-gradient(135deg,rgba(102,126,234,0.1),rgba(118,75,162,0.1)); color:#667eea; font-weight:700; }
+.sidebar-link .icon { font-size:20px; }
+.sidebar-link .link-badge { margin-left:auto; background:#e74c3c; color:white; font-size:11px; padding:2px 7px; border-radius:10px; font-weight:700; }
+.sidebar-profile { text-align:center; padding:10px 0; }
+.sidebar-profile .name { font-weight:700; font-size:17px; }
+.sidebar-profile .university { font-size:13px; color:#888; margin-top:2px; }
+.sidebar-stats { display:flex; justify-content:center; gap:20px; margin-top:12px; font-size:13px; }
+.sidebar-stats .stat { text-align:center; cursor:pointer; }
+.sidebar-stats .stat strong { display:block; font-size:17px; color:#1a1a2e; }
+.sidebar-stats .stat span { color:#888; }
+.feed-area { flex:1; min-width:0; }
+
+/* Create Post */
+.create-post { background:white; border-radius:12px; padding:18px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.create-post .post-input-row { display:flex; gap:12px; align-items:flex-start; }
+.create-post textarea { flex:1; border:none; outline:none; font-size:15px; resize:none; font-family:inherit; padding:10px; border-radius:8px; background:#f8f9fa; min-height:60px; }
+.create-post textarea:focus { background:#f0f2f5; }
+.media-preview { display:none; margin-top:12px; position:relative; border-radius:12px; overflow:hidden; background:#000; max-height:400px; align-items:center; justify-content:center; }
+.media-preview.active { display:flex; }
+.media-preview img, .media-preview video { max-width:100%; max-height:400px; display:block; border-radius:12px; }
+.media-preview .remove-media { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); color:white; border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.post-actions { display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:12px; border-top:1px solid #eee; }
+.post-actions .action-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.post-actions .action-btn { background:none; border:none; font-size:14px; cursor:pointer; padding:6px 12px; border-radius:8px; color:#666; transition:background 0.2s; display:flex; align-items:center; gap:5px; }
+.post-actions .action-btn:hover { background:#f0f2f5; }
+.post-actions .action-btn.active { background:#eef2ff; color:#667eea; font-weight:700; }
+.btn-post { background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:8px 24px; border-radius:8px; font-weight:700; cursor:pointer; font-size:14px; }
+.btn-post:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* Post Card */
+.post-card { background:white; border-radius:12px; padding:18px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); animation:fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.post-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.post-user-info { flex:1; min-width:0; }
+.post-user-info .name { font-weight:700; font-size:15px; cursor:pointer; }
+.post-user-info .name:hover { color:#667eea; }
+.post-user-info .meta { font-size:12px; color:#888; display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-top:2px; }
+.university-tag { background:#eef2ff; color:#667eea; padding:1px 8px; border-radius:10px; font-weight:600; font-size:11px; }
+.year-tag { background:#e0f2fe; color:#0284c7; padding:1px 8px; border-radius:10px; font-weight:600; font-size:11px; }
+.group-tag { background:#fef3c7; color:#d97706; padding:1px 8px; border-radius:10px; font-weight:600; font-size:11px; }
+.post-content { font-size:15px; line-height:1.6; margin-bottom:14px; white-space:pre-wrap; word-break:break-word; }
+.post-media { margin:0 -18px 14px; overflow:hidden; background:#000; cursor:pointer; max-height:500px; display:flex; align-items:center; justify-content:center; }
+.post-media img, .post-media video { width:100%; max-height:500px; object-fit:contain; display:block; }
+.post-actions-bar { display:flex; gap:5px; padding-top:12px; border-top:1px solid #f0f0f0; }
+.post-action-btn { flex:1; background:none; border:none; padding:8px; border-radius:8px; cursor:pointer; font-size:14px; color:#666; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; }
+.post-action-btn:hover { background:#f0f2f5; }
+.post-action-btn.liked { color:#e74c3c; }
+
+/* Comments */
+.comments-section { margin-top:12px; padding-top:12px; border-top:1px solid #f0f0f0; display:none; }
+.comments-section.open { display:block; }
+.comment { display:flex; gap:10px; margin-bottom:10px; }
+.comment .comment-body { background:#f0f2f5; border-radius:12px; padding:8px 14px; flex:1; }
+.comment .comment-body .comment-name { font-weight:700; font-size:13px; margin-bottom:2px; }
+.comment .comment-body .comment-text { font-size:14px; line-height:1.4; }
+.comment .comment-body .comment-image { max-width:200px; border-radius:8px; margin-top:6px; display:block; cursor:pointer; }
+.comment .comment-body .comment-video { max-width:200px; border-radius:8px; margin-top:6px; display:block; }
+.comment-input-row { display:flex; gap:8px; margin-top:10px; align-items:center; }
+.comment-input-row input[type="text"] { flex:1; padding:9px 14px; border:2px solid #e0e0e0; border-radius:20px; font-size:14px; outline:none; }
+.comment-input-row input[type="text"]:focus { border-color:#667eea; }
+.comment-input-row .media-btn { background:#f0f2f5; border:none; width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.comment-input-row .media-btn:hover { background:#e4e6eb; }
+.comment-input-row button.send-btn { background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:9px 18px; border-radius:20px; font-weight:700; cursor:pointer; font-size:13px; flex-shrink:0; }
+
+/* Suggestion */
+.suggestion-item { display:flex; align-items:center; gap:12px; padding:8px 0; }
+.s-info { flex:1; min-width:0; }
+.s-info .s-name { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+.s-info .s-name:hover { color:#667eea; }
+.s-info .s-uni { font-size:12px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.btn-follow { background:#eef2ff; color:#667eea; border:none; padding:5px 14px; border-radius:15px; font-weight:700; font-size:12px; cursor:pointer; white-space:nowrap; }
+.btn-follow:hover { background:#667eea; color:white; }
+.btn-follow.following { background:#e4e6eb; color:#666; }
+.btn-follow.requested { background:#fff4e5; color:#f39c12; }
+
+/* Pages */
+.page { display:none; }
+.page.active { display:block; }
+
+/* Profile */
+.profile-header { background:white; border-radius:12px; overflow:hidden; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); position:relative; }
+.profile-cover { height:220px; background: linear-gradient(135deg,#667eea,#764ba2,#a855f7); background-size:cover; background-position:center; position:relative; overflow:hidden; }
+.cover-edit-btn { position:absolute; bottom:12px; right:12px; background:rgba(255,255,255,0.95); color:#1a1a2e; border:none; padding:8px 14px; border-radius:20px; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+.profile-info { padding:0 24px 24px; position:relative; }
+.profile-avatar-container { position:relative; display:inline-block; margin-top:-70px; margin-bottom:12px; z-index:2; }
+.avatar-edit-btn { position:absolute; bottom:6px; right:6px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:3px solid white; width:42px; height:42px; border-radius:50%; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(102,126,234,0.4); z-index: 3; }
+.profile-name-row { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:4px; }
+.profile-name { font-size:26px; font-weight:800; line-height:1.2; word-break:break-word; }
+.profile-university { color:#667eea; font-weight:600; font-size:15px; margin-top:4px; word-break:break-word; }
+.profile-academic { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.academic-pill { background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); color: #667eea; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+.profile-bio { margin-top:12px; color:#555; font-size:14px; line-height:1.5; max-width:600px; word-break:break-word; }
+.profile-stats { display:flex; gap:30px; margin-top:16px; }
+.profile-stats .stat { text-align:center; }
+.profile-stats .stat strong { display:block; font-size:20px; color:#1a1a2e; }
+.profile-stats .stat span { font-size:13px; color:#888; }
+.profile-actions { margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+.btn-action { padding:9px 20px; border-radius:8px; font-weight:700; font-size:14px; cursor:pointer; border:none; }
+.btn-action-primary { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.btn-action-primary:hover { transform:translateY(-1px); box-shadow:0 5px 15px rgba(102,126,234,0.4); }
+.btn-action-secondary { background:#e4e6eb; color:#1a1a2e; }
+.btn-action-secondary:hover { background:#d0d2d6; }
+.profile-call-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.btn-call { padding: 9px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; }
+.btn-call.audio { background: #d1fae5; color: #059669; }
+.btn-call.audio:hover { background: #10b981; color: white; }
+.btn-call.video { background: #dbeafe; color: #2563eb; }
+.btn-call.video:hover { background: #3b82f6; color: white; }
+.btn-call.conference { background: #fef3c7; color: #d97706; }
+.btn-call.conference:hover { background: #f59e0b; color: white; }
+.empty-state { text-align:center; padding:50px 20px; color:#888; }
+.empty-state .emoji { font-size:48px; margin-bottom:12px; }
+
+/* MESSAGES */
+.messages-layout { display:flex; background:white; border-radius:12px; overflow:hidden; height:calc(100vh - 130px); min-height:500px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.conversations-panel { width:320px; flex-shrink:0; border-right:1px solid #eee; display:flex; flex-direction:column; }
+.conversations-header { padding:15px; border-bottom:1px solid #eee; font-weight:700; font-size:16px; }
+.conversations-list { flex:1; overflow-y:auto; }
+.conversation-item { display:flex; gap:12px; padding:12px 15px; cursor:pointer; border-bottom:1px solid #f8f8f8; align-items:center; }
+.conversation-item:hover { background:#f8f9fa; }
+.conversation-item.active { background:#eef2ff; }
+.conversation-item .c-info { flex:1; min-width:0; }
+.conversation-item .c-name { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.conversation-item .c-preview { font-size:12px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.conversation-item .c-meta { text-align:right; flex-shrink:0; }
+.conversation-item .c-time { font-size:11px; color:#aaa; }
+.conversation-item .c-unread { background:#667eea; color:white; font-size:11px; font-weight:700; border-radius:10px; padding:1px 7px; margin-top:4px; display:inline-block; }
+.chat-panel { flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; }
+.chat-header { padding:12px 20px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:12px; background:#fafafa; flex-shrink:0; }
+.chat-header .chat-name { font-weight:700; font-size:15px; }
+.chat-header .chat-status { font-size:12px; color:#22c55e; }
+.chat-messages { flex:1; overflow-y:auto; padding:20px; background:#f8f9fb; display:flex; flex-direction:column; gap:10px; min-height: 0; }
+.message { max-width:65%; padding:8px 14px; border-radius:16px; font-size:14px; line-height:1.4; word-wrap:break-word; }
+.message.sent { align-self:flex-end; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border-bottom-right-radius:4px; }
+.message.received { align-self:flex-start; background:white; color:#1a1a2e; border-bottom-left-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.message .msg-time { font-size:10px; opacity:0.7; margin-top:4px; display:block; text-align:right; }
+.message .msg-media { max-width:260px; border-radius:10px; margin:4px 0; display:block; cursor:pointer; }
+.chat-media-preview { display: none; padding: 10px 20px; background: #f8f9fb; border-top: 1px solid #eee; position: relative; flex-shrink: 0; }
+.chat-media-preview.active { display: block; }
+.chat-media-preview img, .chat-media-preview video { max-height: 140px; border-radius: 8px; display: block; }
+.chat-media-preview .remove-media { position: absolute; top: 15px; right: 25px; background: rgba(0,0,0,0.7); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 14px; font-weight: 700; }
+.chat-input-area { padding:12px 20px; border-top:1px solid #eee; display:flex; gap:10px; background:white; align-items:center; flex-shrink: 0; }
+.chat-input-area input[type="text"] { flex:1; min-width:0; height:44px; padding:0 18px; border:2px solid #e0e0e0; border-radius:22px; font-size:14px; outline:none; background: #f8f9fa; }
+.chat-input-area input[type="text"]:focus { border-color:#667eea; background: white; }
+.chat-input-area .media-btn, .chat-input-area .send-btn { width:44px; height:44px; border-radius:50%; border:none; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; flex-shrink: 0; padding: 0; }
+.chat-input-area .media-btn { background:#f0f2f5; color:#666; }
+.chat-input-area .send-btn { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.chat-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#888; padding:20px; text-align:center; }
+.chat-empty .emoji { font-size:60px; margin-bottom:15px; }
+
+/* Requests */
+.request-item { display:flex; align-items:center; gap:12px; padding:14px; background:white; border-radius:10px; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+.request-item .r-info { flex:1; min-width:0; }
+.request-item .r-info .r-name { font-weight:700; font-size:15px; }
+.request-item .r-info .r-uni { font-size:12px; color:#888; margin-top:2px; }
+.request-item .r-actions { display:flex; gap:8px; flex-shrink:0; flex-wrap:wrap; }
+.btn-accept { background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; }
+.btn-decline { background:#e4e6eb; color:#1a1a2e; border:none; padding:8px 16px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; }
+.tabs { display:flex; background:white; border-radius:12px; padding:5px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.tab { flex:1; padding:10px; text-align:center; cursor:pointer; border-radius:8px; font-weight:600; font-size:14px; color:#666; }
+.tab.active { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+
+/* Groups */
+.groups-toolbar { display:flex; gap:10px; margin-bottom:15px; align-items:center; background:white; padding:12px 15px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.groups-toolbar input { flex:1; padding:10px 16px; border:2px solid #e0e0e0; border-radius:22px; font-size:14px; outline:none; }
+.btn-create-group { background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:10px 20px; border-radius:22px; font-weight:700; font-size:14px; cursor:pointer; white-space:nowrap; }
+.groups-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:15px; }
+.group-card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.06); cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; }
+.group-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.1); }
+.group-card-cover { height:110px; background:linear-gradient(135deg,#667eea,#764ba2); background-size:cover; background-position:center; position:relative; }
+.group-card-cover .privacy-badge { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:white; font-size:11px; padding:3px 9px; border-radius:12px; font-weight:700; }
+.group-card-body { padding:12px 14px 14px; flex:1; display:flex; flex-direction:column; }
+.group-card-name { font-weight:700; font-size:15px; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.group-card-desc { font-size:12px; color:#888; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:10px; min-height:32px; }
+.group-card-meta { display:flex; justify-content:space-between; align-items:center; margin-top:auto; }
+.group-card-members { font-size:12px; color:#888; }
+.group-card-action { padding:5px 14px; border-radius:15px; font-weight:700; font-size:12px; cursor:pointer; border:none; }
+.group-card-action.join { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.group-card-action.joined { background:#e4e6eb; color:#666; }
+.group-card-action.requested { background:#fff4e5; color:#f39c12; }
+.group-header { background:white; border-radius:12px; overflow:hidden; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.group-cover-lg { height:200px; background:linear-gradient(135deg,#667eea,#764ba2); background-size:cover; background-position:center; }
+.group-info-block { padding:20px 24px; }
+.group-title { font-size:24px; font-weight:800; }
+.group-privacy-pill { background:#eef2ff; color:#667eea; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:700; display:inline-block; margin-left:8px; }
+.group-desc { color:#555; font-size:14px; line-height:1.5; margin:8px 0; }
+.group-stats-row { display:flex; gap:24px; color:#888; font-size:13px; margin:12px 0; flex-wrap:wrap; }
+.group-stats-row strong { color:#1a1a2e; }
+.group-actions-row { display:flex; gap:8px; flex-wrap:wrap; }
+.group-tabs { display:flex; background:white; border-radius:12px; padding:5px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow-x:auto; }
+.group-tab { padding:10px 18px; cursor:pointer; border-radius:8px; font-weight:600; font-size:14px; color:#666; white-space:nowrap; }
+.group-tab.active { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.member-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #f0f0f0; }
+.member-item:last-child { border-bottom:none; }
+.member-info { flex:1; min-width:0; }
+.member-info .m-name { font-weight:700; font-size:14px; }
+.member-info .m-uni { font-size:12px; color:#888; margin-top:2px; }
+.admin-pill { background:#fef3c7; color:#d97706; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; }
+
+/* Modal */
+.modal-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:500; align-items:center; justify-content:center; padding:20px; }
+.modal-backdrop.active { display:flex; }
+.modal { background:white; border-radius:16px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+.modal-header { padding:20px 24px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+.modal-header h3 { font-size:20px; font-weight:800; }
+.modal-header .close-btn { background:#f0f2f5; border:none; width:34px; height:34px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.modal-body { padding:24px; }
+.modal-footer { padding:16px 24px; border-top:1px solid #eee; display:flex; gap:10px; justify-content:flex-end; }
+.modal-footer button { padding:10px 22px; border:none; border-radius:8px; font-weight:700; font-size:14px; cursor:pointer; }
+.modal-footer .btn-cancel { background:#e4e6eb; color:#1a1a2e; }
+.modal-footer .btn-save { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.edit-avatar-section { display:flex; align-items:center; gap:20px; padding-bottom:20px; border-bottom:1px solid #f0f0f0; margin-bottom:20px; }
+.edit-avatar-preview { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:36px; overflow:hidden; flex-shrink:0; border:3px solid #eef2ff; position: relative; }
+.edit-avatar-preview img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.edit-avatar-actions { flex:1; }
+.edit-avatar-actions h4 { font-size:15px; margin-bottom:4px; }
+.edit-avatar-actions p { font-size:13px; color:#888; margin-bottom:10px; }
+.edit-avatar-actions button { background:#eef2ff; color:#667eea; border:none; padding:8px 16px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; margin-right:8px; }
+
+/* Invite */
+.invite-list { max-height:300px; overflow-y:auto; border:2px solid #f0f0f0; border-radius:10px; padding:6px; }
+.invite-row { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; cursor:pointer; }
+.invite-row:hover { background:#f8f9fa; }
+.invite-row.selected { background:#eef2ff; }
+.invite-row .check-mark { width:22px; height:22px; border-radius:50%; border:2px solid #ccc; display:flex; align-items:center; justify-content:center; flex-shrink:0; color: transparent; font-size: 13px; font-weight: 900; }
+.invite-row.selected .check-mark { background:linear-gradient(135deg,#667eea,#764ba2); border-color:#667eea; color:white; }
+
+/* Lightbox */
+.lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
+.lightbox.active { display:flex; }
+.lightbox img, .lightbox video { max-width:90%; max-height:90%; border-radius:8px; }
+.lightbox .close-lb { position:absolute; top:20px; right:30px; background:none; border:none; color:white; font-size:40px; cursor:pointer; line-height:1; }
+
+/* Stories */
+.stories-strip { background: white; border-radius: 12px; padding: 14px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; gap: 12px; overflow-x: auto; }
+.story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; width: 76px; }
+.story-ring { width: 66px; height: 66px; border-radius: 50%; padding: 3px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); display: flex; align-items: center; justify-content: center; position: relative; }
+.story-ring.seen { background: #d0d2d6; }
+.story-ring.mine { background: linear-gradient(135deg, #667eea, #764ba2); }
+.story-ring-inner { width: 100%; height: 100%; border-radius: 50%; background: white; padding: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.story-ring-inner .avatar, .story-ring-inner img { width: 100% !important; height: 100% !important; border-radius: 50%; object-fit: cover; }
+.story-add-btn { position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: 3px solid white; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.story-name { font-size: 11px; color: #444; font-weight: 600; max-width: 72px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+.story-viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; }
+.story-viewer.active { display: flex; }
+.story-viewer-inner { position: relative; width: 100%; max-width: 420px; height: 90vh; max-height: 800px; background: #000; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.story-progress { position: absolute; top: 8px; left: 8px; right: 8px; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; display: flex; gap: 3px; z-index: 10; }
+.story-progress-bar { flex: 1; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+.story-progress-fill { height: 100%; background: white; width: 0%; }
+.story-progress-bar.active .story-progress-fill { animation: storyFill 5s linear forwards; }
+.story-progress-bar.done .story-progress-fill { width: 100%; }
+@keyframes storyFill { from { width: 0%; } to { width: 100%; } }
+.story-header { position: absolute; top: 20px; left: 16px; right: 16px; display: flex; align-items: center; gap: 10px; z-index: 10; color: white; }
+.story-header .story-header-name { font-weight: 700; font-size: 14px; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+.story-header .story-header-time { font-size: 11px; opacity: 0.8; }
+.story-close { margin-left: auto; background: none; border: none; color: white; font-size: 26px; cursor: pointer; }
+.story-content { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; background: #000; }
+.story-content img, .story-content video { max-width: 100%; max-height: 100%; object-fit: contain; }
+.story-caption { position: absolute; bottom: 20px; left: 16px; right: 16px; color: white; text-align: center; font-size: 14px; padding: 10px 16px; background: rgba(0,0,0,0.4); border-radius: 12px; }
+.story-nav { position: absolute; top: 0; bottom: 0; width: 30%; cursor: pointer; z-index: 5; background: transparent; border: none; }
+.story-nav.prev { left: 0; }
+.story-nav.next { right: 0; }
+.story-views-bar { position: absolute; bottom: 70px; left: 16px; right: 16px; color: white; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; text-shadow: 0 1px 3px rgba(0,0,0,0.6); cursor: pointer; }
+.story-viewers-panel { position: absolute; bottom: 0; left: 0; right: 0; max-height: 50%; background: rgba(0,0,0,0.9); color: white; overflow-y: auto; padding: 16px; border-radius: 16px 16px 0 0; display: none; z-index: 20; }
+.story-viewers-panel.active { display: block; }
+.story-viewer-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+
+/* Call */
+.call-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2500; flex-direction: column; }
+.call-modal.active { display: flex; }
+.call-topbar { padding: 12px 20px; background: #1a1a2e; color: white; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.call-topbar .call-title { font-weight: 700; font-size: 15px; }
+.call-topbar .call-type-badge { background: rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.call-topbar .call-close-btn { margin-left: auto; background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.call-frame-container { flex: 1; position: relative; background: #000; }
+.call-frame-container iframe { width: 100%; height: 100%; border: none; display: block; }
+.call-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; gap: 16px; background: #1a1a2e; }
+.call-loading .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: #667eea; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Live */
+.live-strip { background: linear-gradient(135deg, #e74c3c, #c0392b); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: none; align-items: center; gap: 12px; overflow-x: auto; }
+.live-strip.active { display: flex; }
+.live-strip-label { color: white; font-weight: 800; font-size: 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.live-dot-pulse { width: 8px; height: 8px; border-radius: 50%; background: white; animation: livePulse 1s ease-in-out infinite; }
+@keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.live-card { background: white; border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
+.live-card .live-card-avatar { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 2px solid #e74c3c; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: 700; font-size: 14px; }
+.live-card .live-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.live-card-info { min-width: 0; }
+.live-card-name { font-weight: 700; font-size: 13px; color: #1a1a2e; }
+.live-card-title { font-size: 11px; color: #888; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.live-setup-row { display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 10px; background: #f8f9fa; margin-bottom: 12px; }
+.live-setup-row input[type="radio"] { width: 20px; height: 20px; accent-color: #667eea; cursor: pointer; }
+.live-setup-row label { flex: 1; cursor: pointer; font-size: 14px; font-weight: 600; }
+.live-setup-row small { display: block; font-weight: 400; font-size: 12px; color: #888; margin-top: 2px; }
+
+/* Toast */
+.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:#1a1a2e; color:white; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; opacity:0; transition:all 0.4s ease; z-index:999; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Loader */
+.auth-loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; align-items: center; justify-content: center; color: white; }
+.auth-loading.active { display: flex; }
+.auth-loading .spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+/* Responsive */
+@media (max-width:1000px) { .right-sidebar { display:none; } }
+@media (max-width:800px) {
+    .left-sidebar { display:none; }
+    .conversations-panel { width:100%; }
+    .chat-panel { display:none; }
+    .profile-cover { height:150px; }
+    .avatar-profile-big { width:110px; height:110px; font-size:40px; }
+    .profile-avatar-container { margin-top:-55px; }
+    .groups-grid { grid-template-columns:1fr; }
+}
+@media (max-width:600px) {
+    .nav-search { display:none; }
+    .main-layout { padding:0 10px; margin:10px auto; }
+    .auth-box { padding:25px; }
+    .message { max-width:85%; }
+}
+</style>
+</head>
+<body>
+
+<div class="auth-loading" id="authLoading"><div class="spinner"></div></div>
+
+<!-- AUTH -->
+<div class="auth-container" id="authScreen">
+    <div class="auth-box">
+        <div class="logo">Kampo</div>
+        <div class="tagline">Connect with university students worldwide 🌍</div>
+
+        <div id="loginForm">
+            <h2>Welcome back 👋</h2>
+            <div class="form-group"><label>Email</label>
+                <input type="email" id="loginEmail" placeholder="you@university.edu" autocomplete="username"></div>
+            <div class="form-group"><label>Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                    <button type="button" class="pw-toggle" onclick="togglePw('loginPassword', this)">👁️</button>
+                </div>
+            </div>
+            <div class="error-msg" id="loginError"></div>
+            <div style="text-align:right; margin: 6px 0;">
+                <a onclick="showRecovery()" style="color:#667eea;font-size:13px;font-weight:600;cursor:pointer;">Forgot password?</a>
+            </div>
+            <button class="btn btn-primary" onclick="handleLogin()">Log In</button>
+            <div class="auth-switch">Don't have an account? <a onclick="showRegister()">Sign Up</a></div>
+        </div>
+
+        <div id="registerForm" style="display:none;">
+            <h2>Join Kampo 🚀</h2>
+            <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="John Doe"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@university.edu"></div>
+            <div class="form-group"><label>Phone Number</label>
+                <input type="tel" id="regPhone" placeholder="+256 700 000 000">
+                <small>Include country code</small></div>
+            <div class="form-group"><label>University</label><input type="text" id="regUniversity" placeholder="e.g. Makerere University"></div>
+            <div class="form-group"><label>Course / Program</label><input type="text" id="regCourse" placeholder="e.g. BSc Computer Science"></div>
+            <div class="form-group"><label>Academic Year</label>
+                <select id="regYear">
+                    <option value="">Select year...</option>
+                    <option>Year 1</option><option>Year 2</option><option>Year 3</option>
+                    <option>Year 4</option><option>Year 5</option><option>Year 6</option>
+                    <option>Postgraduate</option><option>PhD</option><option>Alumni</option>
+                </select></div>
+            <div class="form-group"><label>Country</label><input type="text" id="regCountry" placeholder="e.g. Uganda"></div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="regPassword" placeholder="Strong password" oninput="updatePwStrength()">
+                    <button type="button" class="pw-toggle" onclick="togglePw('regPassword', this)">👁️</button>
+                </div>
+                <div class="pw-strength">
+                    <div class="pw-bar"><div class="pw-bar-fill" id="pwBarFill"></div></div>
+                    <div class="pw-label" id="pwLabel">Password strength</div>
+                </div>
+                <ul class="pw-rules" id="pwRules">
+                    <li data-rule="length"><span>●</span> 8+ characters</li>
+                    <li data-rule="upper"><span>●</span> Uppercase letter</li>
+                    <li data-rule="lower"><span>●</span> Lowercase letter</li>
+                    <li data-rule="number"><span>●</span> Number</li>
+                    <li data-rule="special"><span>●</span> Special character</li>
+                </ul>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="regPasswordConfirm" placeholder="Repeat password" oninput="checkPasswordMatch()">
+                    <button type="button" class="pw-toggle" onclick="togglePw('regPasswordConfirm', this)">👁️</button>
+                </div>
+                <div class="pw-match" id="pwMatch"></div>
+            </div>
+            <div class="form-group"><label>Short Bio (optional)</label><input type="text" id="regBio" placeholder="Tell us about yourself"></div>
+            <div class="error-msg" id="regError"></div>
+            <div class="success-msg" id="regSuccess"></div>
+            <button class="btn btn-primary" onclick="handleRegister()" id="regSubmitBtn" disabled>Create Account</button>
+            <div class="auth-switch">Already have an account? <a onclick="showLogin()">Log In</a></div>
+        </div>
+
+        <div id="recoveryForm" style="display:none;">
+            <h2>Reset Password 🔐</h2>
+            <p style="color:#666;font-size:14px;margin-bottom:15px;">Enter your email. We'll send a reset link.</p>
+            <div class="form-group"><label>Email</label><input type="email" id="recoveryInput" placeholder="you@university.edu"></div>
+            <div class="error-msg" id="recoveryError"></div>
+            <div class="success-msg" id="recoverySuccess"></div>
+            <button class="btn btn-primary" onclick="handleRecoveryLookup()">Send Reset Link</button>
+            <div class="auth-switch"><a onclick="showLogin()">← Back to Login</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- APP -->
+<div class="app-container" id="appScreen">
+    <nav class="navbar">
+        <div class="nav-logo" onclick="showPage('feed')">Kampo</div>
+        <div class="nav-search"><input type="text" id="globalSearch" placeholder="🔍 Search students, posts, groups..." oninput="handleSearch(this.value)"></div>
+        <div class="nav-actions">
+            <button class="nav-icon-btn" onclick="showPage('feed')" title="Home">🏠</button>
+            <button class="nav-icon-btn" onclick="showPage('messages')" title="Messages">💬<span class="badge" id="navMsgBadge" style="display:none;">0</span></button>
+            <button class="nav-icon-btn" onclick="showPage('requests')" title="Friend Requests">👥<span class="badge" id="navReqBadge" style="display:none;">0</span></button>
+            <button class="nav-icon-btn" onclick="showPage('groups')" title="Groups">👪<span class="badge" id="navGrpBadge" style="display:none;">0</span></button>
+            <button class="nav-icon-btn" id="adminNavBtn" onclick="showPage('admin')" title="Admin" style="display:none;">⚙️</button>
+            <div class="avatar avatar-nav" id="navAvatar" onclick="showPage('profile')">U</div>
+            <button class="nav-icon-btn" onclick="handleLogout()" title="Logout">🚪</button>
+        </div>
+    </nav>
+
+    <div class="main-layout">
+        <aside class="left-sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-profile">
+                    <div class="avatar avatar-80" id="sidebarAvatar" style="margin:0 auto 10px;">U</div>
+                    <div class="name" id="sidebarName">User</div>
+                    <div class="university" id="sidebarUniversity">University</div>
+                    <div class="sidebar-stats">
+                        <div class="stat" onclick="showPage('profile')"><strong id="sidebarPosts">0</strong><span>Posts</span></div>
+                        <div class="stat" onclick="showPage('profile')"><strong id="sidebarFriends">0</strong><span>Friends</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-card">
+                <div class="sidebar-link active" onclick="showPage('feed')"><span class="icon">📰</span> Feed</div>
+                <div class="sidebar-link" onclick="showPage('messages')"><span class="icon">💬</span> Messages<span class="link-badge" id="sideMsgBadge" style="display:none;">0</span></div>
+                <div class="sidebar-link" onclick="showPage('requests')"><span class="icon">👥</span> Friend Requests<span class="link-badge" id="sideReqBadge" style="display:none;">0</span></div>
+                <div class="sidebar-link" onclick="showPage('groups')"><span class="icon">👪</span> Groups<span class="link-badge" id="sideGrpBadge" style="display:none;">0</span></div>
+                <div class="sidebar-link" onclick="showPage('students')"><span class="icon">🌍</span> Discover Students</div>
+                <div class="sidebar-link" onclick="showPage('profile')"><span class="icon">👤</span> My Profile</div>
+                <div class="sidebar-link" onclick="openEditProfile()"><span class="icon">✏️</span> Edit Profile</div>
+                <div class="sidebar-link" id="adminSidebarLink" onclick="showPage('admin')" style="display:none;"><span class="icon">⚙️</span> Admin Panel</div>
+            </div>
+            <div class="sidebar-card">
+                <h3>🌐 Global Stats</h3>
+                <div style="font-size:14px;color:#555;line-height:2;">
+                    <div>👥 <strong id="totalUsers">0</strong> students</div>
+                    <div>📝 <strong id="totalPosts">0</strong> posts</div>
+                    <div>👪 <strong id="totalGroups">0</strong> groups</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="feed-area">
+            <!-- FEED -->
+            <div class="page active" id="page-feed">
+                <div class="live-strip" id="liveStrip">
+                    <div class="live-strip-label"><span class="live-dot-pulse"></span> LIVE NOW</div>
+                    <div id="liveStripCards" style="display:flex;gap:10px;overflow-x:auto;"></div>
+                </div>
+                <div class="stories-strip" id="storiesStrip"></div>
+                <div class="create-post">
+                    <div class="post-input-row">
+                        <div class="avatar avatar-44" id="createAvatar">U</div>
+                        <textarea id="postContent" placeholder="What's on your mind?..." oninput="togglePostBtn()"></textarea>
+                    </div>
+                    <div class="media-preview" id="postMediaPreview">
+                        <button class="remove-media" onclick="clearPostMedia()">✕</button>
+                        <div id="postMediaContent"></div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-btns">
+                            <button class="action-btn" id="photoBtn" onclick="triggerPhotoUpload()">📷 Photo</button>
+                            <button class="action-btn" id="videoBtn" onclick="triggerVideoUpload()">🎥 Video</button>
+                            <button class="action-btn" onclick="openAddStoryModal()">📸 Story</button>
+                            <button class="action-btn" onclick="openLiveSetup()">🔴 Go Live</button>
+                            <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleMediaSelect(event, 'image')">
+                            <input type="file" id="videoInput" accept="video/*" style="display:none;" onchange="handleMediaSelect(event, 'video')">
+                        </div>
+                        <button class="btn-post" id="postBtn" onclick="createPost()" disabled>Post</button>
+                    </div>
+                </div>
+                <div id="feedContainer"></div>
+            </div>
+
+            <!-- MESSAGES -->
+            <div class="page" id="page-messages">
+                <div class="messages-layout">
+                    <div class="conversations-panel">
+                        <div class="conversations-header">💬 Messages</div>
+                        <div class="conversations-list" id="conversationsList"></div>
+                    </div>
+                    <div class="chat-panel" id="chatPanel">
+                        <div class="chat-empty"><div class="emoji">💬</div><p>Select a conversation to start chatting</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REQUESTS -->
+            <div class="page" id="page-requests">
+                <div class="tabs">
+                    <div class="tab active" id="tab-incoming" onclick="switchReqTab('incoming')">Incoming</div>
+                    <div class="tab" id="tab-sent" onclick="switchReqTab('sent')">Sent</div>
+                    <div class="tab" id="tab-friends" onclick="switchReqTab('friends')">My Friends</div>
+                </div>
+                <div id="requestsContent"></div>
+            </div>
+
+            <!-- GROUPS -->
+            <div class="page" id="page-groups">
+                <div class="groups-toolbar">
+                    <input type="text" id="groupsSearch" placeholder="🔍 Search groups..." oninput="renderGroupsDirectory()">
+                    <button class="btn-create-group" onclick="openCreateGroup()">➕ Create Group</button>
+                </div>
+                <div class="tabs">
+                    <div class="tab active" id="grtab-my" onclick="switchGroupsTab('my')">My Groups</div>
+                    <div class="tab" id="grtab-discover" onclick="switchGroupsTab('discover')">Discover</div>
+                </div>
+                <div class="groups-grid" id="groupsGrid"></div>
+            </div>
+
+            <div class="page" id="page-group-detail"><div id="groupDetailContent"></div></div>
+
+            <!-- PROFILE -->
+            <div class="page" id="page-profile">
+                <div class="profile-header">
+                    <div class="profile-cover" id="profileCover">
+                        <button class="cover-edit-btn" onclick="triggerCoverUpload()">🖼️ Add Cover Photo</button>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-avatar-container">
+                            <div class="avatar avatar-profile-big" id="profileAvatar">U</div>
+                            <button class="avatar-edit-btn" onclick="triggerAvatarUpload()">📷</button>
+                        </div>
+                        <div class="profile-name-row">
+                            <div>
+                                <div class="profile-name" id="profileName">User</div>
+                                <div class="profile-university" id="profileUniversity">University</div>
+                                <div class="profile-academic" id="profileAcademic"></div>
+                            </div>
+                            <button class="btn-action btn-action-primary" onclick="openEditProfile()">✏️ Edit Profile</button>
+                        </div>
+                        <div class="profile-bio" id="profileBio">No bio yet.</div>
+                        <div class="profile-stats">
+                            <div class="stat"><strong id="profilePosts">0</strong><span>Posts</span></div>
+                            <div class="stat"><strong id="profileFriends">0</strong><span>Friends</span></div>
+                        </div>
+                        <div class="profile-call-row" id="profileCallRow"></div>
+                    </div>
+                </div>
+                <div id="profilePostsContainer"></div>
+            </div>
+
+            <div class="page" id="page-students">
+                <div class="sidebar-card"><h3>🌍 Discover Students Worldwide</h3><div id="studentsContainer"></div></div>
+            </div>
+
+            <div class="page" id="page-search">
+                <div class="sidebar-card"><h3 id="searchTitle">Search Results</h3><div id="searchResults"></div></div>
+            </div>
+
+            <div class="page" id="page-admin">
+                <div class="sidebar-card" style="padding:20px;">
+                    <h3>⚙️ Admin Panel</h3>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:12px;">
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Total Users</div><div style="font-size:24px;font-weight:800;" id="adminTotalUsers">0</div></div>
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Total Posts</div><div style="font-size:24px;font-weight:800;" id="adminTotalPosts">0</div></div>
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Total Groups</div><div style="font-size:24px;font-weight:800;" id="adminTotalGroups">0</div></div>
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Suspended</div><div style="font-size:24px;font-weight:800;color:#e74c3c;" id="adminSuspended">0</div></div>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <input type="text" id="adminSearchInput" placeholder="🔍 Search users..." style="width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;" oninput="renderAdminUsers()">
+                    </div>
+                    <div id="adminUsersList" style="margin-top:14px;"></div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-card"><h3>🤝 Suggested Friends</h3><div id="suggestionsContainer"></div></div>
+            <div class="sidebar-card"><h3>👪 Suggested Groups</h3><div id="suggestedGroupsContainer"></div></div>
+            <div class="sidebar-card"><h3>🔥 Trending Universities</h3><div id="trendingContainer" style="font-size:14px;color:#555;line-height:2;"></div></div>
+        </aside>
+    </div>
+</div>
+
+<input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarSelect(event)">
+<input type="file" id="coverInput" accept="image/*" style="display:none;" onchange="handleCoverSelect(event)">
+<input type="file" id="groupPhotoInput" accept="image/*" style="display:none;" onchange="handleGroupPhotoSelect(event)">
+<input type="file" id="storyImageInput" accept="image/*" style="display:none;" onchange="handleStoryMedia(event)">
+<input type="file" id="storyVideoInput" accept="video/*" style="display:none;" onchange="handleStoryMediaVideo(event)">
+<input type="file" id="commentMediaInput" accept="image/*" style="display:none;">
+<input type="file" id="chatMediaInput" accept="image/*,video/*" style="display:none;">
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <button class="close-lb" onclick="closeLightbox(event)">×</button>
+    <div id="lightboxContent"></div>
+</div>
+
+<div class="story-viewer" id="storyViewer">
+    <button class="story-nav prev" onclick="prevStory()"></button>
+    <button class="story-nav next" onclick="nextStory()"></button>
+    <div class="story-viewer-inner">
+        <div class="story-progress" id="storyProgress"></div>
+        <div class="story-header" id="storyHeader"></div>
+        <div class="story-content" id="storyContent"></div>
+        <div class="story-views-bar" id="storyViewsBar"></div>
+        <div class="story-viewers-panel" id="storyViewersPanel"></div>
+        <button class="story-close" onclick="closeStoryViewer()">×</button>
+    </div>
+</div>
+
+<div class="call-modal" id="callModal">
+    <div class="call-topbar">
+        <div class="call-title" id="callTitle">Call</div>
+        <div class="call-type-badge" id="callTypeBadge">VIDEO</div>
+        <button class="call-close-btn" onclick="endCall()">End Call</button>
+    </div>
+    <div class="call-frame-container" id="callFrameContainer">
+        <div class="call-loading"><div class="spinner"></div><div>Connecting…</div></div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="editProfileModal">
+    <div class="modal">
+        <div class="modal-header"><h3>✏️ Edit Profile</h3><button class="close-btn" onclick="closeEditProfile()">✕</button></div>
+        <div class="modal-body">
+            <div class="edit-avatar-section">
+                <div class="edit-avatar-preview avatar avatar-100" id="editAvatarPreview">U</div>
+                <div class="edit-avatar-actions">
+                    <h4>Profile Photo</h4><p>Auto-compressed</p>
+                    <button onclick="triggerAvatarUpload()">📷 Change</button>
+                    <button onclick="removeAvatar()" id="removeAvatarBtn" style="display:none;">🗑️ Remove</button>
+                </div>
+            </div>
+            <div class="edit-avatar-section" style="align-items:flex-start;">
+                <div class="edit-avatar-preview" id="editCoverPreview" style="width:140px;height:80px;border-radius:12px;background:#f0f2f5;border:2px dashed #ccc;">
+                    <span style="color:#aaa;font-size:13px;">No cover</span>
+                </div>
+                <div class="edit-avatar-actions">
+                    <h4>Cover Photo</h4><p>Auto-compressed</p>
+                    <button onclick="triggerCoverUpload()">🖼️ Change</button>
+                    <button onclick="removeCover()" id="removeCoverBtn" style="display:none;">🗑️ Remove</button>
+                </div>
+            </div>
+            <div class="form-group"><label>Full Name</label><input type="text" id="editName"></div>
+            <div class="form-group"><label>University</label><input type="text" id="editUniversity"></div>
+            <div class="form-group"><label>Course / Program</label><input type="text" id="editCourse"></div>
+            <div class="form-group"><label>Academic Year</label>
+                <select id="editYear"><option value="">Select year...</option>
+                    <option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option>
+                    <option>Year 5</option><option>Year 6</option><option>Postgraduate</option><option>PhD</option><option>Alumni</option>
+                </select></div>
+            <div class="form-group"><label>Country</label><input type="text" id="editCountry"></div>
+            <div class="form-group"><label>Phone</label><input type="tel" id="editPhone"></div>
+            <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;"></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeEditProfile()">Cancel</button>
+            <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="groupModal">
+    <div class="modal">
+        <div class="modal-header"><h3 id="groupModalTitle">➕ Create Group</h3><button class="close-btn" onclick="closeGroupModal()">✕</button></div>
+        <div class="modal-body">
+            <div class="edit-avatar-section">
+                <div class="edit-avatar-preview" id="groupPhotoPreview" style="border-radius:12px;width:120px;height:80px;background:#f0f2f5;border:2px dashed #ccc;font-size:13px;">
+                    <span style="color:#aaa;">Cover</span>
+                </div>
+                <div class="edit-avatar-actions">
+                    <h4>Group Cover</h4><p>Optional</p>
+                    <button onclick="triggerGroupPhotoUpload()">🖼️ Upload</button>
+                </div>
+            </div>
+            <div class="form-group"><label>Group Name *</label><input type="text" id="groupNameInput" maxlength="60"></div>
+            <div class="form-group"><label>Description</label><textarea id="groupDescInput" rows="3" maxlength="300"></textarea></div>
+            <div class="form-group"><label>Privacy</label>
+                <select id="groupPrivacyInput">
+                    <option value="public">🌍 Public — Anyone can join</option>
+                    <option value="private">🔒 Private — Admin approval</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeGroupModal()">Cancel</button>
+            <button class="btn-save" id="groupSaveBtn" onclick="saveGroup()">Create</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="inviteModal">
+    <div class="modal">
+        <div class="modal-header"><h3>✉️ Invite Friends</h3><button class="close-btn" onclick="closeInviteModal()">✕</button></div>
+        <div class="modal-body">
+            <p style="color:#666;font-size:13px;margin-bottom:12px;">Select friends to invite to <strong id="inviteGroupName"></strong></p>
+            <div class="invite-list" id="inviteList"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeInviteModal()">Cancel</button>
+            <button class="btn-save" onclick="sendInvites()">Send Invites</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="addStoryModal">
+    <div class="modal">
+        <div class="modal-header"><h3>📸 Add Story</h3><button class="close-btn" onclick="closeAddStoryModal()">✕</button></div>
+        <div class="modal-body">
+            <div class="edit-avatar-section" style="flex-direction:column;align-items:stretch;">
+                <div id="storyPreviewWrap" style="display:flex;align-items:center;justify-content:center;background:#000;border-radius:12px;min-height:220px;max-height:320px;overflow:hidden;">
+                    <span style="color:#888;font-size:13px;">No media selected</span>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('storyImageInput').click()" style="margin:0;">📷 Photo</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('storyVideoInput').click()" style="margin:0;">🎥 Video</button>
+                </div>
+            </div>
+            <div class="form-group"><label>Caption (optional)</label><input type="text" id="storyCaption" maxlength="120"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeAddStoryModal()">Cancel</button>
+            <button class="btn-save" onclick="postStory()">Share Story</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="liveSetupModal">
+    <div class="modal">
+        <div class="modal-header"><h3>🔴 Go Live</h3><button class="close-btn" onclick="closeLiveSetup()">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Stream Title *</label><input type="text" id="liveTitle" maxlength="80"></div>
+            <div class="form-group"><label>Type</label>
+                <div style="display:flex;gap:10px;">
+                    <div class="live-setup-row" style="flex:1;"><input type="radio" name="liveType" id="liveTypeStudy" value="study" checked><label for="liveTypeStudy">📚 Study</label></div>
+                    <div class="live-setup-row" style="flex:1;"><input type="radio" name="liveType" id="liveTypeChat" value="chat"><label for="liveTypeChat">💬 Chat</label></div>
+                </div>
+            </div>
+            <div class="live-setup-row"><input type="radio" name="liveMode" id="liveModeSolo" value="solo" checked><label for="liveModeSolo">Solo stream</label></div>
+            <div class="live-setup-row"><input type="radio" name="liveMode" id="liveModeGroup" value="group"><label for="liveModeGroup">Group session</label></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeLiveSetup()">Cancel</button>
+            <button class="btn-save" onclick="startLive()">🔴 Start Live</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================= -->
+<!-- PART 2 GOES HERE (paste the next message's code right below)  -->
+<!-- ============================================================= -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============================================================
+   FIREBASE INIT
+   ============================================================ */
+const firebaseConfig = {
+    apiKey: "AIzaSyCQGnMb_UBGzVwEEk9BwSez045Jf_Koyng",
+    authDomain: "kampo-44f33.firebaseapp.com",
+    projectId: "kampo-44f33",
+    storageBucket: "kampo-44f33.firebasestorage.app",
+    messagingSenderId: "573804983796",
+    appId: "1:573804983796:web:2cb46d6e1ce752ad7635a1",
+    measurementId: "G-M27B9F879L"
+};
+firebase.initializeApp(firebaseConfig);
+const fbAuth = firebase.auth();
+const fbDb = firebase.firestore();
+const FV = firebase.firestore.FieldValue;
+
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
+const STORY_DURATION = 5000;
+const STORY_LIFETIME = 24 * 60 * 60 * 1000;
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 3 * 1024 * 1024;
+const MAX_UPLOAD_IMAGE_DIM = 900;
+const JPEG_QUALITY = 0.75;
+const FIRESTORE_DOC_LIMIT = 900 * 1024;
+const MAX_VIDEO_DURATION = 30;
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentUser = null;
+let users = [], posts = [], messages = [], groups = [], stories = [], lives = [];
+let activePage = 'feed';
+let activeConversation = null;
+let activeGroup = null;
+let currentReqTab = 'incoming';
+let currentGroupsTab = 'my';
+let currentGroupDetailTab = 'posts';
+let pendingPostMedia = null;
+let pendingCommentMedia = {};
+let pendingChatMedia = null;
+let pendingAvatar = undefined;
+let pendingCover = undefined;
+let pendingGroupPhoto = null;
+let pendingStoryMedia = null;
+let editingGroupId = null;
+let inviteGroupId = null;
+let selectedInvites = new Set();
+let currentStoryViewer = null;
+let storyViewTimer = null;
+let currentCall = null;
+let _lastRenderedConvo = null;
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function getInitials(name) {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+}
+function getUser(id) {
+    return users.find(u => u.id === id) ||
+        { name:'Unknown', university:'Unknown', country:'', bio:'', avatar:null };
+}
+function getGroup(id) { return groups.find(g => g.id === id); }
+function timeAgo(ts) {
+    const d = Date.now() - ts;
+    const m = Math.floor(d / 60000);
+    if (m < 1) return 'Just now';
+    if (m < 60) return m + 'm ago';
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + 'h ago';
+    const days = Math.floor(h / 24);
+    if (days < 7) return days + 'd ago';
+    return Math.floor(days / 7) + 'w ago';
+}
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timeout);
+    t._timeout = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function escapeHtml(text) {
+    if (text == null) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+function userAvatarHtml(user, size, extraClass) {
+    const initials = getInitials(user ? user.name : 'U');
+    const imgTag = user && user.avatar ? `<img src="${user.avatar}" alt="">` : '';
+    const cls = `avatar avatar-${size} ${extraClass || ''}`.trim();
+    return `<div class="${cls}">${imgTag || initials}</div>`;
+}
+function setAvatarElement(el, user, sizeClass) {
+    if (!el) return;
+    el.className = 'avatar ' + (sizeClass || '');
+    el.innerHTML = user && user.avatar
+        ? `<img src="${user.avatar}" alt="">`
+        : getInitials(user ? user.name : 'U');
+}
+function groupCoverStyle(g) {
+    if (g.cover) return `background-image:url('${g.cover}');background-size:cover;background-position:center;`;
+    return `background:linear-gradient(135deg,#667eea,#764ba2);`;
+}
+function setBusy(s) {
+    document.getElementById('authLoading').classList.toggle('active', s);
+}
+
+/* ============================================================
+   IMAGE / VIDEO COMPRESSION
+   ============================================================ */
+function compressImage(file, maxDim, quality) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error);
+        reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => reject(new Error('Invalid image'));
+            img.onload = () => {
+                let { width, height } = img;
+                if (width > height && width > maxDim) {
+                    height = Math.round(height * maxDim / width);
+                    width = maxDim;
+                } else if (height > maxDim) {
+                    width = Math.round(width * maxDim / height);
+                    height = maxDim;
+                }
+                const c = document.createElement('canvas');
+                c.width = width; c.height = height;
+                const ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(c.toDataURL('image/jpeg', quality));
+            };
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+async function compressUnderLimit(file, maxDim, startQ, byteLimit) {
+    let q = startQ;
+    let r = await compressImage(file, maxDim, q);
+    while (r.length * 0.75 > byteLimit && q > 0.2) {
+        q -= 0.1;
+        r = await compressImage(file, maxDim, q);
+    }
+    if (r.length * 0.75 > byteLimit) r = await compressImage(file, 500, 0.5);
+    return r;
+}
+async function compressVideoFile(file) {
+    return new Promise((resolve, reject) => {
+        if (file.size > MAX_VIDEO_SIZE) {
+            reject(new Error(`Video too large. Max ${MAX_VIDEO_SIZE / 1024 / 1024}MB for the free plan.`));
+            return;
+        }
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error);
+        reader.onload = () => {
+            const vid = document.createElement('video');
+            vid.preload = 'metadata';
+            vid.onloadedmetadata = () => {
+                URL.revokeObjectURL(vid.src);
+                if (vid.duration > MAX_VIDEO_DURATION) {
+                    reject(new Error(`Video too long (max ${MAX_VIDEO_DURATION}s).`));
+                    return;
+                }
+                const b64len = reader.result.length;
+                if (b64len * 0.75 > FIRESTORE_DOC_LIMIT) {
+                    reject(new Error('Video is too large for storage. Try a shorter clip.'));
+                    return;
+                }
+                resolve(reader.result);
+            };
+            vid.onerror = () => reject(new Error('Could not read video.'));
+            vid.src = URL.createObjectURL(file);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+/* ============================================================
+   AUTH UI
+   ============================================================ */
+function togglePw(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const isPw = el.type === 'password';
+    el.type = isPw ? 'text' : 'password';
+    btn.textContent = isPw ? '🙈' : '👁️';
+}
+function showRegister() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+    document.getElementById('recoveryForm').style.display = 'none';
+}
+function showLogin() {
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('recoveryForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    ['loginError','regError','regSuccess','recoveryError','recoverySuccess'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+}
+function showRecovery() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('recoveryForm').style.display = 'block';
+}
+
+/* ============================================================
+   PASSWORD STRENGTH
+   ============================================================ */
+function evalPassword(pw) {
+    const checks = {
+        length: pw.length >= 8,
+        upper: /[A-Z]/.test(pw),
+        lower: /[a-z]/.test(pw),
+        number: /[0-9]/.test(pw),
+        special: /[^A-Za-z0-9]/.test(pw)
+    };
+    const passed = Object.values(checks).filter(Boolean).length;
+    let label, cls, pct;
+    if (pw.length === 0) { label = 'Password strength'; cls = ''; pct = 0; }
+    else if (passed <= 2) { label = 'Weak'; cls = 'weak'; pct = 25; }
+    else if (passed === 3) { label = 'Medium'; cls = 'medium'; pct = 55; }
+    else if (passed === 4) { label = 'Strong'; cls = 'strong'; pct = 80; }
+    else { label = 'Very Strong'; cls = 'very-strong'; pct = 100; }
+    return { checks, passed, label, cls, pct };
+}
+function isPasswordStrong(pw) { return evalPassword(pw).passed === 5; }
+function updatePwStrength() {
+    const pw = document.getElementById('regPassword').value;
+    const { checks, label, cls, pct } = evalPassword(pw);
+    const fill = document.getElementById('pwBarFill');
+    const labelEl = document.getElementById('pwLabel');
+    fill.style.width = pct + '%';
+    fill.style.background =
+        cls === 'weak' ? '#e74c3c' :
+        cls === 'medium' ? '#f39c12' :
+        cls === 'strong' ? '#22c55e' :
+        cls === 'very-strong' ? '#16a34a' : '#e4e6eb';
+    labelEl.textContent = pw ? label : 'Password strength';
+    labelEl.className = 'pw-label ' + cls;
+    document.getElementById('pwRules').querySelectorAll('li').forEach(li => {
+        li.classList.toggle('pass', checks[li.dataset.rule]);
+    });
+    checkPasswordMatch();
+}
+function checkPasswordMatch() {
+    const pw = document.getElementById('regPassword').value;
+    const cf = document.getElementById('regPasswordConfirm').value;
+    const el = document.getElementById('pwMatch');
+    const submit = document.getElementById('regSubmitBtn');
+    if (!cf) { el.textContent = ''; el.className = 'pw-match'; }
+    else if (pw === cf) { el.textContent = '✓ Passwords match'; el.className = 'pw-match good'; }
+    else { el.textContent = '✗ Passwords do not match'; el.className = 'pw-match bad'; }
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const university = document.getElementById('regUniversity').value.trim();
+    const country = document.getElementById('regCountry').value.trim();
+    submit.disabled = !(name && email && phone && university && country && isPasswordStrong(pw) && pw === cf);
+}
+document.addEventListener('input', (e) => {
+    if (['regName','regEmail','regPhone','regUniversity','regCountry'].includes(e.target.id)) {
+        checkPasswordMatch();
+    }
+});
+
+/* ============================================================
+   AUTH ACTIONS
+   ============================================================ */
+async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const err = document.getElementById('loginError');
+    if (!email || !password) { err.textContent = 'Fill all fields.'; err.style.display = 'block'; return; }
+    setBusy(true);
+    try {
+        await fbAuth.signInWithEmailAndPassword(email, password);
+        err.style.display = 'none';
+    } catch (e) {
+        err.textContent = e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential' ? 'No account found.' : e.code === 'auth/wrong-password' ? 'Incorrect password.' : e.message;
+        err.style.display = 'block';
+    } finally { setBusy(false); }
+}
+
+async function handleRegister() {
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const phone = document.getElementById('regPhone').value.trim().replace(/\s/g,'');
+    const university = document.getElementById('regUniversity').value.trim();
+    const course = document.getElementById('regCourse').value.trim();
+    const year = document.getElementById('regYear').value;
+    const country = document.getElementById('regCountry').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regPasswordConfirm').value;
+    const bio = document.getElementById('regBio').value.trim();
+    const err = document.getElementById('regError');
+    const ok = document.getElementById('regSuccess');
+    if (!name || !email || !phone || !university || !country) { err.textContent = 'Fill required fields.'; err.style.display = 'block'; return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Invalid email.'; err.style.display = 'block'; return; }
+    if (!/^\+[1-9]\d{7,14}$/.test(phone)) { err.textContent = 'Invalid phone.'; err.style.display = 'block'; return; }
+    if (!isPasswordStrong(password)) { err.textContent = 'Weak password.'; err.style.display = 'block'; return; }
+    if (password !== confirm) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; return; }
+    setBusy(true);
+    try {
+        const emSnap = await fbDb.collection('users').where('email','==',email).limit(1).get();
+        if (!emSnap.empty) throw new Error('email-taken');
+        const phSnap = await fbDb.collection('users').where('phone','==',phone).limit(1).get();
+        if (!phSnap.empty) throw new Error('phone-taken');
+        const totalSnap = await fbDb.collection('users').limit(1).get();
+        const isFirst = totalSnap.empty;
+        const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
+        const uid = cred.user.uid;
+        try { await cred.user.sendEmailVerification(); } catch (e) {}
+        await fbDb.collection('users').doc(uid).set({
+            id: uid, name, email, phone, university,
+            course: course || '', year: year || '', country,
+            bio: bio || 'No bio yet.',
+            role: isFirst ? 'admin' : 'student',
+            status: 'active',
+            friends: [], friendRequests: [], sentRequests: [],
+            avatar: null, cover: null,
+            joined: Date.now(), lastLogin: Date.now(),
+            emailVerified: false, phoneVerified: false
+        });
+        err.style.display = 'none';
+        ok.textContent = '✓ Account created! Check ' + email + ' to verify.';
+        ok.style.display = 'block';
+        showToast('Welcome! Check email ✉️');
+    } catch (e) {
+        let m = e.message;
+        if (e.message === 'email-taken' || e.code === 'auth/email-already-in-use') m = 'Email already registered.';
+        else if (e.message === 'phone-taken') m = 'Phone already registered.';
+        err.textContent = m;
+        err.style.display = 'block';
+    } finally { setBusy(false); }
+}
+
+async function handleRecoveryLookup() {
+    const email = document.getElementById('recoveryInput').value.trim();
+    const err = document.getElementById('recoveryError');
+    const ok = document.getElementById('recoverySuccess');
+    if (!email) { err.textContent = 'Enter email.'; err.style.display = 'block'; return; }
+    setBusy(true);
+    try {
+        await fbAuth.sendPasswordResetEmail(email);
+        err.style.display = 'none';
+        ok.textContent = '✓ Reset link sent to ' + email;
+        ok.style.display = 'block';
+    } catch (e) {
+        err.textContent = e.code === 'auth/user-not-found' ? 'No account found.' : e.message;
+        err.style.display = 'block';
+    } finally { setBusy(false); }
+}
+
+async function handleLogout() {
+    try {
+        stopListeners();
+        await fbAuth.signOut();
+    } catch (e) { console.error(e); }
+}
+
+/* ============================================================
+   AUTH STATE LISTENER
+   ============================================================ */
+let unsubUsers, unsubPosts, unsubMessagesTo, unsubMessagesFrom;
+let unsubGroups, unsubStories, unsubLives, unsubMyDoc;
+
+fbAuth.onAuthStateChanged(async (u) => {
+    setBusy(true);
+    try {
+        if (!u) {
+            currentUser = null;
+            stopListeners();
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('appScreen').classList.remove('active');
+            showLogin();
+            return;
+        }
+        const ref = fbDb.collection('users').doc(u.uid);
+        let snap = await ref.get();
+        if (!snap.exists) {
+            await ref.set({
+                id: u.uid,
+                name: u.displayName || u.email.split('@')[0],
+                email: u.email.toLowerCase(),
+                phone: '', university: '', course: '', year: '', country: '',
+                bio: 'No bio yet.',
+                role: 'student', status: 'active',
+                friends: [], friendRequests: [], sentRequests: [],
+                avatar: null, cover: null,
+                joined: Date.now(), lastLogin: Date.now()
+            });
+            snap = await ref.get();
+        }
+        await ref.update({ lastLogin: Date.now() });
+        const data = snap.data();
+        if (data.status === 'suspended' || data.status === 'banned') {
+            alert('Your account is ' + data.status + '. ' + (data.statusReason || ''));
+            await fbAuth.signOut();
+            return;
+        }
+        currentUser = data;
+        unsubMyDoc = ref.onSnapshot(s => {
+            if (s.exists) {
+                currentUser = s.data();
+                updateProfileUI();
+                updateAdminVisibility();
+            }
+        });
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('appScreen').classList.add('active');
+        await startListeners();
+        updateProfileUI();
+        updateAdminVisibility();
+        showPage('feed');
+    } catch (e) {
+        console.error(e);
+    } finally { setBusy(false); }
+});
+
+/* ============================================================
+   REALTIME LISTENERS
+   ============================================================ */
+async function startListeners() {
+    unsubUsers = fbDb.collection('users').limit(500).onSnapshot(s => {
+        users = s.docs.map(d => d.data());
+        renderStudents(); renderSuggestions(); renderConversations(); renderRequests();
+        renderTrending(); renderSuggestedGroups(); updateBadges(); renderAdminIfVisible();
+        const me = users.find(x => x.id === currentUser.id);
+        if (me) { currentUser = me; updateProfileUI(); updateAdminVisibility(); }
+    });
+    unsubPosts = fbDb.collection('posts').orderBy('timestamp','desc').limit(200).onSnapshot(s => {
+        posts = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        renderFeed();
+        renderProfilePosts();
+    }, e => console.warn(e));
+    const uid = currentUser.id;
+    unsubMessagesTo = fbDb.collection('messages').where('to','==',uid).onSnapshot(() => reloadMessages(), e => console.warn(e));
+    unsubMessagesFrom = fbDb.collection('messages').where('from','==',uid).onSnapshot(() => reloadMessages(), e => console.warn(e));
+    unsubGroups = fbDb.collection('groups').limit(200).onSnapshot(s => {
+        groups = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        renderGroupsDirectory();
+        renderSuggestedGroups();
+        if (activeGroup) renderGroupDetail(activeGroup);
+    }, e => console.warn(e));
+    const cutoff = Date.now() - STORY_LIFETIME;
+    unsubStories = fbDb.collection('stories').where('timestamp','>',cutoff).onSnapshot(s => {
+        stories = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        renderStories();
+    }, e => console.warn(e));
+    unsubLives = fbDb.collection('lives').where('active','==',true).onSnapshot(s => {
+        lives = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        renderLiveStrip();
+    }, e => console.warn(e));
+}
+function stopListeners() {
+    [unsubUsers, unsubPosts, unsubMessagesTo, unsubMessagesFrom,
+     unsubGroups, unsubStories, unsubLives, unsubMyDoc].forEach(u => {
+        try { u && u(); } catch(e){}
+    });
+    unsubUsers = unsubPosts = unsubMessagesTo = unsubMessagesFrom = null;
+    unsubGroups = unsubStories = unsubLives = unsubMyDoc = null;
+}
+async function reloadMessages() {
+    const uid = currentUser.id;
+    const [o, i] = await Promise.all([
+        fbDb.collection('messages').where('from','==',uid).get(),
+        fbDb.collection('messages').where('to','==',uid).get()
+    ]);
+    const map = new Map();
+    [...o.docs, ...i.docs].forEach(d => map.set(d.id, { ...d.data(), id: d.id }));
+    messages = [...map.values()].sort((a,b) => a.timestamp - b.timestamp);
+    renderConversations();
+    if (activeConversation) {
+        _lastRenderedConvo = null;
+        openConversation(activeConversation);
+    }
+    updateBadges();
+}
+
+/* ============================================================
+   PROFILE UI
+   ============================================================ */
+function updateProfileUI() {
+    if (!currentUser) return;
+    setAvatarElement(document.getElementById('navAvatar'), currentUser, 'avatar-nav');
+    setAvatarElement(document.getElementById('sidebarAvatar'), currentUser, 'avatar-80');
+    setAvatarElement(document.getElementById('createAvatar'), currentUser, 'avatar-44');
+    setAvatarElement(document.getElementById('profileAvatar'), currentUser, 'avatar-profile-big');
+    document.getElementById('sidebarName').textContent = currentUser.name;
+    document.getElementById('sidebarUniversity').textContent =
+        (currentUser.university||'') + ' • ' + (currentUser.country||'');
+    const coverEl = document.getElementById('profileCover');
+    if (currentUser.cover) {
+        coverEl.style.backgroundImage = `url('${currentUser.cover}')`;
+        coverEl.innerHTML = `<button class="cover-edit-btn" onclick="triggerCoverUpload()">🖼️ Change Cover</button>`;
+    } else {
+        coverEl.style.backgroundImage = 'linear-gradient(135deg,#667eea,#764ba2,#a855f7)';
+        coverEl.innerHTML = `<button class="cover-edit-btn" onclick="triggerCoverUpload()">🖼️ Add Cover Photo</button>`;
+    }
+    document.getElementById('profileName').textContent = currentUser.name;
+    document.getElementById('profileUniversity').textContent =
+        (currentUser.university||'') + ' • ' + (currentUser.country||'');
+    document.getElementById('profileBio').textContent = currentUser.bio || 'No bio yet.';
+    document.getElementById('profileAcademic').innerHTML =
+        (currentUser.course ? `<span class="academic-pill">📚 ${escapeHtml(currentUser.course)}</span>` : '') +
+        (currentUser.year ? `<span class="academic-pill">🎓 ${escapeHtml(currentUser.year)}</span>` : '');
+    const myPosts = posts.filter(p => p.userId === currentUser.id);
+    document.getElementById('sidebarPosts').textContent = myPosts.length;
+    document.getElementById('sidebarFriends').textContent = (currentUser.friends||[]).length;
+    document.getElementById('profilePosts').textContent = myPosts.length;
+    document.getElementById('profileFriends').textContent = (currentUser.friends||[]).length;
+    document.getElementById('totalUsers').textContent = users.length;
+    document.getElementById('totalPosts').textContent = posts.length;
+    document.getElementById('totalGroups').textContent = groups.length;
+}
+function updateAdminVisibility() {
+    const isAdmin = currentUser && currentUser.role === 'admin';
+    document.getElementById('adminNavBtn').style.display = isAdmin ? 'flex' : 'none';
+    document.getElementById('adminSidebarLink').style.display = isAdmin ? 'flex' : 'none';
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+function showPage(page) {
+    activePage = page;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    const target = document.getElementById('page-' + page);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.sidebar-link').forEach(l => {
+        const txt = l.textContent.toLowerCase();
+        if (
+            (page === 'feed' && txt.includes('feed')) ||
+            (page === 'messages' && txt.includes('messages')) ||
+            (page === 'requests' && txt.includes('friend requests')) ||
+            (page === 'groups' && txt.includes('groups')) ||
+            (page === 'students' && txt.includes('discover')) ||
+            (page === 'profile' && txt.includes('my profile')) ||
+            (page === 'admin' && txt.includes('admin'))
+        ) l.classList.add('active');
+    });
+    if (page === 'profile') renderProfilePosts();
+    if (page === 'students') renderStudents();
+    if (page === 'messages') {
+        renderConversations();
+        if (activeConversation) {
+            _lastRenderedConvo = null;
+            openConversation(activeConversation);
+        }
+    }
+    if (page === 'requests') renderRequests();
+    if (page === 'groups') renderGroupsDirectory();
+    if (page === 'group-detail' && activeGroup) renderGroupDetail(activeGroup);
+    if (page === 'admin') renderAdminIfVisible();
+}
+
+/* ============================================================
+   POSTS
+   ============================================================ */
+function togglePostBtn() {
+    const c = document.getElementById('postContent').value.trim();
+    document.getElementById('postBtn').disabled = (c.length === 0 && !pendingPostMedia);
+}
+function triggerPhotoUpload() { document.getElementById('photoInput').click(); }
+function triggerVideoUpload() { document.getElementById('videoInput').click(); }
+
+async function handleMediaSelect(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+    setBusy(true);
+    try {
+        if (type === 'image') {
+            if (file.size > MAX_IMAGE_SIZE) throw new Error('Image too large (max 3 MB).');
+            const c = await compressUnderLimit(file, MAX_UPLOAD_IMAGE_DIM, JPEG_QUALITY, FIRESTORE_DOC_LIMIT);
+            pendingPostMedia = { data: c, type: 'image' };
+        } else {
+            const c = await compressVideoFile(file);
+            pendingPostMedia = { data: c, type: 'video' };
+        }
+        showMediaPreview(pendingPostMedia);
+        togglePostBtn();
+    } catch (e) {
+        alert(e.message);
+    } finally {
+        setBusy(false);
+        event.target.value = '';
+    }
+}
+function showMediaPreview(m) {
+    const p = document.getElementById('postMediaPreview');
+    const c = document.getElementById('postMediaContent');
+    c.innerHTML = m.type === 'image'
+        ? `<img src="${m.data}" alt="">`
+        : `<video src="${m.data}" controls></video>`;
+    p.classList.add('active');
+    document.getElementById('photoBtn').classList.toggle('active', m.type === 'image');
+    document.getElementById('videoBtn').classList.toggle('active', m.type === 'video');
+}
+function clearPostMedia() {
+    pendingPostMedia = null;
+    document.getElementById('postMediaPreview').classList.remove('active');
+    document.getElementById('postMediaContent').innerHTML = '';
+    document.getElementById('photoBtn').classList.remove('active');
+    document.getElementById('videoBtn').classList.remove('active');
+    togglePostBtn();
+}
+async function createPost() {
+    const content = document.getElementById('postContent').value.trim();
+    if (!content && !pendingPostMedia) return;
+    setBusy(true);
+    try {
+        await fbDb.collection('posts').add({
+            userId: currentUser.id,
+            content,
+            media: pendingPostMedia ? pendingPostMedia.data : null,
+            mediaType: pendingPostMedia ? pendingPostMedia.type : null,
+            groupId: null,
+            likes: [], comments: [],
+            timestamp: Date.now()
+        });
+        document.getElementById('postContent').value = '';
+        clearPostMedia();
+        document.getElementById('postBtn').disabled = true;
+        showToast('Post created! 📝');
+    } catch (e) {
+        alert('Failed: ' + e.message);
+    } finally { setBusy(false); }
+}
+function renderFeed() {
+    const c = document.getElementById('feedContainer');
+    const fp = posts.filter(p => !p.groupId);
+    if (fp.length === 0) {
+        c.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>No posts yet. Be the first!</p></div>`;
+        return;
+    }
+    c.innerHTML = fp.map(p => renderPost(p, false)).join('');
+}
+function renderPost(post, inGroup) {
+    const user = getUser(post.userId);
+    const isLiked = (post.likes || []).includes(currentUser.id);
+    const isOwn = post.userId === currentUser.id;
+    const g = post.groupId ? getGroup(post.groupId) : null;
+
+    let mediaHtml = '';
+    if (post.media) {
+        if (post.mediaType === 'image') {
+            mediaHtml = `<div class="post-media" onclick="openLightbox(this.querySelector('img').src)"><img src="${post.media}"></div>`;
+        } else {
+            mediaHtml = `<div class="post-media"><video src="${post.media}" controls preload="metadata"></video></div>`;
+        }
+    }
+    const commentsHtml = (post.comments || []).map(c => {
+        const cu = getUser(c.userId);
+        let cm = '';
+        if (c.media) {
+            cm = c.mediaType === 'video'
+                ? `<video class="comment-video" src="${c.media}" controls></video>`
+                : `<img class="comment-image" src="${c.media}" onclick="openLightbox(this.src)">`;
+        }
+        return `<div class="comment">
+            ${userAvatarHtml(cu, 32)}
+            <div class="comment-body">
+                <div class="comment-name">${escapeHtml(cu.name)}</div>
+                ${c.text ? `<div class="comment-text">${escapeHtml(c.text)}</div>` : ''}
+                ${cm}
+            </div>
+        </div>`;
+    }).join('');
+    const tag = g
+        ? `<span class="group-tag">👪 ${escapeHtml(g.name)}</span>`
+        : `<span class="university-tag">${escapeHtml(user.university || '')}</span>${user.year ? `<span class="year-tag">${escapeHtml(user.year)}</span>` : ''}`;
+    return `<div class="post-card" id="post-${post.id}">
+        <div class="post-header">
+            <div onclick="openUserProfile('${user.id}')" style="cursor:pointer;">${userAvatarHtml(user, 44)}</div>
+            <div class="post-user-info">
+                <div class="name" onclick="openUserProfile('${user.id}')">${escapeHtml(user.name)}</div>
+                <div class="meta">${tag} ${escapeHtml(user.country || '')} • ${timeAgo(post.timestamp)}</div>
+            </div>
+        </div>
+        ${post.content ? `<div class="post-content">${escapeHtml(post.content)}</div>` : ''}
+        ${mediaHtml}
+        <div class="post-actions-bar">
+            <button class="post-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}', ${inGroup})">
+                ${isLiked ? '❤️' : '🤍'} ${(post.likes||[]).length}
+            </button>
+            <button class="post-action-btn" onclick="toggleComments('${post.id}')">
+                💬 ${(post.comments||[]).length}
+            </button>
+            ${isOwn ? `<button class="post-action-btn" onclick="deletePost('${post.id}', ${inGroup})">🗑️ Delete</button>` : ''}
+        </div>
+        <div class="comments-section ${post._commentsOpen ? 'open' : ''}" id="comments-${post.id}">
+            ${commentsHtml}
+            <div class="comment-input-row">
+                <button class="media-btn" onclick="triggerCommentMedia('${post.id}')">📷</button>
+                <input type="text" id="comment-input-${post.id}" placeholder="Write a comment..."
+                       onkeydown="if(event.key==='Enter')addComment('${post.id}', ${inGroup})">
+                <button class="send-btn" onclick="addComment('${post.id}', ${inGroup})">Send</button>
+            </div>
+        </div>
+    </div>`;
+}
+function findPost(id, inG) {
+    if (inG && activeGroup) {
+        const g = getGroup(activeGroup);
+        return g ? (g.posts||[]).find(p => p.id === id) : null;
+    }
+    return posts.find(p => p.id === id);
+}
+async function toggleLike(postId, inG) {
+    try {
+        if (inG && activeGroup) {
+            const g = getGroup(activeGroup);
+            const gp = (g.posts||[]).find(p => p.id === postId);
+            if (!gp) return;
+            const has = (gp.likes||[]).includes(currentUser.id);
+            const newLikes = has
+                ? gp.likes.filter(id => id !== currentUser.id)
+                : [...(gp.likes||[]), currentUser.id];
+            const newPosts = g.posts.map(p => p.id === postId ? { ...p, likes: newLikes } : p);
+            await fbDb.collection('groups').doc(activeGroup).update({ posts: newPosts });
+        } else {
+            const ref = fbDb.collection('posts').doc(postId);
+            const snap = await ref.get();
+            const has = (snap.data().likes||[]).includes(currentUser.id);
+            await ref.update({
+                likes: has ? FV.arrayRemove(currentUser.id) : FV.arrayUnion(currentUser.id)
+            });
+        }
+    } catch (e) { console.error(e); }
+}
+function toggleComments(id) {
+    const post = findPost(id, false) || findPost(id, true);
+    if (post) post._commentsOpen = !post._commentsOpen;
+    const el = document.getElementById('comments-' + id);
+    if (el) el.classList.toggle('open');
+}
+function triggerCommentMedia(postId) {
+    const inp = document.getElementById('commentMediaInput');
+    inp.onchange = async (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        setBusy(true);
+        try {
+            const c = await compressUnderLimit(f, 600, 0.7, 300*1024);
+            pendingCommentMedia[postId] = { data: c, type: 'image' };
+            showToast('Photo attached. Press Send.');
+        } catch (e) { alert(e.message); }
+        finally { setBusy(false); inp.value = ''; }
+    };
+    inp.click();
+}
+async function addComment(postId, inG) {
+    const inp = document.getElementById('comment-input-' + postId);
+    const text = inp.value.trim();
+    const media = pendingCommentMedia[postId];
+    if (!text && !media) return;
+    const comment = {
+        userId: currentUser.id,
+        text,
+        media: media?.data || null,
+        mediaType: media?.type || null,
+        timestamp: Date.now()
+    };
+    try {
+        if (inG && activeGroup) {
+            const g = getGroup(activeGroup);
+            const newPosts = g.posts.map(p =>
+                p.id === postId ? { ...p, comments: [...(p.comments||[]), comment] } : p
+            );
+            await fbDb.collection('groups').doc(activeGroup).update({ posts: newPosts });
+        } else {
+            await fbDb.collection('posts').doc(postId).update({
+                comments: FV.arrayUnion(comment)
+            });
+        }
+        delete pendingCommentMedia[postId];
+        inp.value = '';
+        showToast('Comment added! 💬');
+    } catch (e) { console.error(e); }
+}
+async function deletePost(postId, inG) {
+    if (!confirm('Delete this post?')) return;
+    try {
+        if (inG && activeGroup) {
+            const g = getGroup(activeGroup);
+            const newPosts = (g.posts||[]).filter(p => p.id !== postId);
+            await fbDb.collection('groups').doc(activeGroup).update({ posts: newPosts });
+        } else {
+            await fbDb.collection('posts').doc(postId).delete();
+        }
+        showToast('Deleted.');
+    } catch (e) { console.error(e); }
+}
+function renderProfilePosts() {
+    const c = document.getElementById('profilePostsContainer');
+    const up = posts.filter(p => p.userId === currentUser.id);
+    if (up.length === 0) {
+        c.innerHTML = `<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>`;
+        return;
+    }
+    c.innerHTML = up.map(p => renderPost(p, false)).join('');
+}
+
+/* ============================================================
+   PROFILE EDIT
+   ============================================================ */
+function openEditProfile() {
+    if (!currentUser) return;
+    pendingAvatar = undefined; pendingCover = undefined;
+    document.getElementById('editName').value = currentUser.name || '';
+    document.getElementById('editUniversity').value = currentUser.university || '';
+    document.getElementById('editCourse').value = currentUser.course || '';
+    document.getElementById('editYear').value = currentUser.year || '';
+    document.getElementById('editCountry').value = currentUser.country || '';
+    document.getElementById('editPhone').value = currentUser.phone || '';
+    document.getElementById('editBio').value = currentUser.bio || '';
+    const av = document.getElementById('editAvatarPreview');
+    av.innerHTML = currentUser.avatar
+        ? `<img src="${currentUser.avatar}">`
+        : getInitials(currentUser.name);
+    document.getElementById('removeAvatarBtn').style.display =
+        currentUser.avatar ? 'inline-block' : 'none';
+    const cv = document.getElementById('editCoverPreview');
+    if (currentUser.cover) {
+        cv.innerHTML = `<img src="${currentUser.cover}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+        document.getElementById('removeCoverBtn').style.display = 'inline-block';
+    } else {
+        cv.innerHTML = '<span style="color:#aaa;font-size:13px;">No cover</span>';
+        document.getElementById('removeCoverBtn').style.display = 'none';
+    }
+    document.getElementById('editProfileModal').classList.add('active');
+}
+function closeEditProfile() {
+    document.getElementById('editProfileModal').classList.remove('active');
+    pendingAvatar = undefined;
+    pendingCover = undefined;
+}
+function triggerAvatarUpload() { document.getElementById('avatarInput').click(); }
+async function handleAvatarSelect(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    setBusy(true);
+    try {
+        const c = await compressUnderLimit(f, 400, 0.8, 400*1024);
+        pendingAvatar = c;
+        const av = document.getElementById('editAvatarPreview');
+        av.innerHTML = `<img src="${c}">`;
+        document.getElementById('removeAvatarBtn').style.display = 'inline-block';
+        if (!document.getElementById('editProfileModal').classList.contains('active')) {
+            await fbDb.collection('users').doc(currentUser.id).update({ avatar: c });
+            showToast('Photo updated! 📷');
+        }
+    } catch (e) { alert('Failed: ' + e.message); }
+    finally { setBusy(false); e.target.value = ''; }
+}
+function removeAvatar() {
+    pendingAvatar = null;
+    document.getElementById('editAvatarPreview').innerHTML = getInitials(currentUser.name);
+    document.getElementById('removeAvatarBtn').style.display = 'none';
+}
+function triggerCoverUpload() { document.getElementById('coverInput').click(); }
+async function handleCoverSelect(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    setBusy(true);
+    try {
+        const c = await compressUnderLimit(f, 1000, 0.7, 600*1024);
+        pendingCover = c;
+        const cv = document.getElementById('editCoverPreview');
+        cv.innerHTML = `<img src="${c}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+        document.getElementById('removeCoverBtn').style.display = 'inline-block';
+        if (!document.getElementById('editProfileModal').classList.contains('active')) {
+            await fbDb.collection('users').doc(currentUser.id).update({ cover: c });
+            showToast('Cover updated! 🖼️');
+        }
+    } catch (e) { alert('Failed: ' + e.message); }
+    finally { setBusy(false); e.target.value = ''; }
+}
+function removeCover() {
+    pendingCover = null;
+    const cv = document.getElementById('editCoverPreview');
+    cv.innerHTML = '<span style="color:#aaa;font-size:13px;">No cover</span>';
+    document.getElementById('removeCoverBtn').style.display = 'none';
+}
+async function saveProfile() {
+    const name = document.getElementById('editName').value.trim();
+    const university = document.getElementById('editUniversity').value.trim();
+    const course = document.getElementById('editCourse').value.trim();
+    const year = document.getElementById('editYear').value;
+    const country = document.getElementById('editCountry').value.trim();
+    const phone = document.getElementById('editPhone').value.trim().replace(/\s/g,'');
+    const bio = document.getElementById('editBio').value.trim();
+    if (!name || !university || !country) {
+        alert('Name, university, country required.');
+        return;
+    }
+    const upd = { name, university, course, year, country, phone, bio: bio || 'No bio yet.' };
+    if (pendingAvatar === null) upd.avatar = null;
+    else if (pendingAvatar !== undefined) upd.avatar = pendingAvatar;
+    if (pendingCover === null) upd.cover = null;
+    else if (pendingCover !== undefined) upd.cover = pendingCover;
+    setBusy(true);
+    try {
+        await fbDb.collection('users').doc(currentUser.id).update(upd);
+        closeEditProfile();
+        showToast('Profile updated! ✨');
+    } catch (e) { alert('Failed: ' + e.message); }
+    finally { setBusy(false); }
+}
+
+/* ============================================================
+   MESSAGES (start — will finish in Part 3)
+   ============================================================ */
+function startConversation(id) {
+    _lastRenderedConvo = null;
+    activeConversation = id;
+    activeGroup = null;
+    showPage('messages');
+    openConversation(id);
+}
+function renderConversations() {
+    const c = document.getElementById('conversationsList');
+    if (!c || !currentUser) return;
+    const pids = new Set();
+    messages.forEach(m => {
+        if (m.from === currentUser.id) pids.add(m.to);
+        if (m.to === currentUser.id) pids.add(m.from);
+    });
+    (currentUser.friends||[]).forEach(id => pids.add(id));
+    const partners = [...pids].map(id => users.find(u => u.id === id)).filter(Boolean).map(u => {
+        const convo = messages.filter(m =>
+            (m.from === u.id && m.to === currentUser.id) ||
+            (m.from === currentUser.id && m.to === u.id)
+        ).sort((a,b) => b.timestamp - a.timestamp);
+        return { user: u, last: convo[0], unread: convo.filter(m => m.from === u.id && !m.read).length };
+    }).sort((a,b) => (b.last ? b.last.timestamp : 0) - (a.last ? a.last.timestamp : 0));
+    if (partners.length === 0) {
+        c.innerHTML = `<div class="empty-state" style="padding:30px 15px;"><div class="emoji" style="font-size:36px;">💬</div><p style="font-size:13px;">No conversations yet.</p></div>`;
+        return;
+    }
+    c.innerHTML = partners.map(p => {
+        let prev = 'Start chatting...';
+        if (p.last) {
+            const prefix = p.last.from === currentUser.id ? 'You: ' : '';
+            let content = p.last.text || '';
+            if (p.last.media) {
+                content = (p.last.mediaType === 'image' ? '📷 Photo' : '🎥 Video') + (content ? ' — ' + content : '');
+            }
+            prev = prefix + content;
+        }
+        return `<div class="conversation-item ${activeConversation === p.user.id ? 'active' : ''}" onclick="startConversation('${p.user.id}')">
+            ${userAvatarHtml(p.user, 46)}
+            <div class="c-info">
+                <div class="c-name">${escapeHtml(p.user.name)}</div>
+                <div class="c-preview">${escapeHtml(prev)}</div>
+            </div>
+            <div class="c-meta">
+                <div class="c-time">${p.last ? timeAgo(p.last.timestamp) : ''}</div>
+                ${p.unread > 0 ? `<div class="c-unread">${p.unread}</div>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+function updateBadges() {
+    if (!currentUser) return;
+    const u = messages.filter(m => m.to === currentUser.id && !m.read).length;
+    const r = (currentUser.friendRequests||[]).length;
+    let gb = 0;
+    groups.forEach(g => {
+        if ((g.admins||[]).includes(currentUser.id)) gb += (g.joinRequests||[]).length;
+    });
+    ['navMsgBadge','sideMsgBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = u; el.style.display = u > 0 ? 'inline-block' : 'none'; }
+    });
+    ['navReqBadge','sideReqBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = r; el.style.display = r > 0 ? 'inline-block' : 'none'; }
+    });
+    ['navGrpBadge','sideGrpBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = gb; el.style.display = gb > 0 ? 'inline-block' : 'none'; }
+    });
+}
+
+/* ============================================================
+   FRIEND REQUESTS (renderers only — actions in Part 3)
+   ============================================================ */
+function switchReqTab(t) {
+    currentReqTab = t;
+    ['incoming','sent','friends'].forEach(x =>
+        document.getElementById('tab-' + x).classList.toggle('active', x === t)
+    );
+    renderRequests();
+}
+function renderRequests() {
+    const c = document.getElementById('requestsContent');
+    if (!c || !currentUser) return;
+    if (currentReqTab === 'incoming') {
+        const reqs = (currentUser.friendRequests||[]).map(id => users.find(u => u.id === id)).filter(Boolean);
+        if (reqs.length === 0) { c.innerHTML = `<div class="empty-state"><div class="emoji">📬</div><p>No pending requests.</p></div>`; return; }
+        c.innerHTML = reqs.map(u => `<div class="request-item">${userAvatarHtml(u, 52)}<div class="r-info"><div class="r-name">${escapeHtml(u.name)}</div><div class="r-uni">${escapeHtml(u.university||'')} • ${escapeHtml(u.country||'')}</div></div><div class="r-actions"><button class="btn-accept" onclick="acceptFriendRequest('${u.id}')">Accept</button><button class="btn-decline" onclick="declineFriendRequest('${u.id}')">Decline</button></div></div>`).join('');
+    } else if (currentReqTab === 'sent') {
+        const sent = (currentUser.sentRequests||[]).map(id => users.find(u => u.id === id)).filter(Boolean);
+        if (sent.length === 0) { c.innerHTML = `<div class="empty-state"><div class="emoji">📤</div><p>No sent requests.</p></div>`; return; }
+        c.innerHTML = sent.map(u => `<div class="request-item">${userAvatarHtml(u, 52)}<div class="r-info"><div class="r-name">${escapeHtml(u.name)}</div><div class="r-uni">${escapeHtml(u.university||'')}</div></div><div class="r-actions"><button class="btn-decline" onclick="cancelFriendRequest('${u.id}')">Cancel</button></div></div>`).join('');
+    } else {
+        const fr = (currentUser.friends||[]).map(id => users.find(u => u.id === id)).filter(Boolean);
+        if (fr.length === 0) { c.innerHTML = `<div class="empty-state"><div class="emoji">👥</div><p>No friends yet.</p></div>`; return; }
+        c.innerHTML = fr.map(u => `<div class="request-item">${userAvatarHtml(u, 52)}<div class="r-info"><div class="r-name">${escapeHtml(u.name)}</div><div class="r-uni">${escapeHtml(u.university||'')}</div></div><div class="r-actions"><button class="btn-accept" onclick="startConversation('${u.id}')">💬 Message</button><button class="btn-decline" onclick="removeFriend('${u.id}')">Remove</button></div></div>`).join('');
+    }
+}
+function friendBtnState(id) {
+    if ((currentUser.friends||[]).includes(id)) return { label:'Friends', cls:'following' };
+    if ((currentUser.sentRequests||[]).includes(id)) return { label:'Requested', cls:'requested' };
+    return { label:'Add Friend', cls:'' };
+}
+function handleFriendBtn(id) {
+    if ((currentUser.friends||[]).includes(id)) { showToast('Already friends.'); return; }
+    if ((currentUser.sentRequests||[]).includes(id)) { cancelFriendRequest(id); return; }
+    sendFriendRequest(id);
+}
+
+/* ============================================================
+   SIDEBARS
+   ============================================================ */
+function renderSuggestions() {
+    const c = document.getElementById('suggestionsContainer');
+    if (!c || !currentUser) return;
+    const fids = currentUser.friends || [];
+    const s = users.filter(u => u.id !== currentUser.id && !fids.includes(u.id)).slice(0, 4);
+    if (s.length === 0) { c.innerHTML = '<p style="color:#888;font-size:14px;">No suggestions.</p>'; return; }
+    c.innerHTML = s.map(u => {
+        const b = friendBtnState(u.id);
+        return `<div class="suggestion-item">${userAvatarHtml(u, 40)}<div class="s-info" onclick="openUserProfile('${u.id}')" style="cursor:pointer;"><div class="s-name">${escapeHtml(u.name)}</div><div class="s-uni">${escapeHtml(u.university||'')}</div></div><button class="btn-follow ${b.cls}" onclick="handleFriendBtn('${u.id}')">${b.label}</button></div>`;
+    }).join('');
+}
+function renderTrending() {
+    const c = document.getElementById('trendingContainer');
+    if (!c) return;
+    const counts = {};
+    users.forEach(u => { if (u.university) counts[u.university] = (counts[u.university]||0)+1; });
+    const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
+    c.innerHTML = sorted.map(([u,n]) => `<div>🏛️ ${escapeHtml(u)} <span style="color:#888;">(${n})</span></div>`).join('');
+}
+function renderStudents() {
+    const c = document.getElementById('studentsContainer');
+    if (!c || !currentUser) return;
+    const others = users.filter(u => u.id !== currentUser.id);
+    if (others.length === 0) { c.innerHTML = '<p style="color:#888;">No other students yet.</p>'; return; }
+    c.innerHTML = others.map(u => {
+        const b = friendBtnState(u.id);
+        const isF = (currentUser.friends||[]).includes(u.id);
+        return `<div class="suggestion-item">${userAvatarHtml(u, 40)}<div class="s-info" onclick="openUserProfile('${u.id}')" style="cursor:pointer;"><div class="s-name">${escapeHtml(u.name)}</div><div class="s-uni">${escapeHtml(u.university||'')} • ${escapeHtml(u.country||'')}</div>${(u.course||u.year)?`<div style="font-size:11px;color:#667eea;margin-top:3px;font-weight:600;">${u.course?'📚 '+escapeHtml(u.course):''}${u.course&&u.year?' · ':''}${u.year?'🎓 '+escapeHtml(u.year):''}</div>`:''}</div>${isF?`<button class="btn-follow following" onclick="startConversation('${u.id}')">💬 Chat</button>`:`<button class="btn-follow ${b.cls}" onclick="handleFriendBtn('${u.id}')">${b.label}</button>`}</div>`;
+    }).join('');
+}
+
+/* ============================================================
+   INIT — runs when Part 3 is loaded
+   ============================================================ */
+window._kampoReady = true;
+</script>
+
+<!-- ============================================================= -->
+<!-- PART 3 GOES HERE (paste the next message's code right below)  -->
+<!-- ============================================================= -->
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isSelf(uid) { return request.auth.uid == uid; }
+    function isAdmin() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isSelf(userId);
+      allow update: if isAdmin() || isSelf(userId);
+      allow delete: if isAdmin();
+    }
+    match /posts/{postId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+    match /messages/{msgId} {
+      allow read: if isSignedIn() && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.from == request.auth.uid;
+      allow update: if isSignedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+    match /groups/{groupId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (request.auth.uid in resource.data.members || isAdmin());
+      allow delete: if isSignedIn() && (resource.data.creatorId == request.auth.uid || isAdmin());
+    }
+    match /stories/{storyId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+    match /lives/{liveId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+  }
+}
+/* ============================================================
+   READY
+   ============================================================ */
+console.log('✅ Kampo loaded — Firebase + all features active');
+</script>
+</body>
+</html>

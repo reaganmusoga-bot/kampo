@@ -9,7 +9,7 @@
 img { max-width:100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f0f2f5; color:#1a1a2e; min-height:100vh; }
 
-/* AVATAR */
+/* ============ AVATAR SYSTEM ============ */
 .avatar { position: relative; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; overflow: hidden; flex-shrink: 0; padding: 0; }
 .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
 .avatar-32 { width:32px; height:32px; font-size:13px; }
@@ -23,7 +23,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .avatar-nav { width:38px; height:38px; font-size:16px; }
 .avatar-profile-big { width:140px; height:140px; font-size:52px; border:5px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-/* AUTH */
+/* ============ AUTH ============ */
 .auth-container { display:flex; justify-content:center; align-items:center; min-height:100vh; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); padding:20px; }
 .auth-box { background:white; border-radius:20px; padding:40px; width:100%; max-width:440px; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:95vh; overflow-y:auto; }
 .auth-box .logo { text-align:center; font-size:42px; font-weight:800; background:linear-gradient(135deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -46,7 +46,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .error-msg { color:#e74c3c; font-size:13px; margin-top:5px; display:none; padding:8px 12px; background:#fde8e8; border-radius:8px; }
 .success-msg { color:#059669; font-size:13px; margin-top:5px; display:none; padding:8px 12px; background:#d1fae5; border-radius:8px; }
 
-/* PASSWORD */
+/* ============ PASSWORD UI ============ */
 .password-wrap { position: relative; }
 .password-wrap input { padding-right: 46px; }
 .pw-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; padding: 6px 8px; border-radius: 6px; color: #888; }
@@ -68,7 +68,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .pw-match.good { color: #22c55e; }
 .pw-match.bad { color: #e74c3c; }
 
-/* APP */
+/* ============ APP LAYOUT ============ */
 .app-container { display:none; min-height:100vh; flex-direction:column; }
 .app-container.active { display:flex; }
 .navbar { background:white; padding:10px 20px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.08); position:sticky; top:0; z-index:100; }
@@ -99,7 +99,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .sidebar-stats .stat span { color:#888; }
 .feed-area { flex:1; min-width:0; }
 
-/* Create Post */
+/* ============ CREATE POST ============ */
 .create-post { background:white; border-radius:12px; padding:18px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
 .create-post .post-input-row { display:flex; gap:12px; align-items:flex-start; }
 .create-post textarea { flex:1; border:none; outline:none; font-size:15px; resize:none; font-family:inherit; padding:10px; border-radius:8px; background:#f8f9fa; min-height:60px; }
@@ -115,8 +115,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .post-actions .action-btn.active { background:#eef2ff; color:#667eea; font-weight:700; }
 .btn-post { background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:8px 24px; border-radius:8px; font-weight:700; cursor:pointer; font-size:14px; }
 .btn-post:disabled { opacity:0.5; cursor:not-allowed; }
-
-/* Post Card */
+    /* ============ POST CARD ============ */
 .post-card { background:white; border-radius:12px; padding:18px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); animation:fadeIn 0.4s ease; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 .post-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
@@ -135,7 +134,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .post-action-btn:hover { background:#f0f2f5; }
 .post-action-btn.liked { color:#e74c3c; }
 
-/* Comments */
+/* ============ COMMENTS ============ */
 .comments-section { margin-top:12px; padding-top:12px; border-top:1px solid #f0f0f0; display:none; }
 .comments-section.open { display:block; }
 .comment { display:flex; gap:10px; margin-bottom:10px; }
@@ -151,7 +150,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .comment-input-row .media-btn:hover { background:#e4e6eb; }
 .comment-input-row button.send-btn { background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:9px 18px; border-radius:20px; font-weight:700; cursor:pointer; font-size:13px; flex-shrink:0; }
 
-/* Suggestion */
+/* ============ SUGGESTIONS ============ */
 .suggestion-item { display:flex; align-items:center; gap:12px; padding:8px 0; }
 .s-info { flex:1; min-width:0; }
 .s-info .s-name { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
@@ -162,11 +161,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .btn-follow.following { background:#e4e6eb; color:#666; }
 .btn-follow.requested { background:#fff4e5; color:#f39c12; }
 
-/* Pages */
+/* ============ PAGES ============ */
 .page { display:none; }
 .page.active { display:block; }
 
-/* Profile */
+/* ============ PROFILE ============ */
 .profile-header { background:white; border-radius:12px; overflow:hidden; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); position:relative; }
 .profile-cover { height:220px; background: linear-gradient(135deg,#667eea,#764ba2,#a855f7); background-size:cover; background-position:center; position:relative; overflow:hidden; }
 .cover-edit-btn { position:absolute; bottom:12px; right:12px; background:rgba(255,255,255,0.95); color:#1a1a2e; border:none; padding:8px 14px; border-radius:20px; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
@@ -200,7 +199,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .empty-state { text-align:center; padding:50px 20px; color:#888; }
 .empty-state .emoji { font-size:48px; margin-bottom:12px; }
 
-/* MESSAGES */
+/* ============ MESSAGES ============ */
 .messages-layout { display:flex; background:white; border-radius:12px; overflow:hidden; height:calc(100vh - 130px); min-height:500px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
 .conversations-panel { width:320px; flex-shrink:0; border-right:1px solid #eee; display:flex; flex-direction:column; }
 .conversations-header { padding:15px; border-bottom:1px solid #eee; font-weight:700; font-size:16px; }
@@ -237,7 +236,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .chat-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#888; padding:20px; text-align:center; }
 .chat-empty .emoji { font-size:60px; margin-bottom:15px; }
 
-/* Requests */
+/* ============ REQUESTS ============ */
 .request-item { display:flex; align-items:center; gap:12px; padding:14px; background:white; border-radius:10px; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
 .request-item .r-info { flex:1; min-width:0; }
 .request-item .r-info .r-name { font-weight:700; font-size:15px; }
@@ -249,7 +248,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .tab { flex:1; padding:10px; text-align:center; cursor:pointer; border-radius:8px; font-weight:600; font-size:14px; color:#666; }
 .tab.active { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
 
-/* Groups */
+/* ============ GROUPS ============ */
 .groups-toolbar { display:flex; gap:10px; margin-bottom:15px; align-items:center; background:white; padding:12px 15px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
 .groups-toolbar input { flex:1; padding:10px 16px; border:2px solid #e0e0e0; border-radius:22px; font-size:14px; outline:none; }
 .btn-create-group { background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; padding:10px 20px; border-radius:22px; font-weight:700; font-size:14px; cursor:pointer; white-space:nowrap; }
@@ -286,7 +285,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .member-info .m-uni { font-size:12px; color:#888; margin-top:2px; }
 .admin-pill { background:#fef3c7; color:#d97706; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; }
 
-/* Modal */
+/* ============ MODALS ============ */
 .modal-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:500; align-items:center; justify-content:center; padding:20px; }
 .modal-backdrop.active { display:flex; }
 .modal { background:white; border-radius:16px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
@@ -305,8 +304,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .edit-avatar-actions h4 { font-size:15px; margin-bottom:4px; }
 .edit-avatar-actions p { font-size:13px; color:#888; margin-bottom:10px; }
 .edit-avatar-actions button { background:#eef2ff; color:#667eea; border:none; padding:8px 16px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; margin-right:8px; }
-
-/* Invite */
 .invite-list { max-height:300px; overflow-y:auto; border:2px solid #f0f0f0; border-radius:10px; padding:6px; }
 .invite-row { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; cursor:pointer; }
 .invite-row:hover { background:#f8f9fa; }
@@ -314,13 +311,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .invite-row .check-mark { width:22px; height:22px; border-radius:50%; border:2px solid #ccc; display:flex; align-items:center; justify-content:center; flex-shrink:0; color: transparent; font-size: 13px; font-weight: 900; }
 .invite-row.selected .check-mark { background:linear-gradient(135deg,#667eea,#764ba2); border-color:#667eea; color:white; }
 
-/* Lightbox */
+/* ============ LIGHTBOX ============ */
 .lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
 .lightbox.active { display:flex; }
 .lightbox img, .lightbox video { max-width:90%; max-height:90%; border-radius:8px; }
 .lightbox .close-lb { position:absolute; top:20px; right:30px; background:none; border:none; color:white; font-size:40px; cursor:pointer; line-height:1; }
 
-/* Stories */
+/* ============ STORIES ============ */
 .stories-strip { background: white; border-radius: 12px; padding: 14px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; gap: 12px; overflow-x: auto; }
 .story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; width: 76px; }
 .story-ring { width: 66px; height: 66px; border-radius: 50%; padding: 3px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); display: flex; align-items: center; justify-content: center; position: relative; }
@@ -354,7 +351,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .story-viewers-panel.active { display: block; }
 .story-viewer-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
 
-/* Call */
+/* ============ CALLS ============ */
 .call-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2500; flex-direction: column; }
 .call-modal.active { display: flex; }
 .call-topbar { padding: 12px 20px; background: #1a1a2e; color: white; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
@@ -367,7 +364,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .call-loading .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: #667eea; border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Live */
+/* ============ LIVE ============ */
 .live-strip { background: linear-gradient(135deg, #e74c3c, #c0392b); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: none; align-items: center; gap: 12px; overflow-x: auto; }
 .live-strip.active { display: flex; }
 .live-strip-label { color: white; font-weight: 800; font-size: 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
@@ -384,16 +381,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .live-setup-row label { flex: 1; cursor: pointer; font-size: 14px; font-weight: 600; }
 .live-setup-row small { display: block; font-weight: 400; font-size: 12px; color: #888; margin-top: 2px; }
 
-/* Toast */
+/* ============ TOAST + LOADER ============ */
 .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:#1a1a2e; color:white; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; opacity:0; transition:all 0.4s ease; z-index:999; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-
-/* Loader */
 .auth-loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; align-items: center; justify-content: center; color: white; }
 .auth-loading.active { display: flex; }
 .auth-loading .spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
 
-/* Responsive */
+/* ============ RESPONSIVE ============ */
 @media (max-width:1000px) { .right-sidebar { display:none; } }
 @media (max-width:800px) {
     .left-sidebar { display:none; }
@@ -416,17 +411,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
 <div class="auth-loading" id="authLoading"><div class="spinner"></div></div>
 
-<!-- AUTH -->
+<!-- ============================================================
+     AUTH SCREEN
+     ============================================================ -->
 <div class="auth-container" id="authScreen">
     <div class="auth-box">
         <div class="logo">Kampo</div>
         <div class="tagline">Connect with university students worldwide 🌍</div>
 
+        <!-- LOGIN FORM -->
         <div id="loginForm">
             <h2>Welcome back 👋</h2>
-            <div class="form-group"><label>Email</label>
-                <input type="email" id="loginEmail" placeholder="you@university.edu" autocomplete="username"></div>
-            <div class="form-group"><label>Password</label>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="you@university.edu" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
                 <div class="password-wrap">
                     <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
                     <button type="button" class="pw-toggle" onclick="togglePw('loginPassword', this)">👁️</button>
@@ -440,15 +441,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             <div class="auth-switch">Don't have an account? <a onclick="showRegister()">Sign Up</a></div>
         </div>
 
+        <!-- REGISTER FORM -->
         <div id="registerForm" style="display:none;">
             <h2>Join Kampo 🚀</h2>
-            <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="John Doe"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@university.edu"></div>
+            <div class="form-group"><label>Full Name</label>
+                <input type="text" id="regName" placeholder="John Doe"></div>
+            <div class="form-group"><label>Email</label>
+                <input type="email" id="regEmail" placeholder="you@university.edu"></div>
             <div class="form-group"><label>Phone Number</label>
                 <input type="tel" id="regPhone" placeholder="+256 700 000 000">
                 <small>Include country code</small></div>
-            <div class="form-group"><label>University</label><input type="text" id="regUniversity" placeholder="e.g. Makerere University"></div>
-            <div class="form-group"><label>Course / Program</label><input type="text" id="regCourse" placeholder="e.g. BSc Computer Science"></div>
+            <div class="form-group"><label>University</label>
+                <input type="text" id="regUniversity" placeholder="e.g. Makerere University"></div>
+            <div class="form-group"><label>Course / Program</label>
+                <input type="text" id="regCourse" placeholder="e.g. BSc Computer Science"></div>
             <div class="form-group"><label>Academic Year</label>
                 <select id="regYear">
                     <option value="">Select year...</option>
@@ -456,7 +462,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                     <option>Year 4</option><option>Year 5</option><option>Year 6</option>
                     <option>Postgraduate</option><option>PhD</option><option>Alumni</option>
                 </select></div>
-            <div class="form-group"><label>Country</label><input type="text" id="regCountry" placeholder="e.g. Uganda"></div>
+            <div class="form-group"><label>Country</label>
+                <input type="text" id="regCountry" placeholder="e.g. Uganda"></div>
             <div class="form-group">
                 <label>Password</label>
                 <div class="password-wrap">
@@ -483,17 +490,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 </div>
                 <div class="pw-match" id="pwMatch"></div>
             </div>
-            <div class="form-group"><label>Short Bio (optional)</label><input type="text" id="regBio" placeholder="Tell us about yourself"></div>
+            <div class="form-group"><label>Short Bio (optional)</label>
+                <input type="text" id="regBio" placeholder="Tell us about yourself"></div>
             <div class="error-msg" id="regError"></div>
             <div class="success-msg" id="regSuccess"></div>
             <button class="btn btn-primary" onclick="handleRegister()" id="regSubmitBtn" disabled>Create Account</button>
             <div class="auth-switch">Already have an account? <a onclick="showLogin()">Log In</a></div>
         </div>
 
+        <!-- RECOVERY FORM -->
         <div id="recoveryForm" style="display:none;">
             <h2>Reset Password 🔐</h2>
             <p style="color:#666;font-size:14px;margin-bottom:15px;">Enter your email. We'll send a reset link.</p>
-            <div class="form-group"><label>Email</label><input type="email" id="recoveryInput" placeholder="you@university.edu"></div>
+            <div class="form-group"><label>Email</label>
+                <input type="email" id="recoveryInput" placeholder="you@university.edu"></div>
             <div class="error-msg" id="recoveryError"></div>
             <div class="success-msg" id="recoverySuccess"></div>
             <button class="btn btn-primary" onclick="handleRecoveryLookup()">Send Reset Link</button>
@@ -502,16 +512,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
 </div>
 
-<!-- APP -->
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
 <div class="app-container" id="appScreen">
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-logo" onclick="showPage('feed')">Kampo</div>
-        <div class="nav-search"><input type="text" id="globalSearch" placeholder="🔍 Search students, posts, groups..." oninput="handleSearch(this.value)"></div>
+        <div class="nav-search">
+            <input type="text" id="globalSearch" placeholder="🔍 Search students, posts, groups..." oninput="handleSearch(this.value)">
+        </div>
         <div class="nav-actions">
             <button class="nav-icon-btn" onclick="showPage('feed')" title="Home">🏠</button>
-            <button class="nav-icon-btn" onclick="showPage('messages')" title="Messages">💬<span class="badge" id="navMsgBadge" style="display:none;">0</span></button>
-            <button class="nav-icon-btn" onclick="showPage('requests')" title="Friend Requests">👥<span class="badge" id="navReqBadge" style="display:none;">0</span></button>
-            <button class="nav-icon-btn" onclick="showPage('groups')" title="Groups">👪<span class="badge" id="navGrpBadge" style="display:none;">0</span></button>
+            <button class="nav-icon-btn" onclick="showPage('messages')" title="Messages">
+                💬<span class="badge" id="navMsgBadge" style="display:none;">0</span>
+            </button>
+            <button class="nav-icon-btn" onclick="showPage('requests')" title="Friend Requests">
+                👥<span class="badge" id="navReqBadge" style="display:none;">0</span>
+            </button>
+            <button class="nav-icon-btn" onclick="showPage('groups')" title="Groups">
+                👪<span class="badge" id="navGrpBadge" style="display:none;">0</span>
+            </button>
             <button class="nav-icon-btn" id="adminNavBtn" onclick="showPage('admin')" title="Admin" style="display:none;">⚙️</button>
             <div class="avatar avatar-nav" id="navAvatar" onclick="showPage('profile')">U</div>
             <button class="nav-icon-btn" onclick="handleLogout()" title="Logout">🚪</button>
@@ -519,6 +540,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </nav>
 
     <div class="main-layout">
+        <!-- LEFT SIDEBAR -->
         <aside class="left-sidebar">
             <div class="sidebar-card">
                 <div class="sidebar-profile">
@@ -526,8 +548,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                     <div class="name" id="sidebarName">User</div>
                     <div class="university" id="sidebarUniversity">University</div>
                     <div class="sidebar-stats">
-                        <div class="stat" onclick="showPage('profile')"><strong id="sidebarPosts">0</strong><span>Posts</span></div>
-                        <div class="stat" onclick="showPage('profile')"><strong id="sidebarFriends">0</strong><span>Friends</span></div>
+                        <div class="stat" onclick="showPage('profile')">
+                            <strong id="sidebarPosts">0</strong><span>Posts</span>
+                        </div>
+                        <div class="stat" onclick="showPage('profile')">
+                            <strong id="sidebarFriends">0</strong><span>Friends</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -551,8 +577,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             </div>
         </aside>
 
+        <!-- CENTER FEED AREA -->
         <main class="feed-area">
-            <!-- FEED -->
+
+            <!-- FEED PAGE -->
             <div class="page active" id="page-feed">
                 <div class="live-strip" id="liveStrip">
                     <div class="live-strip-label"><span class="live-dot-pulse"></span> LIVE NOW</div>
@@ -583,7 +611,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div id="feedContainer"></div>
             </div>
 
-            <!-- MESSAGES -->
+            <!-- MESSAGES PAGE -->
             <div class="page" id="page-messages">
                 <div class="messages-layout">
                     <div class="conversations-panel">
@@ -591,12 +619,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                         <div class="conversations-list" id="conversationsList"></div>
                     </div>
                     <div class="chat-panel" id="chatPanel">
-                        <div class="chat-empty"><div class="emoji">💬</div><p>Select a conversation to start chatting</p></div>
+                        <div class="chat-empty">
+                            <div class="emoji">💬</div>
+                            <p>Select a conversation to start chatting</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- REQUESTS -->
+            <!-- FRIEND REQUESTS PAGE -->
             <div class="page" id="page-requests">
                 <div class="tabs">
                     <div class="tab active" id="tab-incoming" onclick="switchReqTab('incoming')">Incoming</div>
@@ -606,7 +637,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div id="requestsContent"></div>
             </div>
 
-            <!-- GROUPS -->
+            <!-- GROUPS PAGE -->
             <div class="page" id="page-groups">
                 <div class="groups-toolbar">
                     <input type="text" id="groupsSearch" placeholder="🔍 Search groups..." oninput="renderGroupsDirectory()">
@@ -619,9 +650,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div class="groups-grid" id="groupsGrid"></div>
             </div>
 
-            <div class="page" id="page-group-detail"><div id="groupDetailContent"></div></div>
+            <!-- GROUP DETAIL PAGE -->
+            <div class="page" id="page-group-detail">
+                <div id="groupDetailContent"></div>
+            </div>
 
-            <!-- PROFILE -->
+            <!-- PROFILE PAGE -->
             <div class="page" id="page-profile">
                 <div class="profile-header">
                     <div class="profile-cover" id="profileCover">
@@ -651,22 +685,43 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div id="profilePostsContainer"></div>
             </div>
 
+            <!-- STUDENTS PAGE -->
             <div class="page" id="page-students">
-                <div class="sidebar-card"><h3>🌍 Discover Students Worldwide</h3><div id="studentsContainer"></div></div>
+                <div class="sidebar-card">
+                    <h3>🌍 Discover Students Worldwide</h3>
+                    <div id="studentsContainer"></div>
+                </div>
             </div>
 
+            <!-- SEARCH PAGE -->
             <div class="page" id="page-search">
-                <div class="sidebar-card"><h3 id="searchTitle">Search Results</h3><div id="searchResults"></div></div>
+                <div class="sidebar-card">
+                    <h3 id="searchTitle">Search Results</h3>
+                    <div id="searchResults"></div>
+                </div>
             </div>
 
+            <!-- ADMIN PAGE -->
             <div class="page" id="page-admin">
                 <div class="sidebar-card" style="padding:20px;">
                     <h3>⚙️ Admin Panel</h3>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:12px;">
-                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Total Users</div><div style="font-size:24px;font-weight:800;" id="adminTotalUsers">0</div></div>
-                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Total Posts</div><div style="font-size:24px;font-weight:800;" id="adminTotalPosts">0</div></div>
-                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Total Groups</div><div style="font-size:24px;font-weight:800;" id="adminTotalGroups">0</div></div>
-                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;"><div style="font-size:12px;color:#888;">Suspended</div><div style="font-size:24px;font-weight:800;color:#e74c3c;" id="adminSuspended">0</div></div>
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;">
+                            <div style="font-size:12px;color:#888;">Total Users</div>
+                            <div style="font-size:24px;font-weight:800;" id="adminTotalUsers">0</div>
+                        </div>
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;">
+                            <div style="font-size:12px;color:#888;">Total Posts</div>
+                            <div style="font-size:24px;font-weight:800;" id="adminTotalPosts">0</div>
+                        </div>
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;">
+                            <div style="font-size:12px;color:#888;">Total Groups</div>
+                            <div style="font-size:24px;font-weight:800;" id="adminTotalGroups">0</div>
+                        </div>
+                        <div style="background:#f8f9fa;padding:14px;border-radius:10px;">
+                            <div style="font-size:12px;color:#888;">Suspended</div>
+                            <div style="font-size:24px;font-weight:800;color:#e74c3c;" id="adminSuspended">0</div>
+                        </div>
                     </div>
                     <div style="margin-top:20px;">
                         <input type="text" id="adminSearchInput" placeholder="🔍 Search users..." style="width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;" oninput="renderAdminUsers()">
@@ -676,14 +731,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             </div>
         </main>
 
+        <!-- RIGHT SIDEBAR -->
         <aside class="right-sidebar">
-            <div class="sidebar-card"><h3>🤝 Suggested Friends</h3><div id="suggestionsContainer"></div></div>
-            <div class="sidebar-card"><h3>👪 Suggested Groups</h3><div id="suggestedGroupsContainer"></div></div>
-            <div class="sidebar-card"><h3>🔥 Trending Universities</h3><div id="trendingContainer" style="font-size:14px;color:#555;line-height:2;"></div></div>
+            <div class="sidebar-card">
+                <h3>🤝 Suggested Friends</h3>
+                <div id="suggestionsContainer"></div>
+            </div>
+            <div class="sidebar-card">
+                <h3>👪 Suggested Groups</h3>
+                <div id="suggestedGroupsContainer"></div>
+            </div>
+            <div class="sidebar-card">
+                <h3>🔥 Trending Universities</h3>
+                <div id="trendingContainer" style="font-size:14px;color:#555;line-height:2;"></div>
+            </div>
         </aside>
     </div>
 </div>
-
+<!-- ============================================================
+     HIDDEN FILE INPUTS
+     ============================================================ -->
 <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarSelect(event)">
 <input type="file" id="coverInput" accept="image/*" style="display:none;" onchange="handleCoverSelect(event)">
 <input type="file" id="groupPhotoInput" accept="image/*" style="display:none;" onchange="handleGroupPhotoSelect(event)">
@@ -692,11 +759,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 <input type="file" id="commentMediaInput" accept="image/*" style="display:none;">
 <input type="file" id="chatMediaInput" accept="image/*,video/*" style="display:none;">
 
+<!-- ============================================================
+     LIGHTBOX
+     ============================================================ -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
     <button class="close-lb" onclick="closeLightbox(event)">×</button>
     <div id="lightboxContent"></div>
 </div>
 
+<!-- ============================================================
+     STORY VIEWER
+     ============================================================ -->
 <div class="story-viewer" id="storyViewer">
     <button class="story-nav prev" onclick="prevStory()"></button>
     <button class="story-nav next" onclick="nextStory()"></button>
@@ -710,6 +783,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
 </div>
 
+<!-- ============================================================
+     CALL MODAL
+     ============================================================ -->
 <div class="call-modal" id="callModal">
     <div class="call-topbar">
         <div class="call-title" id="callTitle">Call</div>
@@ -717,18 +793,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <button class="call-close-btn" onclick="endCall()">End Call</button>
     </div>
     <div class="call-frame-container" id="callFrameContainer">
-        <div class="call-loading"><div class="spinner"></div><div>Connecting…</div></div>
+        <div class="call-loading">
+            <div class="spinner"></div>
+            <div>Connecting…</div>
+        </div>
     </div>
 </div>
 
+<!-- ============================================================
+     EDIT PROFILE MODAL
+     ============================================================ -->
 <div class="modal-backdrop" id="editProfileModal">
     <div class="modal">
-        <div class="modal-header"><h3>✏️ Edit Profile</h3><button class="close-btn" onclick="closeEditProfile()">✕</button></div>
+        <div class="modal-header">
+            <h3>✏️ Edit Profile</h3>
+            <button class="close-btn" onclick="closeEditProfile()">✕</button>
+        </div>
         <div class="modal-body">
             <div class="edit-avatar-section">
                 <div class="edit-avatar-preview avatar avatar-100" id="editAvatarPreview">U</div>
                 <div class="edit-avatar-actions">
-                    <h4>Profile Photo</h4><p>Auto-compressed</p>
+                    <h4>Profile Photo</h4>
+                    <p>Auto-compressed</p>
                     <button onclick="triggerAvatarUpload()">📷 Change</button>
                     <button onclick="removeAvatar()" id="removeAvatarBtn" style="display:none;">🗑️ Remove</button>
                 </div>
@@ -738,22 +824,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                     <span style="color:#aaa;font-size:13px;">No cover</span>
                 </div>
                 <div class="edit-avatar-actions">
-                    <h4>Cover Photo</h4><p>Auto-compressed</p>
+                    <h4>Cover Photo</h4>
+                    <p>Auto-compressed</p>
                     <button onclick="triggerCoverUpload()">🖼️ Change</button>
                     <button onclick="removeCover()" id="removeCoverBtn" style="display:none;">🗑️ Remove</button>
                 </div>
             </div>
-            <div class="form-group"><label>Full Name</label><input type="text" id="editName"></div>
-            <div class="form-group"><label>University</label><input type="text" id="editUniversity"></div>
-            <div class="form-group"><label>Course / Program</label><input type="text" id="editCourse"></div>
+            <div class="form-group"><label>Full Name</label>
+                <input type="text" id="editName"></div>
+            <div class="form-group"><label>University</label>
+                <input type="text" id="editUniversity"></div>
+            <div class="form-group"><label>Course / Program</label>
+                <input type="text" id="editCourse"></div>
             <div class="form-group"><label>Academic Year</label>
-                <select id="editYear"><option value="">Select year...</option>
-                    <option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option>
-                    <option>Year 5</option><option>Year 6</option><option>Postgraduate</option><option>PhD</option><option>Alumni</option>
+                <select id="editYear">
+                    <option value="">Select year...</option>
+                    <option>Year 1</option><option>Year 2</option><option>Year 3</option>
+                    <option>Year 4</option><option>Year 5</option><option>Year 6</option>
+                    <option>Postgraduate</option><option>PhD</option><option>Alumni</option>
                 </select></div>
-            <div class="form-group"><label>Country</label><input type="text" id="editCountry"></div>
-            <div class="form-group"><label>Phone</label><input type="tel" id="editPhone"></div>
-            <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;"></textarea></div>
+            <div class="form-group"><label>Country</label>
+                <input type="text" id="editCountry"></div>
+            <div class="form-group"><label>Phone</label>
+                <input type="tel" id="editPhone"></div>
+            <div class="form-group"><label>Bio</label>
+                <textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;"></textarea></div>
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeEditProfile()">Cancel</button>
@@ -762,21 +857,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
 </div>
 
+<!-- ============================================================
+     CREATE / EDIT GROUP MODAL
+     ============================================================ -->
 <div class="modal-backdrop" id="groupModal">
     <div class="modal">
-        <div class="modal-header"><h3 id="groupModalTitle">➕ Create Group</h3><button class="close-btn" onclick="closeGroupModal()">✕</button></div>
+        <div class="modal-header">
+            <h3 id="groupModalTitle">➕ Create Group</h3>
+            <button class="close-btn" onclick="closeGroupModal()">✕</button>
+        </div>
         <div class="modal-body">
             <div class="edit-avatar-section">
                 <div class="edit-avatar-preview" id="groupPhotoPreview" style="border-radius:12px;width:120px;height:80px;background:#f0f2f5;border:2px dashed #ccc;font-size:13px;">
                     <span style="color:#aaa;">Cover</span>
                 </div>
                 <div class="edit-avatar-actions">
-                    <h4>Group Cover</h4><p>Optional</p>
+                    <h4>Group Cover</h4>
+                    <p>Optional</p>
                     <button onclick="triggerGroupPhotoUpload()">🖼️ Upload</button>
                 </div>
             </div>
-            <div class="form-group"><label>Group Name *</label><input type="text" id="groupNameInput" maxlength="60"></div>
-            <div class="form-group"><label>Description</label><textarea id="groupDescInput" rows="3" maxlength="300"></textarea></div>
+            <div class="form-group"><label>Group Name *</label>
+                <input type="text" id="groupNameInput" maxlength="60"></div>
+            <div class="form-group"><label>Description</label>
+                <textarea id="groupDescInput" rows="3" maxlength="300"></textarea></div>
             <div class="form-group"><label>Privacy</label>
                 <select id="groupPrivacyInput">
                     <option value="public">🌍 Public — Anyone can join</option>
@@ -791,11 +895,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
 </div>
 
+<!-- ============================================================
+     INVITE FRIENDS MODAL
+     ============================================================ -->
 <div class="modal-backdrop" id="inviteModal">
     <div class="modal">
-        <div class="modal-header"><h3>✉️ Invite Friends</h3><button class="close-btn" onclick="closeInviteModal()">✕</button></div>
+        <div class="modal-header">
+            <h3>✉️ Invite Friends</h3>
+            <button class="close-btn" onclick="closeInviteModal()">✕</button>
+        </div>
         <div class="modal-body">
-            <p style="color:#666;font-size:13px;margin-bottom:12px;">Select friends to invite to <strong id="inviteGroupName"></strong></p>
+            <p style="color:#666;font-size:13px;margin-bottom:12px;">
+                Select friends to invite to <strong id="inviteGroupName"></strong>
+            </p>
             <div class="invite-list" id="inviteList"></div>
         </div>
         <div class="modal-footer">
@@ -805,9 +917,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
 </div>
 
+<!-- ============================================================
+     ADD STORY MODAL
+     ============================================================ -->
 <div class="modal-backdrop" id="addStoryModal">
     <div class="modal">
-        <div class="modal-header"><h3>📸 Add Story</h3><button class="close-btn" onclick="closeAddStoryModal()">✕</button></div>
+        <div class="modal-header">
+            <h3>📸 Add Story</h3>
+            <button class="close-btn" onclick="closeAddStoryModal()">✕</button>
+        </div>
         <div class="modal-body">
             <div class="edit-avatar-section" style="flex-direction:column;align-items:stretch;">
                 <div id="storyPreviewWrap" style="display:flex;align-items:center;justify-content:center;background:#000;border-radius:12px;min-height:220px;max-height:320px;overflow:hidden;">
@@ -818,7 +936,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                     <button class="btn btn-secondary" onclick="document.getElementById('storyVideoInput').click()" style="margin:0;">🎥 Video</button>
                 </div>
             </div>
-            <div class="form-group"><label>Caption (optional)</label><input type="text" id="storyCaption" maxlength="120"></div>
+            <div class="form-group"><label>Caption (optional)</label>
+                <input type="text" id="storyCaption" maxlength="120"></div>
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeAddStoryModal()">Cancel</button>
@@ -827,19 +946,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
 </div>
 
+<!-- ============================================================
+     GO LIVE SETUP MODAL
+     ============================================================ -->
 <div class="modal-backdrop" id="liveSetupModal">
     <div class="modal">
-        <div class="modal-header"><h3>🔴 Go Live</h3><button class="close-btn" onclick="closeLiveSetup()">✕</button></div>
+        <div class="modal-header">
+            <h3>🔴 Go Live</h3>
+            <button class="close-btn" onclick="closeLiveSetup()">✕</button>
+        </div>
         <div class="modal-body">
-            <div class="form-group"><label>Stream Title *</label><input type="text" id="liveTitle" maxlength="80"></div>
+            <div class="form-group"><label>Stream Title *</label>
+                <input type="text" id="liveTitle" maxlength="80"></div>
             <div class="form-group"><label>Type</label>
                 <div style="display:flex;gap:10px;">
-                    <div class="live-setup-row" style="flex:1;"><input type="radio" name="liveType" id="liveTypeStudy" value="study" checked><label for="liveTypeStudy">📚 Study</label></div>
-                    <div class="live-setup-row" style="flex:1;"><input type="radio" name="liveType" id="liveTypeChat" value="chat"><label for="liveTypeChat">💬 Chat</label></div>
+                    <div class="live-setup-row" style="flex:1;">
+                        <input type="radio" name="liveType" id="liveTypeStudy" value="study" checked>
+                        <label for="liveTypeStudy">📚 Study</label>
+                    </div>
+                    <div class="live-setup-row" style="flex:1;">
+                        <input type="radio" name="liveType" id="liveTypeChat" value="chat">
+                        <label for="liveTypeChat">💬 Chat</label>
+                    </div>
                 </div>
             </div>
-            <div class="live-setup-row"><input type="radio" name="liveMode" id="liveModeSolo" value="solo" checked><label for="liveModeSolo">Solo stream</label></div>
-            <div class="live-setup-row"><input type="radio" name="liveMode" id="liveModeGroup" value="group"><label for="liveModeGroup">Group session</label></div>
+            <div class="live-setup-row">
+                <input type="radio" name="liveMode" id="liveModeSolo" value="solo" checked>
+                <label for="liveModeSolo">Solo stream</label>
+            </div>
+            <div class="live-setup-row">
+                <input type="radio" name="liveMode" id="liveModeGroup" value="group">
+                <label for="liveModeGroup">Group session</label>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeLiveSetup()">Cancel</button>
@@ -848,11 +986,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
 </div>
 
+<!-- ============================================================
+     TOAST
+     ============================================================ -->
 <div class="toast" id="toast"></div>
 
-<!-- ============================================================= -->
-<!-- PART 2 GOES HERE (paste the next message's code right below)  -->
-<!-- ============================================================= -->
+<!-- ============================================================
+     FIREBASE SDK
+     ============================================================ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -969,8 +1110,7 @@ function groupCoverStyle(g) {
 function setBusy(s) {
     document.getElementById('authLoading').classList.toggle('active', s);
 }
-
-/* ============================================================
+    /* ============================================================
    IMAGE / VIDEO COMPRESSION
    ============================================================ */
 function compressImage(file, maxDim, quality) {
@@ -1013,7 +1153,7 @@ async function compressUnderLimit(file, maxDim, startQ, byteLimit) {
 async function compressVideoFile(file) {
     return new Promise((resolve, reject) => {
         if (file.size > MAX_VIDEO_SIZE) {
-            reject(new Error(`Video too large. Max ${MAX_VIDEO_SIZE / 1024 / 1024}MB for the free plan.`));
+            reject(new Error('Video too large. Max ' + (MAX_VIDEO_SIZE / 1024 / 1024) + 'MB for the free plan.'));
             return;
         }
         const reader = new FileReader();
@@ -1024,7 +1164,7 @@ async function compressVideoFile(file) {
             vid.onloadedmetadata = () => {
                 URL.revokeObjectURL(vid.src);
                 if (vid.duration > MAX_VIDEO_DURATION) {
-                    reject(new Error(`Video too long (max ${MAX_VIDEO_DURATION}s).`));
+                    reject(new Error('Video too long (max ' + MAX_VIDEO_DURATION + 's).'));
                     return;
                 }
                 const b64len = reader.result.length;
@@ -1144,11 +1284,14 @@ async function handleLogin() {
         await fbAuth.signInWithEmailAndPassword(email, password);
         err.style.display = 'none';
     } catch (e) {
-        err.textContent = e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential' ? 'No account found.' : e.code === 'auth/wrong-password' ? 'Incorrect password.' : e.message;
+        err.textContent = e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential'
+            ? 'No account found.'
+            : e.code === 'auth/wrong-password'
+            ? 'Incorrect password.'
+            : e.message;
         err.style.display = 'block';
     } finally { setBusy(false); }
 }
-
 async function handleRegister() {
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim().toLowerCase();
@@ -1164,7 +1307,7 @@ async function handleRegister() {
     const ok = document.getElementById('regSuccess');
     if (!name || !email || !phone || !university || !country) { err.textContent = 'Fill required fields.'; err.style.display = 'block'; return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Invalid email.'; err.style.display = 'block'; return; }
-    if (!/^\+[1-9]\d{7,14}$/.test(phone)) { err.textContent = 'Invalid phone.'; err.style.display = 'block'; return; }
+    if (!/^\+[1-9]\d{7,14}$/.test(phone)) { err.textContent = 'Invalid phone. Use format +256700000000'; err.style.display = 'block'; return; }
     if (!isPasswordStrong(password)) { err.textContent = 'Weak password.'; err.style.display = 'block'; return; }
     if (password !== confirm) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; return; }
     setBusy(true);
@@ -1201,7 +1344,6 @@ async function handleRegister() {
         err.style.display = 'block';
     } finally { setBusy(false); }
 }
-
 async function handleRecoveryLookup() {
     const email = document.getElementById('recoveryInput').value.trim();
     const err = document.getElementById('recoveryError');
@@ -1218,7 +1360,6 @@ async function handleRecoveryLookup() {
         err.style.display = 'block';
     } finally { setBusy(false); }
 }
-
 async function handleLogout() {
     try {
         stopListeners();
@@ -1300,7 +1441,7 @@ async function startListeners() {
         posts = s.docs.map(d => ({ ...d.data(), id: d.id }));
         renderFeed();
         renderProfilePosts();
-    }, e => console.warn(e));
+    }, e => console.warn('posts listener', e));
     const uid = currentUser.id;
     unsubMessagesTo = fbDb.collection('messages').where('to','==',uid).onSnapshot(() => reloadMessages(), e => console.warn(e));
     unsubMessagesFrom = fbDb.collection('messages').where('from','==',uid).onSnapshot(() => reloadMessages(), e => console.warn(e));
@@ -1314,11 +1455,11 @@ async function startListeners() {
     unsubStories = fbDb.collection('stories').where('timestamp','>',cutoff).onSnapshot(s => {
         stories = s.docs.map(d => ({ ...d.data(), id: d.id }));
         renderStories();
-    }, e => console.warn(e));
+    }, e => console.warn('stories', e));
     unsubLives = fbDb.collection('lives').where('active','==',true).onSnapshot(s => {
         lives = s.docs.map(d => ({ ...d.data(), id: d.id }));
         renderLiveStrip();
-    }, e => console.warn(e));
+    }, e => console.warn('lives', e));
 }
 function stopListeners() {
     [unsubUsers, unsubPosts, unsubMessagesTo, unsubMessagesFrom,
@@ -1356,27 +1497,27 @@ function updateProfileUI() {
     setAvatarElement(document.getElementById('profileAvatar'), currentUser, 'avatar-profile-big');
     document.getElementById('sidebarName').textContent = currentUser.name;
     document.getElementById('sidebarUniversity').textContent =
-        (currentUser.university||'') + ' • ' + (currentUser.country||'');
+        (currentUser.university || '') + ' • ' + (currentUser.country || '');
     const coverEl = document.getElementById('profileCover');
     if (currentUser.cover) {
-        coverEl.style.backgroundImage = `url('${currentUser.cover}')`;
-        coverEl.innerHTML = `<button class="cover-edit-btn" onclick="triggerCoverUpload()">🖼️ Change Cover</button>`;
+        coverEl.style.backgroundImage = "url('" + currentUser.cover + "')";
+        coverEl.innerHTML = '<button class="cover-edit-btn" onclick="triggerCoverUpload()">🖼️ Change Cover</button>';
     } else {
         coverEl.style.backgroundImage = 'linear-gradient(135deg,#667eea,#764ba2,#a855f7)';
-        coverEl.innerHTML = `<button class="cover-edit-btn" onclick="triggerCoverUpload()">🖼️ Add Cover Photo</button>`;
+        coverEl.innerHTML = '<button class="cover-edit-btn" onclick="triggerCoverUpload()">🖼️ Add Cover Photo</button>';
     }
     document.getElementById('profileName').textContent = currentUser.name;
     document.getElementById('profileUniversity').textContent =
-        (currentUser.university||'') + ' • ' + (currentUser.country||'');
+        (currentUser.university || '') + ' • ' + (currentUser.country || '');
     document.getElementById('profileBio').textContent = currentUser.bio || 'No bio yet.';
     document.getElementById('profileAcademic').innerHTML =
-        (currentUser.course ? `<span class="academic-pill">📚 ${escapeHtml(currentUser.course)}</span>` : '') +
-        (currentUser.year ? `<span class="academic-pill">🎓 ${escapeHtml(currentUser.year)}</span>` : '');
+        (currentUser.course ? '<span class="academic-pill">📚 ' + escapeHtml(currentUser.course) + '</span>' : '') +
+        (currentUser.year ? '<span class="academic-pill">🎓 ' + escapeHtml(currentUser.year) + '</span>' : '');
     const myPosts = posts.filter(p => p.userId === currentUser.id);
     document.getElementById('sidebarPosts').textContent = myPosts.length;
-    document.getElementById('sidebarFriends').textContent = (currentUser.friends||[]).length;
+    document.getElementById('sidebarFriends').textContent = (currentUser.friends || []).length;
     document.getElementById('profilePosts').textContent = myPosts.length;
-    document.getElementById('profileFriends').textContent = (currentUser.friends||[]).length;
+    document.getElementById('profileFriends').textContent = (currentUser.friends || []).length;
     document.getElementById('totalUsers').textContent = users.length;
     document.getElementById('totalPosts').textContent = posts.length;
     document.getElementById('totalGroups').textContent = groups.length;
@@ -1412,10 +1553,7 @@ function showPage(page) {
     if (page === 'students') renderStudents();
     if (page === 'messages') {
         renderConversations();
-        if (activeConversation) {
-            _lastRenderedConvo = null;
-            openConversation(activeConversation);
-        }
+        if (activeConversation) { _lastRenderedConvo = null; openConversation(activeConversation); }
     }
     if (page === 'requests') renderRequests();
     if (page === 'groups') renderGroupsDirectory();
@@ -1432,7 +1570,6 @@ function togglePostBtn() {
 }
 function triggerPhotoUpload() { document.getElementById('photoInput').click(); }
 function triggerVideoUpload() { document.getElementById('videoInput').click(); }
-
 async function handleMediaSelect(event, type) {
     const file = event.target.files[0];
     if (!file) return;
@@ -1448,19 +1585,15 @@ async function handleMediaSelect(event, type) {
         }
         showMediaPreview(pendingPostMedia);
         togglePostBtn();
-    } catch (e) {
-        alert(e.message);
-    } finally {
-        setBusy(false);
-        event.target.value = '';
-    }
+    } catch (e) { alert(e.message); }
+    finally { setBusy(false); event.target.value = ''; }
 }
 function showMediaPreview(m) {
     const p = document.getElementById('postMediaPreview');
     const c = document.getElementById('postMediaContent');
     c.innerHTML = m.type === 'image'
-        ? `<img src="${m.data}" alt="">`
-        : `<video src="${m.data}" controls></video>`;
+        ? '<img src="' + m.data + '" alt="">'
+        : '<video src="' + m.data + '" controls></video>';
     p.classList.add('active');
     document.getElementById('photoBtn').classList.toggle('active', m.type === 'image');
     document.getElementById('videoBtn').classList.toggle('active', m.type === 'video');
@@ -1480,7 +1613,7 @@ async function createPost() {
     try {
         await fbDb.collection('posts').add({
             userId: currentUser.id,
-            content,
+            content: content,
             media: pendingPostMedia ? pendingPostMedia.data : null,
             mediaType: pendingPostMedia ? pendingPostMedia.type : null,
             groupId: null,
@@ -1491,15 +1624,14 @@ async function createPost() {
         clearPostMedia();
         document.getElementById('postBtn').disabled = true;
         showToast('Post created! 📝');
-    } catch (e) {
-        alert('Failed: ' + e.message);
-    } finally { setBusy(false); }
+    } catch (e) { alert('Failed: ' + e.message); }
+    finally { setBusy(false); }
 }
 function renderFeed() {
     const c = document.getElementById('feedContainer');
     const fp = posts.filter(p => !p.groupId);
     if (fp.length === 0) {
-        c.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>No posts yet. Be the first!</p></div>`;
+        c.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><p>No posts yet. Be the first!</p></div>';
         return;
     }
     c.innerHTML = fp.map(p => renderPost(p, false)).join('');
@@ -1513,9 +1645,9 @@ function renderPost(post, inGroup) {
     let mediaHtml = '';
     if (post.media) {
         if (post.mediaType === 'image') {
-            mediaHtml = `<div class="post-media" onclick="openLightbox(this.querySelector('img').src)"><img src="${post.media}"></div>`;
+            mediaHtml = '<div class="post-media" onclick="openLightbox(this.querySelector(\'img\').src)"><img src="' + post.media + '"></div>';
         } else {
-            mediaHtml = `<div class="post-media"><video src="${post.media}" controls preload="metadata"></video></div>`;
+            mediaHtml = '<div class="post-media"><video src="' + post.media + '" controls preload="metadata"></video></div>';
         }
     }
     const commentsHtml = (post.comments || []).map(c => {
@@ -1523,50 +1655,47 @@ function renderPost(post, inGroup) {
         let cm = '';
         if (c.media) {
             cm = c.mediaType === 'video'
-                ? `<video class="comment-video" src="${c.media}" controls></video>`
-                : `<img class="comment-image" src="${c.media}" onclick="openLightbox(this.src)">`;
+                ? '<video class="comment-video" src="' + c.media + '" controls></video>'
+                : '<img class="comment-image" src="' + c.media + '" onclick="openLightbox(this.src)">';
         }
-        return `<div class="comment">
-            ${userAvatarHtml(cu, 32)}
-            <div class="comment-body">
-                <div class="comment-name">${escapeHtml(cu.name)}</div>
-                ${c.text ? `<div class="comment-text">${escapeHtml(c.text)}</div>` : ''}
-                ${cm}
-            </div>
-        </div>`;
+        return '<div class="comment">' +
+            userAvatarHtml(cu, 32) +
+            '<div class="comment-body">' +
+                '<div class="comment-name">' + escapeHtml(cu.name) + '</div>' +
+                (c.text ? '<div class="comment-text">' + escapeHtml(c.text) + '</div>' : '') +
+                cm +
+            '</div>' +
+        '</div>';
     }).join('');
     const tag = g
-        ? `<span class="group-tag">👪 ${escapeHtml(g.name)}</span>`
-        : `<span class="university-tag">${escapeHtml(user.university || '')}</span>${user.year ? `<span class="year-tag">${escapeHtml(user.year)}</span>` : ''}`;
-    return `<div class="post-card" id="post-${post.id}">
-        <div class="post-header">
-            <div onclick="openUserProfile('${user.id}')" style="cursor:pointer;">${userAvatarHtml(user, 44)}</div>
-            <div class="post-user-info">
-                <div class="name" onclick="openUserProfile('${user.id}')">${escapeHtml(user.name)}</div>
-                <div class="meta">${tag} ${escapeHtml(user.country || '')} • ${timeAgo(post.timestamp)}</div>
-            </div>
-        </div>
-        ${post.content ? `<div class="post-content">${escapeHtml(post.content)}</div>` : ''}
-        ${mediaHtml}
-        <div class="post-actions-bar">
-            <button class="post-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}', ${inGroup})">
-                ${isLiked ? '❤️' : '🤍'} ${(post.likes||[]).length}
-            </button>
-            <button class="post-action-btn" onclick="toggleComments('${post.id}')">
-                💬 ${(post.comments||[]).length}
-            </button>
-            ${isOwn ? `<button class="post-action-btn" onclick="deletePost('${post.id}', ${inGroup})">🗑️ Delete</button>` : ''}
-        </div>
-        <div class="comments-section ${post._commentsOpen ? 'open' : ''}" id="comments-${post.id}">
-            ${commentsHtml}
-            <div class="comment-input-row">
-                <button class="media-btn" onclick="triggerCommentMedia('${post.id}')">📷</button>
-                <input type="text" id="comment-input-${post.id}" placeholder="Write a comment..."
-                       onkeydown="if(event.key==='Enter')addComment('${post.id}', ${inGroup})">
-                <button class="send-btn" onclick="addComment('${post.id}', ${inGroup})">Send</button>
-            </div>
-        </div>
-    </div>`;
+        ? '<span class="group-tag">👪 ' + escapeHtml(g.name) + '</span>'
+        : '<span class="university-tag">' + escapeHtml(user.university || '') + '</span>' + (user.year ? '<span class="year-tag">' + escapeHtml(user.year) + '</span>' : '');
+    return '<div class="post-card" id="post-' + post.id + '">' +
+        '<div class="post-header">' +
+            '<div onclick="openUserProfile(\'' + user.id + '\')" style="cursor:pointer;">' + userAvatarHtml(user, 44) + '</div>' +
+            '<div class="post-user-info">' +
+                '<div class="name" onclick="openUserProfile(\'' + user.id + '\')">' + escapeHtml(user.name) + '</div>' +
+                '<div class="meta">' + tag + ' ' + escapeHtml(user.country || '') + ' • ' + timeAgo(post.timestamp) + '</div>' +
+            '</div>' +
+        '</div>' +
+        (post.content ? '<div class="post-content">' + escapeHtml(post.content) + '</div>' : '') +
+        mediaHtml +
+        '<div class="post-actions-bar">' +
+            '<button class="post-action-btn ' + (isLiked ? 'liked' : '') + '" onclick="toggleLike(\'' + post.id + '\', ' + inGroup + ')">' +
+                (isLiked ? '❤️' : '🤍') + ' ' + (post.likes||[]).length +
+            '</button>' +
+            '<button class="post-action-btn" onclick="toggleComments(\'' + post.id + '\')">💬 ' + (post.comments||[]).length + '</button>' +
+            (isOwn ? '<button class="post-action-btn" onclick="deletePost(\'' + post.id + '\', ' + inGroup + ')">🗑️ Delete</button>' : '') +
+        '</div>' +
+        '<div class="comments-section ' + (post._commentsOpen ? 'open' : '') + '" id="comments-' + post.id + '">' +
+            commentsHtml +
+            '<div class="comment-input-row">' +
+                '<button class="media-btn" onclick="triggerCommentMedia(\'' + post.id + '\')">📷</button>' +
+                '<input type="text" id="comment-input-' + post.id + '" placeholder="Write a comment..." onkeydown="if(event.key===\'Enter\')addComment(\'' + post.id + '\', ' + inGroup + ')">' +
+                '<button class="send-btn" onclick="addComment(\'' + post.id + '\', ' + inGroup + ')">Send</button>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
 }
 function findPost(id, inG) {
     if (inG && activeGroup) {
@@ -1625,9 +1754,9 @@ async function addComment(postId, inG) {
     if (!text && !media) return;
     const comment = {
         userId: currentUser.id,
-        text,
-        media: media?.data || null,
-        mediaType: media?.type || null,
+        text: text,
+        media: media ? media.data : null,
+        mediaType: media ? media.type : null,
         timestamp: Date.now()
     };
     try {
@@ -1662,9 +1791,10 @@ async function deletePost(postId, inG) {
 }
 function renderProfilePosts() {
     const c = document.getElementById('profilePostsContainer');
+    if (!c || !currentUser) return;
     const up = posts.filter(p => p.userId === currentUser.id);
     if (up.length === 0) {
-        c.innerHTML = `<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>`;
+        c.innerHTML = '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>';
         return;
     }
     c.innerHTML = up.map(p => renderPost(p, false)).join('');
@@ -1684,14 +1814,11 @@ function openEditProfile() {
     document.getElementById('editPhone').value = currentUser.phone || '';
     document.getElementById('editBio').value = currentUser.bio || '';
     const av = document.getElementById('editAvatarPreview');
-    av.innerHTML = currentUser.avatar
-        ? `<img src="${currentUser.avatar}">`
-        : getInitials(currentUser.name);
-    document.getElementById('removeAvatarBtn').style.display =
-        currentUser.avatar ? 'inline-block' : 'none';
+    av.innerHTML = currentUser.avatar ? '<img src="' + currentUser.avatar + '">' : getInitials(currentUser.name);
+    document.getElementById('removeAvatarBtn').style.display = currentUser.avatar ? 'inline-block' : 'none';
     const cv = document.getElementById('editCoverPreview');
     if (currentUser.cover) {
-        cv.innerHTML = `<img src="${currentUser.cover}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+        cv.innerHTML = '<img src="' + currentUser.cover + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">';
         document.getElementById('removeCoverBtn').style.display = 'inline-block';
     } else {
         cv.innerHTML = '<span style="color:#aaa;font-size:13px;">No cover</span>';
@@ -1701,8 +1828,7 @@ function openEditProfile() {
 }
 function closeEditProfile() {
     document.getElementById('editProfileModal').classList.remove('active');
-    pendingAvatar = undefined;
-    pendingCover = undefined;
+    pendingAvatar = undefined; pendingCover = undefined;
 }
 function triggerAvatarUpload() { document.getElementById('avatarInput').click(); }
 async function handleAvatarSelect(e) {
@@ -1713,7 +1839,7 @@ async function handleAvatarSelect(e) {
         const c = await compressUnderLimit(f, 400, 0.8, 400*1024);
         pendingAvatar = c;
         const av = document.getElementById('editAvatarPreview');
-        av.innerHTML = `<img src="${c}">`;
+        av.innerHTML = '<img src="' + c + '">';
         document.getElementById('removeAvatarBtn').style.display = 'inline-block';
         if (!document.getElementById('editProfileModal').classList.contains('active')) {
             await fbDb.collection('users').doc(currentUser.id).update({ avatar: c });
@@ -1736,7 +1862,7 @@ async function handleCoverSelect(e) {
         const c = await compressUnderLimit(f, 1000, 0.7, 600*1024);
         pendingCover = c;
         const cv = document.getElementById('editCoverPreview');
-        cv.innerHTML = `<img src="${c}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+        cv.innerHTML = '<img src="' + c + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">';
         document.getElementById('removeCoverBtn').style.display = 'inline-block';
         if (!document.getElementById('editProfileModal').classList.contains('active')) {
             await fbDb.collection('users').doc(currentUser.id).update({ cover: c });
@@ -1759,11 +1885,8 @@ async function saveProfile() {
     const country = document.getElementById('editCountry').value.trim();
     const phone = document.getElementById('editPhone').value.trim().replace(/\s/g,'');
     const bio = document.getElementById('editBio').value.trim();
-    if (!name || !university || !country) {
-        alert('Name, university, country required.');
-        return;
-    }
-    const upd = { name, university, course, year, country, phone, bio: bio || 'No bio yet.' };
+    if (!name || !university || !country) { alert('Name, university, country required.'); return; }
+    const upd = { name: name, university: university, course: course, year: year, country: country, phone: phone, bio: bio || 'No bio yet.' };
     if (pendingAvatar === null) upd.avatar = null;
     else if (pendingAvatar !== undefined) upd.avatar = pendingAvatar;
     if (pendingCover === null) upd.cover = null;
@@ -1778,7 +1901,7 @@ async function saveProfile() {
 }
 
 /* ============================================================
-   MESSAGES (start — will finish in Part 3)
+   MESSAGES
    ============================================================ */
 function startConversation(id) {
     _lastRenderedConvo = null;
@@ -1804,7 +1927,7 @@ function renderConversations() {
         return { user: u, last: convo[0], unread: convo.filter(m => m.from === u.id && !m.read).length };
     }).sort((a,b) => (b.last ? b.last.timestamp : 0) - (a.last ? a.last.timestamp : 0));
     if (partners.length === 0) {
-        c.innerHTML = `<div class="empty-state" style="padding:30px 15px;"><div class="emoji" style="font-size:36px;">💬</div><p style="font-size:13px;">No conversations yet.</p></div>`;
+        c.innerHTML = '<div class="empty-state" style="padding:30px 15px;"><div class="emoji" style="font-size:36px;">💬</div><p style="font-size:13px;">No conversations yet.</p></div>';
         return;
     }
     c.innerHTML = partners.map(p => {
@@ -1812,23 +1935,155 @@ function renderConversations() {
         if (p.last) {
             const prefix = p.last.from === currentUser.id ? 'You: ' : '';
             let content = p.last.text || '';
-            if (p.last.media) {
-                content = (p.last.mediaType === 'image' ? '📷 Photo' : '🎥 Video') + (content ? ' — ' + content : '');
-            }
+            if (p.last.media) content = (p.last.mediaType === 'image' ? '📷 Photo' : '🎥 Video') + (content ? ' — ' + content : '');
             prev = prefix + content;
         }
-        return `<div class="conversation-item ${activeConversation === p.user.id ? 'active' : ''}" onclick="startConversation('${p.user.id}')">
-            ${userAvatarHtml(p.user, 46)}
-            <div class="c-info">
-                <div class="c-name">${escapeHtml(p.user.name)}</div>
-                <div class="c-preview">${escapeHtml(prev)}</div>
-            </div>
-            <div class="c-meta">
-                <div class="c-time">${p.last ? timeAgo(p.last.timestamp) : ''}</div>
-                ${p.unread > 0 ? `<div class="c-unread">${p.unread}</div>` : ''}
-            </div>
-        </div>`;
+        return '<div class="conversation-item ' + (activeConversation === p.user.id ? 'active' : '') + '" onclick="startConversation(\'' + p.user.id + '\')">' +
+            userAvatarHtml(p.user, 46) +
+            '<div class="c-info">' +
+                '<div class="c-name">' + escapeHtml(p.user.name) + '</div>' +
+                '<div class="c-preview">' + escapeHtml(prev) + '</div>' +
+            '</div>' +
+            '<div class="c-meta">' +
+                '<div class="c-time">' + (p.last ? timeAgo(p.last.timestamp) : '') + '</div>' +
+                (p.unread > 0 ? '<div class="c-unread">' + p.unread + '</div>' : '') +
+            '</div>' +
+        '</div>';
     }).join('');
+}
+function openConversation(id) {
+    const user = users.find(u => u.id === id);
+    if (!user) return;
+    activeConversation = id;
+    messages.forEach(m => {
+        if (m.from === id && m.to === currentUser.id && !m.read) {
+            fbDb.collection('messages').doc(m.id).update({ read: true }).catch(()=>{});
+        }
+    });
+    if (_lastRenderedConvo === id && document.getElementById('chatMessages')) {
+        appendNewMessages(id);
+        renderConversations();
+        return;
+    }
+    _lastRenderedConvo = id;
+    const convo = messages.filter(m =>
+        (m.from === id && m.to === currentUser.id) ||
+        (m.from === currentUser.id && m.to === id)
+    ).sort((a,b) => a.timestamp - b.timestamp);
+    const html = convo.length === 0
+        ? '<div style="text-align:center;color:#aaa;font-size:13px;margin:20px 0;">Say hi to ' + escapeHtml(user.name) + '! 👋</div>'
+        : convo.map(m => renderMessageBubble(m)).join('');
+    const isF = (currentUser.friends||[]).includes(id);
+    document.getElementById('chatPanel').innerHTML =
+        '<div class="chat-header">' +
+            userAvatarHtml(user, 40) +
+            '<div><div class="chat-name">' + escapeHtml(user.name) + '</div>' +
+            '<div class="chat-status">' + (isF ? '● Friend' : escapeHtml(user.university||'')) + '</div></div>' +
+            '<div style="margin-left:auto;display:flex;gap:6px;">' +
+                '<button class="btn-call audio" onclick="startCall(\'' + user.id + '\', \'audio\')" style="padding:6px 12px;">📞</button>' +
+                '<button class="btn-call video" onclick="startCall(\'' + user.id + '\', \'video\')" style="padding:6px 12px;">🎥</button>' +
+            '</div>' +
+        '</div>' +
+        '<div class="chat-messages" id="chatMessages">' + html + '</div>' +
+        '<div class="chat-media-preview" id="chatMediaPreview">' +
+            '<button class="remove-media" onclick="clearChatMedia()">✕</button>' +
+            '<div id="chatMediaContent"></div>' +
+        '</div>' +
+        '<div class="chat-input-area">' +
+            '<button class="media-btn" onclick="triggerChatMedia()">📎</button>' +
+            '<input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" onkeydown="if(event.key===\'Enter\' && !event.shiftKey){event.preventDefault();sendMessage();}">' +
+            '<button class="send-btn" onclick="sendMessage()">➤</button>' +
+        '</div>';
+    setTimeout(() => {
+        const b = document.getElementById('chatMessages');
+        if (b) b.scrollTop = b.scrollHeight;
+        const i = document.getElementById('chatInput');
+        if (i) i.focus();
+    }, 30);
+    renderConversations();
+}
+function renderMessageBubble(m) {
+    let inner = '';
+    if (m.text) inner += escapeHtml(m.text);
+    if (m.media) {
+        if (m.mediaType === 'image') {
+            inner += '<img src="' + m.media + '" class="msg-media" onclick="event.stopPropagation();openLightbox(this.src)">';
+        } else {
+            inner += '<video src="' + m.media + '" class="msg-media" controls preload="metadata"></video>';
+        }
+    }
+    return '<div class="message ' + (m.from === currentUser.id ? 'sent' : 'received') + '" data-msg-id="' + m.id + '">' +
+        inner +
+        '<span class="msg-time">' + timeAgo(m.timestamp) + '</span>' +
+    '</div>';
+}
+function appendNewMessages(id) {
+    const b = document.getElementById('chatMessages');
+    if (!b) return;
+    const ex = new Set([...b.querySelectorAll('.message')].map(el => el.dataset.msgId));
+    const convo = messages.filter(m =>
+        (m.from === id && m.to === currentUser.id) ||
+        (m.from === currentUser.id && m.to === id)
+    ).sort((a,b) => a.timestamp - b.timestamp);
+    let added = false;
+    convo.forEach(m => {
+        if (!ex.has(m.id)) {
+            b.insertAdjacentHTML('beforeend', renderMessageBubble(m));
+            added = true;
+        }
+    });
+    if (added) b.scrollTop = b.scrollHeight;
+}
+function triggerChatMedia() {
+    const inp = document.getElementById('chatMediaInput');
+    inp.onchange = async (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        setBusy(true);
+        try {
+            const isV = f.type.startsWith('video/');
+            let data;
+            if (isV) data = await compressVideoFile(f);
+            else data = await compressUnderLimit(f, 800, 0.7, 700*1024);
+            pendingChatMedia = { data: data, type: isV ? 'video' : 'image' };
+            const p = document.getElementById('chatMediaPreview');
+            const c = document.getElementById('chatMediaContent');
+            c.innerHTML = isV
+                ? '<video src="' + data + '" controls style="max-height:140px;border-radius:8px;"></video>'
+                : '<img src="' + data + '" style="max-height:140px;border-radius:8px;">';
+            p.classList.add('active');
+        } catch (e) { alert(e.message); }
+        finally { setBusy(false); inp.value = ''; }
+    };
+    inp.click();
+}
+function clearChatMedia() {
+    pendingChatMedia = null;
+    const p = document.getElementById('chatMediaPreview');
+    if (p) p.classList.remove('active');
+    const c = document.getElementById('chatMediaContent');
+    if (c) c.innerHTML = '';
+}
+async function sendMessage() {
+    const i = document.getElementById('chatInput');
+    if (!i) return;
+    const text = i.value.trim();
+    if (!text && !pendingChatMedia) return;
+    if (!activeConversation) return;
+    try {
+        await fbDb.collection('messages').add({
+            from: currentUser.id,
+            to: activeConversation,
+            text: text,
+            media: pendingChatMedia ? pendingChatMedia.data : null,
+            mediaType: pendingChatMedia ? pendingChatMedia.type : null,
+            timestamp: Date.now(),
+            read: false
+        });
+        i.value = '';
+        i.focus();
+        clearChatMedia();
+    } catch (e) { console.error(e); }
 }
 
 /* ============================================================
@@ -1857,7 +2112,7 @@ function updateBadges() {
 }
 
 /* ============================================================
-   FRIEND REQUESTS (renderers only — actions in Part 3)
+   FRIEND REQUESTS — render
    ============================================================ */
 function switchReqTab(t) {
     currentReqTab = t;
@@ -1871,16 +2126,16 @@ function renderRequests() {
     if (!c || !currentUser) return;
     if (currentReqTab === 'incoming') {
         const reqs = (currentUser.friendRequests||[]).map(id => users.find(u => u.id === id)).filter(Boolean);
-        if (reqs.length === 0) { c.innerHTML = `<div class="empty-state"><div class="emoji">📬</div><p>No pending requests.</p></div>`; return; }
-        c.innerHTML = reqs.map(u => `<div class="request-item">${userAvatarHtml(u, 52)}<div class="r-info"><div class="r-name">${escapeHtml(u.name)}</div><div class="r-uni">${escapeHtml(u.university||'')} • ${escapeHtml(u.country||'')}</div></div><div class="r-actions"><button class="btn-accept" onclick="acceptFriendRequest('${u.id}')">Accept</button><button class="btn-decline" onclick="declineFriendRequest('${u.id}')">Decline</button></div></div>`).join('');
+        if (reqs.length === 0) { c.innerHTML = '<div class="empty-state"><div class="emoji">📬</div><p>No pending requests.</p></div>'; return; }
+        c.innerHTML = reqs.map(u => '<div class="request-item">' + userAvatarHtml(u, 52) + '<div class="r-info"><div class="r-name">' + escapeHtml(u.name) + '</div><div class="r-uni">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div></div><div class="r-actions"><button class="btn-accept" onclick="acceptFriendRequest(\'' + u.id + '\')">Accept</button><button class="btn-decline" onclick="declineFriendRequest(\'' + u.id + '\')">Decline</button></div></div>').join('');
     } else if (currentReqTab === 'sent') {
         const sent = (currentUser.sentRequests||[]).map(id => users.find(u => u.id === id)).filter(Boolean);
-        if (sent.length === 0) { c.innerHTML = `<div class="empty-state"><div class="emoji">📤</div><p>No sent requests.</p></div>`; return; }
-        c.innerHTML = sent.map(u => `<div class="request-item">${userAvatarHtml(u, 52)}<div class="r-info"><div class="r-name">${escapeHtml(u.name)}</div><div class="r-uni">${escapeHtml(u.university||'')}</div></div><div class="r-actions"><button class="btn-decline" onclick="cancelFriendRequest('${u.id}')">Cancel</button></div></div>`).join('');
+        if (sent.length === 0) { c.innerHTML = '<div class="empty-state"><div class="emoji">📤</div><p>No sent requests.</p></div>'; return; }
+        c.innerHTML = sent.map(u => '<div class="request-item">' + userAvatarHtml(u, 52) + '<div class="r-info"><div class="r-name">' + escapeHtml(u.name) + '</div><div class="r-uni">' + escapeHtml(u.university||'') + '</div></div><div class="r-actions"><button class="btn-decline" onclick="cancelFriendRequest(\'' + u.id + '\')">Cancel</button></div></div>').join('');
     } else {
         const fr = (currentUser.friends||[]).map(id => users.find(u => u.id === id)).filter(Boolean);
-        if (fr.length === 0) { c.innerHTML = `<div class="empty-state"><div class="emoji">👥</div><p>No friends yet.</p></div>`; return; }
-        c.innerHTML = fr.map(u => `<div class="request-item">${userAvatarHtml(u, 52)}<div class="r-info"><div class="r-name">${escapeHtml(u.name)}</div><div class="r-uni">${escapeHtml(u.university||'')}</div></div><div class="r-actions"><button class="btn-accept" onclick="startConversation('${u.id}')">💬 Message</button><button class="btn-decline" onclick="removeFriend('${u.id}')">Remove</button></div></div>`).join('');
+        if (fr.length === 0) { c.innerHTML = '<div class="empty-state"><div class="emoji">👥</div><p>No friends yet.</p></div>'; return; }
+        c.innerHTML = fr.map(u => '<div class="request-item">' + userAvatarHtml(u, 52) + '<div class="r-info"><div class="r-name">' + escapeHtml(u.name) + '</div><div class="r-uni">' + escapeHtml(u.university||'') + '</div></div><div class="r-actions"><button class="btn-accept" onclick="startConversation(\'' + u.id + '\')">💬 Message</button><button class="btn-decline" onclick="removeFriend(\'' + u.id + '\')">Remove</button></div></div>').join('');
     }
 }
 function friendBtnState(id) {
@@ -1905,7 +2160,7 @@ function renderSuggestions() {
     if (s.length === 0) { c.innerHTML = '<p style="color:#888;font-size:14px;">No suggestions.</p>'; return; }
     c.innerHTML = s.map(u => {
         const b = friendBtnState(u.id);
-        return `<div class="suggestion-item">${userAvatarHtml(u, 40)}<div class="s-info" onclick="openUserProfile('${u.id}')" style="cursor:pointer;"><div class="s-name">${escapeHtml(u.name)}</div><div class="s-uni">${escapeHtml(u.university||'')}</div></div><button class="btn-follow ${b.cls}" onclick="handleFriendBtn('${u.id}')">${b.label}</button></div>`;
+        return '<div class="suggestion-item">' + userAvatarHtml(u, 40) + '<div class="s-info" onclick="openUserProfile(\'' + u.id + '\')" style="cursor:pointer;"><div class="s-name">' + escapeHtml(u.name) + '</div><div class="s-uni">' + escapeHtml(u.university||'') + '</div></div><button class="btn-follow ' + b.cls + '" onclick="handleFriendBtn(\'' + u.id + '\')">' + b.label + '</button></div>';
     }).join('');
 }
 function renderTrending() {
@@ -1914,7 +2169,7 @@ function renderTrending() {
     const counts = {};
     users.forEach(u => { if (u.university) counts[u.university] = (counts[u.university]||0)+1; });
     const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
-    c.innerHTML = sorted.map(([u,n]) => `<div>🏛️ ${escapeHtml(u)} <span style="color:#888;">(${n})</span></div>`).join('');
+    c.innerHTML = sorted.map(([u,n]) => '<div>🏛️ ' + escapeHtml(u) + ' <span style="color:#888;">(' + n + ')</span></div>').join('');
 }
 function renderStudents() {
     const c = document.getElementById('studentsContainer');
@@ -1924,61 +2179,933 @@ function renderStudents() {
     c.innerHTML = others.map(u => {
         const b = friendBtnState(u.id);
         const isF = (currentUser.friends||[]).includes(u.id);
-        return `<div class="suggestion-item">${userAvatarHtml(u, 40)}<div class="s-info" onclick="openUserProfile('${u.id}')" style="cursor:pointer;"><div class="s-name">${escapeHtml(u.name)}</div><div class="s-uni">${escapeHtml(u.university||'')} • ${escapeHtml(u.country||'')}</div>${(u.course||u.year)?`<div style="font-size:11px;color:#667eea;margin-top:3px;font-weight:600;">${u.course?'📚 '+escapeHtml(u.course):''}${u.course&&u.year?' · ':''}${u.year?'🎓 '+escapeHtml(u.year):''}</div>`:''}</div>${isF?`<button class="btn-follow following" onclick="startConversation('${u.id}')">💬 Chat</button>`:`<button class="btn-follow ${b.cls}" onclick="handleFriendBtn('${u.id}')">${b.label}</button>`}</div>`;
+        const acad = (u.course || u.year)
+            ? '<div style="font-size:11px;color:#667eea;margin-top:3px;font-weight:600;">' +
+              (u.course ? '📚 ' + escapeHtml(u.course) : '') +
+              (u.course && u.year ? ' · ' : '') +
+              (u.year ? '🎓 ' + escapeHtml(u.year) : '') +
+              '</div>'
+            : '';
+        return '<div class="suggestion-item">' + userAvatarHtml(u, 40) + '<div class="s-info" onclick="openUserProfile(\'' + u.id + '\')" style="cursor:pointer;"><div class="s-name">' + escapeHtml(u.name) + '</div><div class="s-uni">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div>' + acad + '</div>' +
+            (isF ? '<button class="btn-follow following" onclick="startConversation(\'' + u.id + '\')">💬 Chat</button>' : '<button class="btn-follow ' + b.cls + '" onclick="handleFriendBtn(\'' + u.id + '\')">' + b.label + '</button>') +
+            '</div>';
     }).join('');
+}
+    /* ============================================================
+   FRIEND REQUEST ACTIONS
+   ============================================================ */
+async function sendFriendRequest(toId) {
+    if ((currentUser.friends||[]).includes(toId)) { showToast('Already friends!'); return; }
+    if ((currentUser.sentRequests||[]).includes(toId)) { showToast('Already sent.'); return; }
+    try {
+        if ((currentUser.friendRequests||[]).includes(toId)) {
+            await acceptFriendRequest(toId);
+            return;
+        }
+        await fbDb.collection('users').doc(currentUser.id).update({ sentRequests: FV.arrayUnion(toId) });
+        await fbDb.collection('users').doc(toId).update({ friendRequests: FV.arrayUnion(currentUser.id) });
+        showToast('Request sent! 🤝');
+    } catch (e) { console.error(e); }
+}
+async function cancelFriendRequest(toId) {
+    try {
+        await fbDb.collection('users').doc(currentUser.id).update({ sentRequests: FV.arrayRemove(toId) });
+        await fbDb.collection('users').doc(toId).update({ friendRequests: FV.arrayRemove(currentUser.id) });
+        showToast('Cancelled.');
+    } catch (e) { console.error(e); }
+}
+async function acceptFriendRequest(fromId) {
+    try {
+        await fbDb.collection('users').doc(currentUser.id).update({
+            friendRequests: FV.arrayRemove(fromId),
+            friends: FV.arrayUnion(fromId)
+        });
+        await fbDb.collection('users').doc(fromId).update({
+            sentRequests: FV.arrayRemove(currentUser.id),
+            friends: FV.arrayUnion(currentUser.id)
+        });
+        showToast('Friends! 🎉');
+    } catch (e) { console.error(e); }
+}
+async function declineFriendRequest(fromId) {
+    try {
+        await fbDb.collection('users').doc(currentUser.id).update({ friendRequests: FV.arrayRemove(fromId) });
+        await fbDb.collection('users').doc(fromId).update({ sentRequests: FV.arrayRemove(currentUser.id) });
+        showToast('Declined.');
+    } catch (e) { console.error(e); }
+}
+async function removeFriend(fid) {
+    if (!confirm('Remove friend?')) return;
+    try {
+        await fbDb.collection('users').doc(currentUser.id).update({ friends: FV.arrayRemove(fid) });
+        await fbDb.collection('users').doc(fid).update({ friends: FV.arrayRemove(currentUser.id) });
+        showToast('Removed.');
+    } catch (e) { console.error(e); }
 }
 
 /* ============================================================
-   INIT — runs when Part 3 is loaded
+   GROUPS
    ============================================================ */
-window._kampoReady = true;
-</script>
-
-<!-- ============================================================= -->
-<!-- PART 3 GOES HERE (paste the next message's code right below)  -->
-<!-- ============================================================= -->
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    function isSignedIn() { return request.auth != null; }
-    function isSelf(uid) { return request.auth.uid == uid; }
-    function isAdmin() {
-      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-    match /users/{userId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && isSelf(userId);
-      allow update: if isAdmin() || isSelf(userId);
-      allow delete: if isAdmin();
-    }
-    match /posts/{postId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-    }
-    match /messages/{msgId} {
-      allow read: if isSignedIn() && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
-      allow create: if isSignedIn() && request.resource.data.from == request.auth.uid;
-      allow update: if isSignedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
-      allow delete: if isAdmin();
-    }
-    match /groups/{groupId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && (request.auth.uid in resource.data.members || isAdmin());
-      allow delete: if isSignedIn() && (resource.data.creatorId == request.auth.uid || isAdmin());
-    }
-    match /stories/{storyId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-    }
-    match /lives/{liveId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-    }
-  }
+function switchGroupsTab(t) {
+    currentGroupsTab = t;
+    document.getElementById('grtab-my').classList.toggle('active', t === 'my');
+    document.getElementById('grtab-discover').classList.toggle('active', t === 'discover');
+    renderGroupsDirectory();
 }
+function renderGroupsDirectory() {
+    const c = document.getElementById('groupsGrid');
+    if (!c || !currentUser) return;
+    const q = (document.getElementById('groupsSearch')?.value || '').toLowerCase();
+    let list = currentGroupsTab === 'my'
+        ? groups.filter(g => (g.members||[]).includes(currentUser.id))
+        : groups.filter(g => !(g.members||[]).includes(currentUser.id));
+    if (q) list = list.filter(g => g.name.toLowerCase().includes(q) || (g.description||'').toLowerCase().includes(q));
+    if (list.length === 0) {
+        c.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="emoji">👪</div><p>' + (currentGroupsTab==='my' ? "You haven't joined any groups." : 'No groups.') + '</p></div>';
+        return;
+    }
+    c.innerHTML = list.map(g => {
+        const im = (g.members||[]).includes(currentUser.id);
+        const ip = (g.joinRequests||[]).includes(currentUser.id);
+        let a;
+        if (im) a = '<button class="group-card-action joined">Open</button>';
+        else if (ip) a = '<button class="group-card-action requested">Requested</button>';
+        else a = '<button class="group-card-action join">' + (g.privacy === 'private' ? 'Request' : 'Join') + '</button>';
+        return '<div class="group-card" onclick="openGroup(\'' + g.id + '\')">' +
+            '<div class="group-card-cover" style="' + groupCoverStyle(g) + '">' +
+                '<div class="privacy-badge">' + (g.privacy === 'private' ? '🔒' : '🌍') + '</div>' +
+            '</div>' +
+            '<div class="group-card-body">' +
+                '<div class="group-card-name">' + escapeHtml(g.name) + '</div>' +
+                '<div class="group-card-desc">' + escapeHtml(g.description || 'No description') + '</div>' +
+                '<div class="group-card-meta">' +
+                    '<div class="group-card-members">👥 ' + (g.members||[]).length + '</div>' +
+                    a +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+function renderSuggestedGroups() {
+    const c = document.getElementById('suggestedGroupsContainer');
+    if (!c || !currentUser) return;
+    const mine = groups.filter(g => (g.members||[]).includes(currentUser.id)).map(g => g.id);
+    const s = groups.filter(g => !mine.includes(g.id)).slice(0, 3);
+    c.innerHTML = s.length === 0
+        ? '<p style="color:#888;font-size:14px;">No groups.</p>'
+        : s.map(g => '<div class="suggestion-item"><div class="avatar avatar-40" style="border-radius:10px;background:' + (g.cover ? "url('" + g.cover + "') center/cover" : 'linear-gradient(135deg,#667eea,#764ba2)') + ';">' + (g.cover ? '' : '👪') + '</div><div class="s-info" onclick="openGroup(\'' + g.id + '\')" style="cursor:pointer;"><div class="s-name">' + escapeHtml(g.name) + '</div><div class="s-uni">' + (g.members||[]).length + ' members</div></div></div>').join('');
+}
+function openCreateGroup() {
+    editingGroupId = null;
+    pendingGroupPhoto = null;
+    document.getElementById('groupModalTitle').textContent = '➕ Create Group';
+    document.getElementById('groupSaveBtn').textContent = 'Create';
+    document.getElementById('groupNameInput').value = '';
+    document.getElementById('groupDescInput').value = '';
+    document.getElementById('groupPrivacyInput').value = 'public';
+    document.getElementById('groupPhotoPreview').innerHTML = '<span style="color:#aaa;">Cover</span>';
+    document.getElementById('groupModal').classList.add('active');
+}
+function closeGroupModal() {
+    document.getElementById('groupModal').classList.remove('active');
+    editingGroupId = null;
+    pendingGroupPhoto = null;
+}
+function triggerGroupPhotoUpload() { document.getElementById('groupPhotoInput').click(); }
+async function handleGroupPhotoSelect(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    setBusy(true);
+    try {
+        const c = await compressUnderLimit(f, 800, 0.7, 500*1024);
+        pendingGroupPhoto = c;
+        document.getElementById('groupPhotoPreview').innerHTML = '<img src="' + c + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">';
+    } catch (e) { alert(e.message); }
+    finally { setBusy(false); e.target.value = ''; }
+}
+async function saveGroup() {
+    const name = document.getElementById('groupNameInput').value.trim();
+    const description = document.getElementById('groupDescInput').value.trim();
+    const privacy = document.getElementById('groupPrivacyInput').value;
+    if (!name) { alert('Name required.'); return; }
+    setBusy(true);
+    try {
+        if (editingGroupId) {
+            const upd = { name: name, description: description, privacy: privacy };
+            if (pendingGroupPhoto !== null) upd.cover = pendingGroupPhoto;
+            await fbDb.collection('groups').doc(editingGroupId).update(upd);
+            closeGroupModal();
+            showToast('Updated! ✏️');
+        } else {
+            await fbDb.collection('groups').add({
+                name: name, description: description, privacy: privacy,
+                cover: pendingGroupPhoto || null,
+                creatorId: currentUser.id,
+                members: [currentUser.id],
+                admins: [currentUser.id],
+                joinRequests: [], invites: [],
+                posts: [], messages: [],
+                createdAt: Date.now()
+            });
+            closeGroupModal();
+            showToast('Group created! 🎉');
+        }
+    } catch (e) { alert('Failed: ' + e.message); }
+    finally { setBusy(false); }
+}
+async function joinGroup(gid) {
+    try { await fbDb.collection('groups').doc(gid).update({ members: FV.arrayUnion(currentUser.id) }); showToast('Joined! 🎉'); }
+    catch (e) { console.error(e); }
+}
+async function requestJoinGroup(gid) {
+    try { await fbDb.collection('groups').doc(gid).update({ joinRequests: FV.arrayUnion(currentUser.id) }); showToast('Request sent.'); }
+    catch (e) { console.error(e); }
+}
+function openGroup(gid) {
+    activeGroup = gid;
+    currentGroupDetailTab = 'posts';
+    showPage('group-detail');
+    renderGroupDetail(gid);
+}
+function switchGroupDetailTab(t) {
+    currentGroupDetailTab = t;
+    renderGroupDetail(activeGroup);
+}
+function renderGroupDetail(gid) {
+    const g = getGroup(gid);
+    if (!g) { showPage('groups'); return; }
+    const isM = (g.members||[]).includes(currentUser.id);
+    const isA = (g.admins||[]).includes(currentUser.id);
+    const isC = g.creatorId === currentUser.id;
+    const isP = (g.joinRequests||[]).includes(currentUser.id);
+    let acts = '';
+    if (isM) {
+        acts += '<button class="btn-action btn-action-primary" onclick="openInviteModal(\'' + g.id + '\')">✉️ Invite</button>';
+        acts += '<button class="btn-action btn-action-primary" onclick="startGroupConference(\'' + g.id + '\')">👥 Conference</button>';
+        if (isA) acts += '<button class="btn-action btn-action-secondary" onclick="openEditGroup(\'' + g.id + '\')">✏️ Edit</button>';
+        if (isC) acts += '<button class="btn-action btn-action-secondary" style="background:#fde8e8;color:#e74c3c;" onclick="deleteGroup(\'' + g.id + '\')">🗑️ Delete</button>';
+        acts += '<button class="btn-action btn-action-secondary" onclick="leaveGroup(\'' + g.id + '\')">Leave</button>';
+    } else if (isP) {
+        acts += '<button class="btn-action btn-action-secondary" onclick="cancelJoinRequest(\'' + g.id + '\')">Cancel Request</button>';
+    } else if (g.privacy === 'private') {
+        acts += '<button class="btn-action btn-action-primary" onclick="requestJoinGroup(\'' + g.id + '\')">🔒 Request</button>';
+    } else {
+        acts += '<button class="btn-action btn-action-primary" onclick="joinGroup(\'' + g.id + '\')">➕ Join</button>';
+    }
+    acts += '<button class="btn-action btn-action-secondary" onclick="showPage(\'groups\')">← Back</button>';
+    const pending = g.joinRequests || [];
+    const tabsHtml = '<div class="group-tabs">' +
+        '<div class="group-tab ' + (currentGroupDetailTab==='posts'?'active':'') + '" onclick="switchGroupDetailTab(\'posts\')">📝 Discussion</div>' +
+        '<div class="group-tab ' + (currentGroupDetailTab==='members'?'active':'') + '" onclick="switchGroupDetailTab(\'members\')">👥 Members (' + (g.members||[]).length + ')</div>' +
+        (isA ? '<div class="group-tab ' + (currentGroupDetailTab==='requests'?'active':'') + '" onclick="switchGroupDetailTab(\'requests\')">📥 Requests ' + (pending.length ? '(' + pending.length + ')' : '') + '</div>' : '') +
+    '</div>';
+    let content = '';
+    if (currentGroupDetailTab === 'posts') {
+        if (!isM) {
+            content = '<div class="empty-state"><div class="emoji">🔒</div><p>Join to see posts.</p></div>';
+        } else {
+            const ph = (g.posts||[]).map(p => renderPost(p, true)).join('') || '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>';
+            content = '<div class="create-post">' +
+                '<div class="post-input-row">' + userAvatarHtml(currentUser, 44) + '<textarea id="groupPostContent" placeholder="Share with ' + escapeHtml(g.name) + '..." oninput="toggleGroupPostBtn()"></textarea></div>' +
+                '<div class="post-actions"><div></div><button class="btn-post" id="groupPostBtn" onclick="createGroupPost()" disabled>Post</button></div>' +
+            '</div>' + ph;
+        }
+    } else if (currentGroupDetailTab === 'members') {
+        content = '<div class="sidebar-card" style="padding:15px;">' +
+            (g.members||[]).map(uid => {
+                const u = getUser(uid);
+                const a = (g.admins||[]).includes(uid);
+                const cr = uid === g.creatorId;
+                let aBtns = '';
+                if (isA && uid !== currentUser.id) {
+                    if (!a) aBtns += '<button class="btn-accept" style="font-size:12px;padding:5px 12px;" onclick="promoteAdmin(\'' + g.id + '\',\'' + uid + '\')">Make Admin</button>';
+                    if (!cr) aBtns += '<button class="btn-decline" style="font-size:12px;padding:5px 12px;" onclick="removeMember(\'' + g.id + '\',\'' + uid + '\')">Remove</button>';
+                }
+                return '<div class="member-item">' +
+                    userAvatarHtml(u, 46) +
+                    '<div class="member-info" onclick="openUserProfile(\'' + u.id + '\')" style="cursor:pointer;">' +
+                        '<div class="m-name">' + escapeHtml(u.name) + ' ' + (cr?'👑':'') + '</div>' +
+                        '<div class="m-uni">' + escapeHtml(u.university||'') + '</div>' +
+                    '</div>' +
+                    (a ? '<span class="admin-pill">Admin</span>' : '') +
+                    (aBtns ? '<div style="display:flex;gap:6px;">' + aBtns + '</div>' : '') +
+                '</div>';
+            }).join('') +
+        '</div>';
+    } else if (currentGroupDetailTab === 'requests' && isA) {
+        content = pending.length === 0
+            ? '<div class="empty-state"><div class="emoji">📬</div><p>No requests.</p></div>'
+            : pending.map(uid => {
+                const u = getUser(uid);
+                return '<div class="request-item">' + userAvatarHtml(u, 52) + '<div class="r-info"><div class="r-name">' + escapeHtml(u.name) + '</div><div class="r-uni">' + escapeHtml(u.university||'') + '</div></div><div class="r-actions"><button class="btn-accept" onclick="approveJoinRequest(\'' + g.id + '\',\'' + uid + '\')">Approve</button><button class="btn-decline" onclick="declineJoinRequest(\'' + g.id + '\',\'' + uid + '\')">Decline</button></div></div>';
+            }).join('');
+    }
+    document.getElementById('groupDetailContent').innerHTML =
+        '<div class="group-header">' +
+            '<div class="group-cover-lg" style="' + groupCoverStyle(g) + '"></div>' +
+            '<div class="group-info-block">' +
+                '<div><span class="group-title">' + escapeHtml(g.name) + '</span>' +
+                '<span class="group-privacy-pill">' + (g.privacy === 'private' ? '🔒 Private' : '🌍 Public') + '</span></div>' +
+                '<div class="group-desc">' + escapeHtml(g.description||'No description') + '</div>' +
+                '<div class="group-stats-row">' +
+                    '<span>👥 <strong>' + (g.members||[]).length + '</strong> members</span>' +
+                    '<span>📝 <strong>' + (g.posts||[]).length + '</strong> posts</span>' +
+                    '<span>⭐ <strong>' + escapeHtml(getUser(g.creatorId).name) + '</strong></span>' +
+                '</div>' +
+                '<div class="group-actions-row">' + acts + '</div>' +
+            '</div>' +
+        '</div>' + tabsHtml + content;
+}
+function openEditGroup(gid) {
+    const g = getGroup(gid);
+    if (!g) return;
+    editingGroupId = gid;
+    pendingGroupPhoto = null;
+    document.getElementById('groupModalTitle').textContent = '✏️ Edit Group';
+    document.getElementById('groupSaveBtn').textContent = 'Save';
+    document.getElementById('groupNameInput').value = g.name;
+    document.getElementById('groupDescInput').value = g.description || '';
+    document.getElementById('groupPrivacyInput').value = g.privacy;
+    const prev = document.getElementById('groupPhotoPreview');
+    prev.innerHTML = g.cover ? '<img src="' + g.cover + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">' : '<span style="color:#aaa;">Cover</span>';
+    document.getElementById('groupModal').classList.add('active');
+}
+function toggleGroupPostBtn() {
+    document.getElementById('groupPostBtn').disabled = document.getElementById('groupPostContent').value.trim().length === 0;
+}
+async function createGroupPost() {
+    const content = document.getElementById('groupPostContent').value.trim();
+    if (!content) return;
+    const g = getGroup(activeGroup);
+    if (!g) return;
+    const newPost = {
+        id: 'gp' + Date.now(),
+        userId: currentUser.id,
+        content: content, media: null, mediaType: null,
+        groupId: g.id,
+        likes: [], comments: [],
+        timestamp: Date.now()
+    };
+    try {
+        await fbDb.collection('groups').doc(g.id).update({ posts: [newPost, ...(g.posts||[])] });
+        showToast('Posted! 📝');
+    } catch (e) { console.error(e); }
+}
+async function approveJoinRequest(gid, uid) {
+    try {
+        await fbDb.collection('groups').doc(gid).update({
+            joinRequests: FV.arrayRemove(uid),
+            members: FV.arrayUnion(uid)
+        });
+        showToast('Approved!');
+    } catch (e) { console.error(e); }
+}
+async function declineJoinRequest(gid, uid) {
+    try { await fbDb.collection('groups').doc(gid).update({ joinRequests: FV.arrayRemove(uid) }); showToast('Declined.'); }
+    catch (e) { console.error(e); }
+}
+async function cancelJoinRequest(gid) {
+    try { await fbDb.collection('groups').doc(gid).update({ joinRequests: FV.arrayRemove(currentUser.id) }); showToast('Cancelled.'); }
+    catch (e) { console.error(e); }
+}
+async function promoteAdmin(gid, uid) {
+    try { await fbDb.collection('groups').doc(gid).update({ admins: FV.arrayUnion(uid) }); showToast('Promoted! ⭐'); }
+    catch (e) { console.error(e); }
+}
+async function removeMember(gid, uid) {
+    if (!confirm('Remove member?')) return;
+    try { await fbDb.collection('groups').doc(gid).update({ members: FV.arrayRemove(uid), admins: FV.arrayRemove(uid) }); showToast('Removed.'); }
+    catch (e) { console.error(e); }
+}
+async function leaveGroup(gid) {
+    if (!confirm('Leave this group?')) return;
+    try {
+        await fbDb.collection('groups').doc(gid).update({ members: FV.arrayRemove(currentUser.id), admins: FV.arrayRemove(currentUser.id) });
+        activeGroup = null;
+        showPage('groups');
+        showToast('Left.');
+    } catch (e) { console.error(e); }
+}
+async function deleteGroup(gid) {
+    if (!confirm('Permanently delete?')) return;
+    try {
+        await fbDb.collection('groups').doc(gid).delete();
+        activeGroup = null;
+        showPage('groups');
+        showToast('Deleted.');
+    } catch (e) { console.error(e); }
+}
+function openInviteModal(gid) {
+    inviteGroupId = gid;
+    selectedInvites = new Set();
+    const g = getGroup(gid);
+    if (!g) return;
+    document.getElementById('inviteGroupName').textContent = g.name;
+    const friends = (currentUser.friends||[]).map(id => users.find(u => u.id === id)).filter(u => u && !(g.members||[]).includes(u.id));
+    const list = document.getElementById('inviteList');
+    if (friends.length === 0) list.innerHTML = '<p style="padding:20px;text-align:center;color:#888;">No friends to invite.</p>';
+    else list.innerHTML = friends.map(u => '<div class="invite-row" data-uid="' + u.id + '" onclick="toggleInvite(\'' + u.id + '\')"><div class="check-mark">✓</div>' + userAvatarHtml(u, 40) + '<div class="s-info"><div class="s-name">' + escapeHtml(u.name) + '</div><div class="s-uni">' + escapeHtml(u.university||'') + '</div></div></div>').join('');
+    document.getElementById('inviteModal').classList.add('active');
+}
+function toggleInvite(uid) {
+    const row = document.querySelector('.invite-row[data-uid="' + uid + '"]');
+    if (!row) return;
+    if (selectedInvites.has(uid)) { selectedInvites.delete(uid); row.classList.remove('selected'); }
+    else { selectedInvites.add(uid); row.classList.add('selected'); }
+}
+function closeInviteModal() {
+    document.getElementById('inviteModal').classList.remove('active');
+    inviteGroupId = null;
+    selectedInvites.clear();
+}
+async function sendInvites() {
+    if (!inviteGroupId || selectedInvites.size === 0) { closeInviteModal(); return; }
+    const g = getGroup(inviteGroupId);
+    if (!g) return;
+    try {
+        const invites = [...selectedInvites].map(uid => ({ userId: uid, invitedBy: currentUser.id, timestamp: Date.now() }));
+        await fbDb.collection('groups').doc(inviteGroupId).update({ invites: FV.arrayUnion(...invites) });
+        showToast(invites.length + ' invite' + (invites.length > 1 ? 's' : '') + ' sent! ✉️');
+    } catch (e) { console.error(e); }
+    closeInviteModal();
+}
+
+/* ============================================================
+   STORIES
+   ============================================================ */
+function renderStories() {
+    const strip = document.getElementById('storiesStrip');
+    if (!strip || !currentUser) return;
+    const cutoff = Date.now() - STORY_LIFETIME;
+    const active = stories.filter(s => s.timestamp > cutoff);
+    const grouped = {};
+    active.forEach(s => {
+        if (!grouped[s.userId]) grouped[s.userId] = [];
+        grouped[s.userId].push(s);
+    });
+    const arr = Object.entries(grouped).map(([uid, s]) => {
+        s.sort((a,b) => a.timestamp - b.timestamp);
+        return { userId: uid, stories: s, latest: s[s.length-1].timestamp };
+    }).sort((a,b) => b.latest - a.latest);
+    const myIdx = arr.findIndex(x => x.userId === currentUser.id);
+    if (myIdx > 0) { const [m] = arr.splice(myIdx, 1); arr.unshift(m); }
+    let html = '';
+    const mine = active.filter(s => s.userId === currentUser.id);
+    if (mine.length > 0) {
+        html += '<div class="story-item" onclick="openStoryViewer(\'' + currentUser.id + '\')">' +
+            '<div class="story-ring mine"><div class="story-ring-inner">' +
+            (currentUser.avatar ? '<img src="' + currentUser.avatar + '">' : '<div class="avatar" style="width:100%;height:100%;font-size:22px;">' + getInitials(currentUser.name) + '</div>') +
+            '</div><div class="story-add-btn" onclick="event.stopPropagation();openAddStoryModal()">+</div></div>' +
+            '<div class="story-name">Your Story</div></div>';
+    } else {
+        html += '<div class="story-item" onclick="openAddStoryModal()">' +
+            '<div class="story-ring" style="background:#e4e6eb;"><div class="story-ring-inner">' +
+            (currentUser.avatar ? '<img src="' + currentUser.avatar + '">' : '<div class="avatar" style="width:100%;height:100%;font-size:22px;">' + getInitials(currentUser.name) + '</div>') +
+            '</div><div class="story-add-btn">+</div></div>' +
+            '<div class="story-name">Add Story</div></div>';
+    }
+    arr.forEach(g => {
+        if (g.userId === currentUser.id) return;
+        const u = users.find(x => x.id === g.userId);
+        if (!u) return;
+        const seen = g.stories.every(s => (s.views||[]).includes(currentUser.id));
+        html += '<div class="story-item" onclick="openStoryViewer(\'' + u.id + '\')">' +
+            '<div class="story-ring ' + (seen ? 'seen' : '') + '"><div class="story-ring-inner">' +
+            (u.avatar ? '<img src="' + u.avatar + '">' : '<div class="avatar" style="width:100%;height:100%;font-size:22px;">' + getInitials(u.name) + '</div>') +
+            '</div></div>' +
+            '<div class="story-name">' + escapeHtml(u.name.split(' ')[0]) + '</div></div>';
+    });
+    strip.innerHTML = html;
+}
+function openAddStoryModal() {
+    pendingStoryMedia = null;
+    document.getElementById('storyCaption').value = '';
+    document.getElementById('storyPreviewWrap').innerHTML = '<span style="color:#888;font-size:13px;">No media selected</span>';
+    document.getElementById('addStoryModal').classList.add('active');
+}
+function closeAddStoryModal() {
+    document.getElementById('addStoryModal').classList.remove('active');
+    pendingStoryMedia = null;
+}
+async function handleStoryMedia(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    setBusy(true);
+    try {
+        const c = await compressUnderLimit(f, 800, 0.7, 700*1024);
+        pendingStoryMedia = { data: c, type: 'image' };
+        document.getElementById('storyPreviewWrap').innerHTML = '<img src="' + c + '" style="max-width:100%;max-height:320px;border-radius:12px;">';
+    } catch (e) { alert(e.message); }
+    finally { setBusy(false); e.target.value = ''; }
+}
+async function handleStoryMediaVideo(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    setBusy(true);
+    try {
+        const c = await compressVideoFile(f);
+        pendingStoryMedia = { data: c, type: 'video' };
+        document.getElementById('storyPreviewWrap').innerHTML = '<video src="' + c + '" controls style="max-width:100%;max-height:320px;border-radius:12px;"></video>';
+    } catch (e) { alert(e.message); }
+    finally { setBusy(false); e.target.value = ''; }
+}
+async function postStory() {
+    if (!pendingStoryMedia) { alert('Pick media.'); return; }
+    const caption = document.getElementById('storyCaption').value.trim();
+    try {
+        await fbDb.collection('stories').add({
+            userId: currentUser.id,
+            media: pendingStoryMedia.data,
+            mediaType: pendingStoryMedia.type,
+            caption: caption,
+            timestamp: Date.now(),
+            views: []
+        });
+        closeAddStoryModal();
+        showToast('Story shared! Disappears in 24h ⏱️');
+    } catch (e) { alert('Failed.'); }
+}
+function openStoryViewer(uid) {
+    const cutoff = Date.now() - STORY_LIFETIME;
+    const list = stories.filter(s => s.userId === uid && s.timestamp > cutoff).sort((a,b) => a.timestamp - b.timestamp);
+    if (list.length === 0) return;
+    currentStoryViewer = { userId: uid, stories: list, index: 0 };
+    document.getElementById('storyViewer').classList.add('active');
+    renderStoryFrame();
+}
+function closeStoryViewer() {
+    clearTimeout(storyViewTimer);
+    document.getElementById('storyViewer').classList.remove('active');
+    currentStoryViewer = null;
+    document.getElementById('storyViewersPanel').classList.remove('active');
+    renderStories();
+}
+function renderStoryFrame() {
+    if (!currentStoryViewer) return;
+    clearTimeout(storyViewTimer);
+    const { stories: list, index, userId } = currentStoryViewer;
+    const s = list[index];
+    const u = users.find(x => x.id === userId) || currentUser;
+    document.getElementById('storyProgress').innerHTML = list.map((_, i) => {
+        let cls = '';
+        if (i < index) cls = 'done';
+        else if (i === index) cls = 'active';
+        return '<div class="story-progress-bar ' + cls + '"><div class="story-progress-fill"></div></div>';
+    }).join('');
+    document.getElementById('storyHeader').innerHTML =
+        '<div class="avatar avatar-40" style="border:2px solid white;">' +
+        (u.avatar ? '<img src="' + u.avatar + '">' : getInitials(u.name)) +
+        '</div><div><div class="story-header-name">' + escapeHtml(u.name) + '</div>' +
+        '<div class="story-header-time">' + timeAgo(s.timestamp) + '</div></div>';
+    document.getElementById('storyContent').innerHTML = s.mediaType === 'video'
+        ? '<video src="' + s.media + '" autoplay playsinline></video>' + (s.caption ? '<div class="story-caption">' + escapeHtml(s.caption) + '</div>' : '')
+        : '<img src="' + s.media + '" alt="">' + (s.caption ? '<div class="story-caption">' + escapeHtml(s.caption) + '</div>' : '');
+    const viewsBar = document.getElementById('storyViewsBar');
+    if (userId === currentUser.id) {
+        const count = (s.views||[]).length;
+        viewsBar.innerHTML = '👁️ ' + count + ' view' + (count !== 1 ? 's' : '');
+        viewsBar.onclick = () => toggleStoryViewers(s);
+    } else {
+        viewsBar.innerHTML = '';
+        viewsBar.onclick = null;
+    }
+    if (userId !== currentUser.id && !(s.views||[]).includes(currentUser.id)) {
+        fbDb.collection('stories').doc(s.id).update({ views: FV.arrayUnion(currentUser.id) }).catch(()=>{});
+    }
+    const dur = s.mediaType === 'image' ? STORY_DURATION : 8000;
+    storyViewTimer = setTimeout(() => nextStory(), dur);
+}
+function toggleStoryViewers(story) {
+    const panel = document.getElementById('storyViewersPanel');
+    if (panel.classList.contains('active')) { panel.classList.remove('active'); return; }
+    const viewers = (story.views || []).map(id => users.find(u => u.id === id)).filter(Boolean);
+    panel.innerHTML = '<div style="font-weight:700;margin-bottom:10px;">👁️ ' + viewers.length + ' viewer' + (viewers.length !== 1 ? 's' : '') + '</div>' +
+        (viewers.length === 0 ? '<p style="opacity:0.7;font-size:13px;">No views yet.</p>' :
+        viewers.map(u => '<div class="story-viewer-item">' + userAvatarHtml(u, 36) + '<div style="font-size:13px;font-weight:600;">' + escapeHtml(u.name) + '</div></div>').join(''));
+    panel.classList.add('active');
+}
+function nextStory() {
+    if (!currentStoryViewer) return;
+    const { stories: list, index, userId } = currentStoryViewer;
+    if (index < list.length - 1) { currentStoryViewer.index++; renderStoryFrame(); }
+    else {
+        const cutoff = Date.now() - STORY_LIFETIME;
+        const active = stories.filter(s => s.timestamp > cutoff);
+        const grouped = {};
+        active.forEach(s => { if (!grouped[s.userId]) grouped[s.userId] = []; grouped[s.userId].push(s); });
+        const arr = Object.entries(grouped).map(([uid, s]) => {
+            s.sort((a,b) => a.timestamp - b.timestamp);
+            return { userId: uid, stories: s, latest: s[s.length-1].timestamp };
+        }).sort((a,b) => b.latest - a.latest);
+        const myIdx = arr.findIndex(x => x.userId === userId);
+        if (myIdx >= 0 && myIdx < arr.length - 1) openStoryViewer(arr[myIdx + 1].userId);
+        else closeStoryViewer();
+    }
+}
+function prevStory() {
+    if (!currentStoryViewer) return;
+    if (currentStoryViewer.index > 0) { currentStoryViewer.index--; renderStoryFrame(); }
+}
+
+/* ============================================================
+   CALLS (JITSI)
+   ============================================================ */
+function makeRoomId(a, b) {
+    const ids = [a, b].sort();
+    return 'kampo-' + ids.join('-').replace(/[^a-z0-9-]/gi, '').slice(0, 40);
+}
+function startCall(pid, type) {
+    const p = users.find(u => u.id === pid);
+    if (!p) return;
+    openJitsiCall(makeRoomId(currentUser.id, pid), type, (type === 'audio' ? '📞 Audio' : '🎥 Video') + ' · ' + p.name.split(' ')[0]);
+}
+function startGroupConference(gid) {
+    const g = getGroup(gid);
+    if (!g) return;
+    openJitsiCall('kampo-group-' + gid, 'video', '👥 ' + g.name);
+}
+function openJitsiCall(room, type, title) {
+    currentCall = { room: room, type: type, title: title };
+    const modal = document.getElementById('callModal');
+    document.getElementById('callTitle').textContent = title;
+    document.getElementById('callTypeBadge').textContent = type.toUpperCase();
+    modal.querySelector('.call-close-btn').textContent = 'End Call';
+    const domain = 'meet.jit.si';
+    const config = [
+        '#userInfo.displayName="' + encodeURIComponent('"' + currentUser.name + '"') + '"',
+        '#config.startWithAudioMuted=false',
+        type === 'audio' ? '#config.startWithVideoMuted=true' : '#config.startWithVideoMuted=false',
+        '#config.prejoinPageEnabled=false',
+        '#config.disableDeepLinking=true',
+        '#config.enableWelcomePage=false'
+    ].join('&');
+    const url = 'https://' + domain + '/' + room + config;
+    const container = document.getElementById('callFrameContainer');
+    container.innerHTML =
+        '<div class="call-loading">' +
+            '<div class="spinner"></div>' +
+            '<div>Connecting…</div>' +
+            '<div style="font-size:12px;opacity:0.6;text-align:center;padding:0 20px;word-break:break-all;">Share: <code style="font-size:11px;color:#667eea;">https://' + domain + '/' + room + '</code></div>' +
+        '</div>' +
+        '<iframe id="jitsiFrame" src="' + url + '" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>';
+    setTimeout(() => {
+        const i = document.getElementById('jitsiFrame');
+        if (i) i.addEventListener('load', () => {
+            const l = container.querySelector('.call-loading');
+            if (l) l.style.display = 'none';
+        });
+    }, 100);
+    modal.classList.add('active');
+}
+async function endCall() {
+    if (currentCall && currentCall.liveId) {
+        const l = lives.find(x => x.id === currentCall.liveId);
+        if (l && l.userId === currentUser.id) {
+            try { await fbDb.collection('lives').doc(currentCall.liveId).update({ active: false }); } catch (e) {}
+        }
+    }
+    document.getElementById('callModal').classList.remove('active');
+    document.getElementById('callFrameContainer').innerHTML = '<div class="call-loading"><div class="spinner"></div><div>Connecting…</div></div>';
+    const wasLive = currentCall && currentCall.liveId;
+    currentCall = null;
+    renderLiveStrip();
+    if (!wasLive) showToast('Call ended. 👋');
+}
+
+/* ============================================================
+   LIVE STREAMING
+   ============================================================ */
+function renderLiveStrip() {
+    const strip = document.getElementById('liveStrip');
+    const cards = document.getElementById('liveStripCards');
+    if (!strip || !cards || !currentUser) return;
+    if (lives.length === 0) { strip.classList.remove('active'); return; }
+    strip.classList.add('active');
+    cards.innerHTML = lives.map(l => {
+        const u = getUser(l.userId);
+        return '<div class="live-card" onclick="openLiveStream(\'' + l.id + '\')">' +
+            '<div class="live-card-avatar">' + (u.avatar ? '<img src="' + u.avatar + '">' : getInitials(u.name)) + '</div>' +
+            '<div class="live-card-info">' +
+                '<div class="live-card-name">' + (l.userId === currentUser.id ? 'You' : escapeHtml(u.name.split(' ')[0])) + ' ' + (l.type === 'study' ? '📚' : '💬') + '</div>' +
+                '<div class="live-card-title">' + escapeHtml(l.title) + '</div>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+function openLiveSetup() {
+    document.getElementById('liveTitle').value = '';
+    document.getElementById('liveSetupModal').classList.add('active');
+}
+function closeLiveSetup() {
+    document.getElementById('liveSetupModal').classList.remove('active');
+}
+async function startLive() {
+    const title = document.getElementById('liveTitle').value.trim();
+    if (!title) { alert('Title required.'); return; }
+    const type = document.querySelector('input[name="liveType"]:checked').value;
+    const mode = document.querySelector('input[name="liveMode"]:checked').value;
+    try {
+        const ref = await fbDb.collection('lives').add({
+            userId: currentUser.id,
+            title: title, type: type, mode: mode,
+            room: 'kampo-live-' + currentUser.id + '-' + Date.now(),
+            startedAt: Date.now(),
+            active: true
+        });
+        closeLiveSetup();
+        showToast('You are LIVE! 🔴');
+        setTimeout(() => openLiveStream(ref.id), 400);
+    } catch (e) { alert('Failed.'); }
+}
+function openLiveStream(lid) {
+    const l = lives.find(x => x.id === lid);
+    if (!l) return;
+    const b = getUser(l.userId);
+    const isM = l.userId === currentUser.id;
+    const canB = isM || l.mode === 'group';
+    const url = 'https://meet.jit.si/' + l.room +
+        '#userInfo.displayName="' + encodeURIComponent(currentUser.name) + '"' +
+        '&config.prejoinPageEnabled=false' +
+        '&config.disableDeepLinking=true' +
+        '&config.enableWelcomePage=false' +
+        (canB ? '&config.startWithAudioMuted=false&config.startWithVideoMuted=false' : '&config.startWithAudioMuted=true&config.startWithVideoMuted=true');
+    currentCall = { room: l.room, type: 'video', title: '🔴 LIVE', liveId: l.id };
+    const modal = document.getElementById('callModal');
+    document.getElementById('callTitle').textContent = '🔴 ' + l.title + ' · ' + b.name.split(' ')[0];
+    document.getElementById('callTypeBadge').textContent = canB ? 'BROADCAST' : 'WATCHING';
+    modal.querySelector('.call-close-btn').textContent = isM ? 'End Live' : 'Leave';
+    const c = document.getElementById('callFrameContainer');
+    c.innerHTML = '<div class="call-loading"><div class="spinner"></div><div>Joining…</div></div>' +
+        '<iframe id="jitsiFrame" src="' + url + '" allow="camera; microphone; fullscreen; autoplay; display-capture"></iframe>';
+    setTimeout(() => {
+        const i = document.getElementById('jitsiFrame');
+        if (i) i.addEventListener('load', () => {
+            const x = c.querySelector('.call-loading');
+            if (x) x.style.display = 'none';
+        });
+    }, 100);
+    modal.classList.add('active');
+}
+
+/* ============================================================
+   USER PROFILE (other users)
+   ============================================================ */
+function openUserProfile(uid) {
+    if (uid === currentUser.id) { showPage('profile'); return; }
+    const u = users.find(x => x.id === uid);
+    if (!u) return;
+    const isF = (currentUser.friends||[]).includes(uid);
+    const b = friendBtnState(uid);
+    const up = posts.filter(p => p.userId === uid);
+    const c = document.getElementById('feedContainer');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-feed').classList.add('active');
+    const cs = u.cover ? "background-image:url('" + u.cover + "');background-size:cover;background-position:center;" : '';
+    const ah = u.avatar ? '<img src="' + u.avatar + '">' : getInitials(u.name);
+    c.innerHTML =
+        '<div class="profile-header">' +
+            '<div class="profile-cover" style="' + cs + '"></div>' +
+            '<div class="profile-info">' +
+                '<div class="profile-avatar-container"><div class="avatar avatar-profile-big">' + ah + '</div></div>' +
+                '<div class="profile-name-row"><div>' +
+                    '<div class="profile-name">' + escapeHtml(u.name) + '</div>' +
+                    '<div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div>' +
+                    '<div class="profile-academic">' +
+                        (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') +
+                        (u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') +
+                    '</div>' +
+                '</div></div>' +
+                '<div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div>' +
+                '<div class="profile-stats">' +
+                    '<div class="stat"><strong>' + up.length + '</strong><span>Posts</span></div>' +
+                    '<div class="stat"><strong>' + (u.friends||[]).length + '</strong><span>Friends</span></div>' +
+                '</div>' +
+                '<div class="profile-actions">' +
+                    (isF
+                        ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')">💬 Message</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\');showPage(\'feed\');">Remove</button>'
+                        : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') +
+                    '<button class="btn-action btn-action-secondary" onclick="showPage(\'feed\')">← Back</button>' +
+                '</div>' +
+                '<div class="profile-call-row">' +
+                    '<button class="btn-call audio" onclick="startCall(\'' + u.id + '\', \'audio\')">📞 Audio</button>' +
+                    '<button class="btn-call video" onclick="startCall(\'' + u.id + '\', \'video\')">🎥 Video</button>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+        (up.length > 0 ? up.map(p => renderPost(p, false)).join('') : '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>');
+    window.scrollTo(0, 0);
+}
+
+/* ============================================================
+   LIGHTBOX
+   ============================================================ */
+function openLightbox(src) {
+    document.getElementById('lightboxContent').innerHTML = '<img src="' + src + '">';
+    document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox(e) {
+    if (e) e.stopPropagation();
+    document.getElementById('lightbox').classList.remove('active');
+    document.getElementById('lightboxContent').innerHTML = '';
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function handleSearch(q) {
+    if (!q.trim()) { showPage('feed'); return; }
+    const lower = q.toLowerCase();
+    const mu = users.filter(u => u.id !== currentUser.id && (
+        (u.name||'').toLowerCase().includes(lower) ||
+        (u.university||'').toLowerCase().includes(lower) ||
+        (u.country||'').toLowerCase().includes(lower) ||
+        (u.course||'').toLowerCase().includes(lower)
+    ));
+    const mp = posts.filter(p => (p.content||'').toLowerCase().includes(lower));
+    const mg = groups.filter(g => (g.name||'').toLowerCase().includes(lower));
+    showPage('search');
+    const c = document.getElementById('searchResults');
+    document.getElementById('searchTitle').textContent = 'Results for "' + q + '"';
+    let html = '';
+    if (mu.length) {
+        html += '<h4 style="margin:10px 0 8px;font-size:14px;color:#666;">👥 Students</h4>';
+        html += mu.map(u => {
+            const b = friendBtnState(u.id);
+            const isF = (currentUser.friends||[]).includes(u.id);
+            return '<div class="suggestion-item">' + userAvatarHtml(u, 40) +
+                '<div class="s-info" onclick="openUserProfile(\'' + u.id + '\')" style="cursor:pointer;">' +
+                    '<div class="s-name">' + escapeHtml(u.name) + '</div>' +
+                    '<div class="s-uni">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div>' +
+                '</div>' +
+                (isF
+                    ? '<button class="btn-follow following" onclick="startConversation(\'' + u.id + '\')">💬 Chat</button>'
+                    : '<button class="btn-follow ' + b.cls + '" onclick="handleFriendBtn(\'' + u.id + '\')">' + b.label + '</button>') +
+                '</div>';
+        }).join('');
+    }
+    if (mg.length) {
+        html += '<h4 style="margin:20px 0 8px;font-size:14px;color:#666;">👪 Groups</h4>';
+        html += mg.map(g => '<div class="suggestion-item" onclick="openGroup(\'' + g.id + '\')" style="cursor:pointer;"><div class="avatar avatar-40" style="border-radius:10px;background:' + (g.cover ? "url('" + g.cover + "') center/cover" : 'linear-gradient(135deg,#667eea,#764ba2)') + ';">' + (g.cover ? '' : '👪') + '</div><div class="s-info"><div class="s-name">' + escapeHtml(g.name) + '</div><div class="s-uni">' + (g.members||[]).length + ' members</div></div></div>').join('');
+    }
+    if (mp.length) {
+        html += '<h4 style="margin:20px 0 8px;font-size:14px;color:#666;">📝 Posts</h4>';
+        html += mp.slice(0, 20).map(p => renderPost(p, false)).join('');
+    }
+    if (!html) html = '<div class="empty-state"><div class="emoji">🔍</div><p>No results.</p></div>';
+    c.innerHTML = html;
+}
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+function renderAdminIfVisible() {
+    if (!currentUser || currentUser.role !== 'admin') return;
+    if (activePage !== 'admin') return;
+    document.getElementById('adminTotalUsers').textContent = users.length;
+    document.getElementById('adminTotalPosts').textContent = posts.length;
+    document.getElementById('adminTotalGroups').textContent = groups.length;
+    document.getElementById('adminSuspended').textContent = users.filter(u => u.status === 'suspended').length;
+    renderAdminUsers();
+}
+function renderAdminUsers() {
+    const c = document.getElementById('adminUsersList');
+    if (!c) return;
+    const q = (document.getElementById('adminSearchInput')?.value || '').toLowerCase();
+    let list = users.slice();
+    if (q) list = list.filter(u => (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q) || (u.university||'').toLowerCase().includes(q));
+    if (list.length === 0) { c.innerHTML = '<p style="color:#888;text-align:center;padding:20px;">No users.</p>'; return; }
+    c.innerHTML = list.slice(0, 100).map(u =>
+        '<div style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #f0f0f0;">' +
+            userAvatarHtml(u, 40) +
+            '<div style="flex:1;min-width:0;">' +
+                '<div style="font-weight:700;">' + escapeHtml(u.name) +
+                    (u.role === 'admin' ? ' <span style="color:#7c3aed;font-size:11px;">ADMIN</span>' : '') +
+                    (u.status === 'suspended' ? ' <span style="color:#dc2626;font-size:11px;">SUSPENDED</span>' : '') +
+                '</div>' +
+                '<div style="font-size:12px;color:#888;">' + escapeHtml(u.email) + ' · ' + escapeHtml(u.university||'') + '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;">' +
+                (u.status === 'active'
+                    ? '<button onclick="adminSuspend(\'' + u.id + '\')" style="background:#fef3c7;color:#d97706;border:none;padding:5px 10px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Suspend</button>'
+                    : '<button onclick="adminActivate(\'' + u.id + '\')" style="background:#d1fae5;color:#059669;border:none;padding:5px 10px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Activate</button>') +
+                (u.role === 'admin'
+                    ? '<button onclick="adminDemote(\'' + u.id + '\')" style="background:#e4e6eb;border:none;padding:5px 10px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Demote</button>'
+                    : '<button onclick="adminPromote(\'' + u.id + '\')" style="background:#ede9fe;color:#7c3aed;border:none;padding:5px 10px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Promote</button>') +
+                (u.id !== currentUser.id
+                    ? '<button onclick="adminDelete(\'' + u.id + '\')" style="background:#fee2e2;color:#dc2626;border:none;padding:5px 10px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Delete</button>'
+                    : '') +
+            '</div>' +
+        '</div>').join('');
+}
+async function adminSuspend(uid) {
+    const r = prompt('Reason:', 'Violation of rules');
+    if (r === null) return;
+    await fbDb.collection('users').doc(uid).update({ status: 'suspended', statusReason: r });
+    showToast('Suspended.');
+}
+async function adminActivate(uid) {
+    await fbDb.collection('users').doc(uid).update({ status: 'active', statusReason: FV.delete() });
+    showToast('Activated.');
+}
+async function adminPromote(uid) {
+    if (!confirm('Promote to admin?')) return;
+    await fbDb.collection('users').doc(uid).update({ role: 'admin' });
+    showToast('Promoted.');
+}
+async function adminDemote(uid) {
+    if (!confirm('Demote?')) return;
+    await fbDb.collection('users').doc(uid).update({ role: 'student' });
+    showToast('Demoted.');
+}
+async function adminDelete(uid) {
+    if (!confirm('Delete account + all data?')) return;
+    if (!confirm('ABSOLUTELY SURE?')) return;
+    setBusy(true);
+    try {
+        const batch = fbDb.batch();
+        const ps = await fbDb.collection('posts').where('userId','==',uid).get();
+        ps.forEach(d => batch.delete(d.ref));
+        const mf = await fbDb.collection('messages').where('from','==',uid).get();
+        mf.forEach(d => batch.delete(d.ref));
+        const mt = await fbDb.collection('messages').where('to','==',uid).get();
+        mt.forEach(d => batch.delete(d.ref));
+        const st = await fbDb.collection('stories').where('userId','==',uid).get();
+        st.forEach(d => batch.delete(d.ref));
+        batch.delete(fbDb.collection('users').doc(uid));
+        await batch.commit();
+        showToast('Deleted.');
+    } catch (e) { alert('Failed: ' + e.message); }
+    finally { setBusy(false); }
+}
+
+/* ============================================================
+   KEYBOARD + MODAL BACKDROPS
+   ============================================================ */
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (document.getElementById('lightbox').classList.contains('active')) { closeLightbox(); return; }
+        if (document.getElementById('storyViewer').classList.contains('active')) { closeStoryViewer(); return; }
+        if (document.getElementById('callModal').classList.contains('active')) { endCall(); return; }
+        if (document.getElementById('editProfileModal').classList.contains('active')) { closeEditProfile(); return; }
+        if (document.getElementById('groupModal').classList.contains('active')) { closeGroupModal(); return; }
+        if (document.getElementById('inviteModal').classList.contains('active')) { closeInviteModal(); return; }
+        if (document.getElementById('addStoryModal').classList.contains('active')) { closeAddStoryModal(); return; }
+        if (document.getElementById('liveSetupModal').classList.contains('active')) { closeLiveSetup(); return; }
+    }
+});
+['editProfileModal','groupModal','inviteModal','addStoryModal','liveSetupModal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', (e) => {
+        if (e.target.id === id) {
+            if (id === 'editProfileModal') closeEditProfile();
+            if (id === 'groupModal') closeGroupModal();
+            if (id === 'inviteModal') closeInviteModal();
+            if (id === 'addStoryModal') closeAddStoryModal();
+            if (id === 'liveSetupModal') closeLiveSetup();
+        }
+    });
+});
+
 /* ============================================================
    READY
    ============================================================ */

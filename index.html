@@ -1492,6 +1492,8 @@ fbAuth.onAuthStateChanged(async (u) => {
                 currentUser = s.data();
                 updateProfileUI();
                 updateAdminVisibility();
+                updateBadges();
+                if (activePage === 'requests') renderRequests();
             }
         });
         document.getElementById('authScreen').style.display = 'none';
@@ -2284,14 +2286,22 @@ async function sendFriendRequest(toId) {
         await fbDb.collection('users').doc(currentUser.id).update({ sentRequests: FV.arrayUnion(toId) });
         await fbDb.collection('users').doc(toId).update({ friendRequests: FV.arrayUnion(currentUser.id) });
         showToast('Request sent! 🤝');
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        showToast(e.code === 'permission-denied'
+            ? 'Permission denied – update Firestore rules for friend requests'
+            : ('Failed: ' + (e.message || e.code)));
+    }
 }
 async function cancelFriendRequest(toId) {
     try {
         await fbDb.collection('users').doc(currentUser.id).update({ sentRequests: FV.arrayRemove(toId) });
         await fbDb.collection('users').doc(toId).update({ friendRequests: FV.arrayRemove(currentUser.id) });
         showToast('Cancelled.');
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        showToast(e.code === 'permission-denied' ? 'Permission denied – check rules' : ('Failed: ' + e.message));
+    }
 }
 async function acceptFriendRequest(fromId) {
     try {
@@ -2304,14 +2314,20 @@ async function acceptFriendRequest(fromId) {
             friends: FV.arrayUnion(currentUser.id)
         });
         showToast('Friends! 🎉');
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        showToast(e.code === 'permission-denied' ? 'Permission denied – check rules' : ('Failed: ' + e.message));
+    }
 }
 async function declineFriendRequest(fromId) {
     try {
         await fbDb.collection('users').doc(currentUser.id).update({ friendRequests: FV.arrayRemove(fromId) });
         await fbDb.collection('users').doc(fromId).update({ sentRequests: FV.arrayRemove(currentUser.id) });
         showToast('Declined.');
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        showToast(e.code === 'permission-denied' ? 'Permission denied – check rules' : ('Failed: ' + e.message));
+    }
 }
 async function removeFriend(fid) {
     if (!confirm('Remove friend?')) return;
@@ -2319,7 +2335,10 @@ async function removeFriend(fid) {
         await fbDb.collection('users').doc(currentUser.id).update({ friends: FV.arrayRemove(fid) });
         await fbDb.collection('users').doc(fid).update({ friends: FV.arrayRemove(currentUser.id) });
         showToast('Removed.');
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        showToast(e.code === 'permission-denied' ? 'Permission denied – check rules' : ('Failed: ' + e.message));
+    }
 }
 
 /* ============================================================

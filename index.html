@@ -392,33 +392,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .live-setup-row small { display: block; font-weight: 400; font-size: 12px; color: #888; margin-top: 2px; }
 
 /* ============ VERIFIED / BADGE TICKS ============ */
-.verified-badge {
+/* Standard verification ticks (X / LinkedIn style) */
+.verified-badge, .badge-gold, .badge-official, .badge-educator {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: #1d9bf0; color: white; font-size: 10px; font-weight: 900;
+    width: 18px; height: 18px; border-radius: 50%;
     margin-left: 4px; vertical-align: middle; flex-shrink: 0;
-    line-height: 1; box-shadow: 0 1px 2px rgba(29,155,240,0.4);
+    line-height: 0; position: relative;
 }
-.verified-badge.lg { width: 20px; height: 20px; font-size: 12px; margin-left: 6px; }
-.badge-gold {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
-    font-size: 10px; margin-left: 3px; vertical-align: middle; flex-shrink: 0;
+.verified-badge svg, .badge-gold svg, .badge-official svg, .badge-educator svg {
+    width: 18px; height: 18px; display: block;
 }
-.badge-official {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: #7c3aed; color: white; font-size: 9px;
-    margin-left: 3px; vertical-align: middle; flex-shrink: 0;
+.verified-badge.lg, .badge-gold.lg, .badge-official.lg, .badge-educator.lg {
+    width: 22px; height: 22px; margin-left: 6px;
 }
-.badge-educator {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: #059669; color: white; font-size: 9px;
-    margin-left: 3px; vertical-align: middle; flex-shrink: 0;
+.verified-badge.lg svg, .badge-gold.lg svg, .badge-official.lg svg, .badge-educator.lg svg {
+    width: 22px; height: 22px;
 }
-.name-with-badge { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 2px; }
+.name-with-badge { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 1px; }
+.account-type-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;
+}
+.account-type-pill.student { background: #eef2ff; color: #667eea; }
+.account-type-pill.alumni { background: #fef3c7; color: #d97706; }
+.account-type-pill.professional { background: #d1fae5; color: #059669; }
+.account-type-pill.educator { background: #ede9fe; color: #7c3aed; }
 
 /* ============ TOAST + LOADER ============ */
 .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:#1a1a2e; color:white; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; opacity:0; transition:all 0.4s ease; z-index:999; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
@@ -592,17 +590,40 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             <div class="form-group"><label>Phone Number</label>
                 <input type="tel" id="regPhone" placeholder="+256 700 000 000">
                 <small>Include country code</small></div>
-            <div class="form-group"><label>University</label>
+            <div class="form-group"><label>Date of Birth</label>
+                <input type="date" id="regDob" max="2015-12-31"></div>
+            <div class="form-group"><label>Gender</label>
+                <select id="regGender">
+                    <option value="">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer_not">Prefer not to say</option>
+                </select></div>
+            <div class="form-group"><label>I am a...</label>
+                <select id="regAccountType" onchange="toggleRegStudentFields()">
+                    <option value="student">🎓 Current student</option>
+                    <option value="alumni">🎖 Alumni / Graduated</option>
+                    <option value="professional">💼 Working professional</option>
+                    <option value="educator">📚 Educator / Lecturer</option>
+                </select></div>
+            <div class="form-group"><label>University / Institution</label>
                 <input type="text" id="regUniversity" placeholder="e.g. Makerere University"></div>
-            <div class="form-group"><label>Course / Program</label>
+            <div class="form-group" id="regCourseGroup"><label>Course / Program</label>
                 <input type="text" id="regCourse" placeholder="e.g. BSc Computer Science"></div>
-            <div class="form-group"><label>Academic Year</label>
+            <div class="form-group" id="regYearGroup"><label>Academic Year</label>
                 <select id="regYear">
                     <option value="">Select year...</option>
                     <option>Year 1</option><option>Year 2</option><option>Year 3</option>
                     <option>Year 4</option><option>Year 5</option><option>Year 6</option>
-                    <option>Postgraduate</option><option>PhD</option><option>Alumni</option>
+                    <option>Postgraduate</option><option>PhD</option>
                 </select></div>
+            <div class="form-group" id="regGradYearGroup" style="display:none;"><label>Graduation Year</label>
+                <input type="number" id="regGradYear" placeholder="e.g. 2022" min="1970" max="2035"></div>
+            <div class="form-group" id="regOccupationGroup" style="display:none;"><label>Occupation / Job Title</label>
+                <input type="text" id="regOccupation" placeholder="e.g. Software Engineer"></div>
+            <div class="form-group" id="regCompanyGroup" style="display:none;"><label>Company / Organisation (optional)</label>
+                <input type="text" id="regCompany" placeholder="e.g. Andela"></div>
             <div class="form-group"><label>Country</label>
                 <input type="text" id="regCountry" placeholder="e.g. Uganda"></div>
             <div class="form-group">
@@ -1027,17 +1048,40 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             </div>
             <div class="form-group"><label>Full Name</label>
                 <input type="text" id="editName"></div>
-            <div class="form-group"><label>University</label>
+            <div class="form-group"><label>Date of Birth</label>
+                <input type="date" id="editDob" max="2015-12-31"></div>
+            <div class="form-group"><label>Gender</label>
+                <select id="editGender">
+                    <option value="">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer_not">Prefer not to say</option>
+                </select></div>
+            <div class="form-group"><label>I am a...</label>
+                <select id="editAccountType" onchange="toggleEditStudentFields()">
+                    <option value="student">🎓 Current student</option>
+                    <option value="alumni">🎖 Alumni / Graduated</option>
+                    <option value="professional">💼 Working professional</option>
+                    <option value="educator">📚 Educator / Lecturer</option>
+                </select></div>
+            <div class="form-group"><label>University / Institution</label>
                 <input type="text" id="editUniversity"></div>
-            <div class="form-group"><label>Course / Program</label>
+            <div class="form-group" id="editCourseGroup"><label>Course / Program</label>
                 <input type="text" id="editCourse"></div>
-            <div class="form-group"><label>Academic Year</label>
+            <div class="form-group" id="editYearGroup"><label>Academic Year</label>
                 <select id="editYear">
                     <option value="">Select year...</option>
                     <option>Year 1</option><option>Year 2</option><option>Year 3</option>
                     <option>Year 4</option><option>Year 5</option><option>Year 6</option>
-                    <option>Postgraduate</option><option>PhD</option><option>Alumni</option>
+                    <option>Postgraduate</option><option>PhD</option>
                 </select></div>
+            <div class="form-group" id="editGradYearGroup" style="display:none;"><label>Graduation Year</label>
+                <input type="number" id="editGradYear" placeholder="e.g. 2022" min="1970" max="2035"></div>
+            <div class="form-group" id="editOccupationGroup" style="display:none;"><label>Occupation / Job Title</label>
+                <input type="text" id="editOccupation" placeholder="e.g. Software Engineer"></div>
+            <div class="form-group" id="editCompanyGroup" style="display:none;"><label>Company / Organisation</label>
+                <input type="text" id="editCompany" placeholder="e.g. Andela"></div>
             <div class="form-group"><label>Country</label>
                 <input type="text" id="editCountry"></div>
             <div class="form-group"><label>Phone</label>
@@ -1353,20 +1397,38 @@ function userAvatarHtml(user, size, extraClass) {
     const cls = `avatar avatar-${size} ${extraClass || ''}`.trim();
     return `<div class="${cls}">${imgTag || initials}</div>`;
 }
+function badgeSvg(color) {
+    // Standard rounded-check mark (similar to X / Meta verified)
+    return '<svg viewBox="0 0 22 22" aria-hidden="true"><g>' +
+        '<path fill="' + color + '" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"/>' +
+        '</g></svg>';
+}
 function userBadgeHtml(user, large) {
     if (!user) return '';
+    const lg = large ? ' lg' : '';
     let html = '';
     if (user.verified) {
-        html += `<span class="verified-badge${large ? ' lg' : ''}" title="Verified account">✓</span>`;
+        html += '<span class="verified-badge' + lg + '" title="Verified account">' + badgeSvg('#1d9bf0') + '</span>';
     }
     if (user.badge === 'gold') {
-        html += `<span class="badge-gold" title="Gold member">★</span>`;
+        html += '<span class="badge-gold' + lg + '" title="Gold member">' + badgeSvg('#f59e0b') + '</span>';
     } else if (user.badge === 'official') {
-        html += `<span class="badge-official" title="Official account">🏛</span>`;
+        html += '<span class="badge-official' + lg + '" title="Official account">' + badgeSvg('#7c3aed') + '</span>';
     } else if (user.badge === 'educator') {
-        html += `<span class="badge-educator" title="Educator">📚</span>`;
+        html += '<span class="badge-educator' + lg + '" title="Educator">' + badgeSvg('#059669') + '</span>';
     }
     return html;
+}
+function accountTypePill(user) {
+    if (!user) return '';
+    const t = user.accountType || (user.year === 'Alumni' ? 'alumni' : 'student');
+    const labels = {
+        student: '🎓 Student',
+        alumni: '🎖 Alumni',
+        professional: '💼 Professional',
+        educator: '📚 Educator'
+    };
+    return '<span class="account-type-pill ' + t + '">' + (labels[t] || labels.student) + '</span>';
 }
 function displayName(user, large) {
     if (!user) return 'Unknown';
@@ -1471,6 +1533,31 @@ function showRegister() {
     document.getElementById('loginForm').style.display = 'none';
     document.getElementById('registerForm').style.display = 'block';
     document.getElementById('recoveryForm').style.display = 'none';
+    toggleRegStudentFields();
+}
+function toggleRegStudentFields() {
+    const t = (document.getElementById('regAccountType') || {}).value || 'student';
+    const isStudent = t === 'student';
+    const isAlumni = t === 'alumni';
+    const showWork = t === 'alumni' || t === 'professional' || t === 'educator';
+    const set = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? 'block' : 'none'; };
+    set('regCourseGroup', isStudent || isAlumni);
+    set('regYearGroup', isStudent);
+    set('regGradYearGroup', isAlumni);
+    set('regOccupationGroup', showWork);
+    set('regCompanyGroup', showWork);
+}
+function toggleEditStudentFields() {
+    const t = (document.getElementById('editAccountType') || {}).value || 'student';
+    const isStudent = t === 'student';
+    const isAlumni = t === 'alumni';
+    const showWork = t === 'alumni' || t === 'professional' || t === 'educator';
+    const set = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? 'block' : 'none'; };
+    set('editCourseGroup', isStudent || isAlumni);
+    set('editYearGroup', isStudent);
+    set('editGradYearGroup', isAlumni);
+    set('editOccupationGroup', showWork);
+    set('editCompanyGroup', showWork);
 }
 function showLogin() {
     document.getElementById('registerForm').style.display = 'none';
@@ -1572,9 +1659,15 @@ async function handleRegister() {
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim().toLowerCase();
     const phone = document.getElementById('regPhone').value.trim().replace(/\s/g,'');
+    const dob = document.getElementById('regDob').value;
+    const gender = document.getElementById('regGender').value;
+    const accountType = document.getElementById('regAccountType').value || 'student';
     const university = document.getElementById('regUniversity').value.trim();
     const course = document.getElementById('regCourse').value.trim();
     const year = document.getElementById('regYear').value;
+    const gradYear = document.getElementById('regGradYear').value;
+    const occupation = document.getElementById('regOccupation').value.trim();
+    const company = document.getElementById('regCompany').value.trim();
     const country = document.getElementById('regCountry').value.trim();
     const password = document.getElementById('regPassword').value;
     const confirm = document.getElementById('regPasswordConfirm').value;
@@ -1582,6 +1675,12 @@ async function handleRegister() {
     const err = document.getElementById('regError');
     const ok = document.getElementById('regSuccess');
     if (!name || !email || !phone || !university || !country) { err.textContent = 'Fill required fields.'; err.style.display = 'block'; return; }
+    if (!dob) { err.textContent = 'Date of birth is required.'; err.style.display = 'block'; return; }
+    if (!gender) { err.textContent = 'Please select your gender.'; err.style.display = 'block'; return; }
+    // Age check (must be at least 13)
+    const ageMs = Date.now() - new Date(dob).getTime();
+    const ageYears = ageMs / (365.25 * 24 * 60 * 60 * 1000);
+    if (ageYears < 13) { err.textContent = 'You must be at least 13 years old.'; err.style.display = 'block'; return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Invalid email.'; err.style.display = 'block'; return; }
     if (!/^\+[1-9]\d{7,14}$/.test(phone)) { err.textContent = 'Invalid phone. Use format +256700000000'; err.style.display = 'block'; return; }
     if (!isPasswordStrong(password)) { err.textContent = 'Weak password.'; err.style.display = 'block'; return; }
@@ -1590,14 +1689,12 @@ async function handleRegister() {
     let createdAuthUser = null;
     try {
         // 1. Create Auth account FIRST → user becomes authenticated
-        //    (Firebase Auth already enforces unique emails)
         const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
         createdAuthUser = cred.user;
         const uid = cred.user.uid;
         try { await cred.user.sendEmailVerification(); } catch (e) {}
 
-        // 2. Now authenticated — try uniqueness / first-user checks.
-        //    If rules block collection queries, we skip them gracefully.
+        // 2. Now authenticated — try uniqueness / first-user checks
         let isFirst = false;
         try {
             const phSnap = await fbDb.collection('users').where('phone','==',phone).limit(1).get();
@@ -1610,14 +1707,21 @@ async function handleRegister() {
             isFirst = totalSnap.empty;
         } catch (queryErr) {
             if (queryErr.message === 'phone-taken') throw queryErr;
-            // permission-denied on list/query → continue without the checks
             console.warn('User list query blocked by rules, skipping phone/first checks:', queryErr.message);
         }
 
         // 3. Create the user profile document
         await fbDb.collection('users').doc(uid).set({
             id: uid, name, email, phone, university,
-            course: course || '', year: year || '', country,
+            course: course || '',
+            year: accountType === 'student' ? (year || '') : (accountType === 'alumni' ? 'Alumni' : ''),
+            gradYear: gradYear || '',
+            occupation: occupation || '',
+            company: company || '',
+            dob: dob,
+            gender: gender,
+            accountType: accountType,
+            country,
             bio: bio || 'No bio yet.',
             role: isFirst ? 'admin' : 'student',
             status: 'active',
@@ -1626,6 +1730,7 @@ async function handleRegister() {
             friends: [], friendRequests: [], sentRequests: [],
             avatar: null, cover: null,
             joined: Date.now(), lastLogin: Date.now(),
+            online: true, lastSeen: Date.now(),
             emailVerified: false, phoneVerified: false
         });
 
@@ -1857,8 +1962,11 @@ function updateProfileUI() {
         (currentUser.university || '') + ' • ' + (currentUser.country || '');
     document.getElementById('profileBio').textContent = currentUser.bio || 'No bio yet.';
     document.getElementById('profileAcademic').innerHTML =
+        accountTypePill(currentUser) +
         (currentUser.course ? '<span class="academic-pill">📚 ' + escapeHtml(currentUser.course) + '</span>' : '') +
-        (currentUser.year ? '<span class="academic-pill">🎓 ' + escapeHtml(currentUser.year) + '</span>' : '');
+        (currentUser.accountType === 'student' && currentUser.year ? '<span class="academic-pill">🎓 ' + escapeHtml(currentUser.year) + '</span>' : '') +
+        (currentUser.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(currentUser.gradYear)) + '</span>' : '') +
+        (currentUser.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(currentUser.occupation) + (currentUser.company ? ' @ ' + escapeHtml(currentUser.company) : '') + '</span>' : '');
     const myPosts = posts.filter(p => p.userId === currentUser.id);
     document.getElementById('sidebarPosts').textContent = myPosts.length;
     document.getElementById('sidebarFriends').textContent = (currentUser.friends || []).length;
@@ -2176,12 +2284,19 @@ function openEditProfile() {
     if (!currentUser) return;
     pendingAvatar = undefined; pendingCover = undefined;
     document.getElementById('editName').value = currentUser.name || '';
+    document.getElementById('editDob').value = currentUser.dob || '';
+    document.getElementById('editGender').value = currentUser.gender || '';
+    document.getElementById('editAccountType').value = currentUser.accountType || (currentUser.year === 'Alumni' ? 'alumni' : 'student');
     document.getElementById('editUniversity').value = currentUser.university || '';
     document.getElementById('editCourse').value = currentUser.course || '';
-    document.getElementById('editYear').value = currentUser.year || '';
+    document.getElementById('editYear').value = (currentUser.year === 'Alumni' ? '' : (currentUser.year || ''));
+    document.getElementById('editGradYear').value = currentUser.gradYear || '';
+    document.getElementById('editOccupation').value = currentUser.occupation || '';
+    document.getElementById('editCompany').value = currentUser.company || '';
     document.getElementById('editCountry').value = currentUser.country || '';
     document.getElementById('editPhone').value = currentUser.phone || '';
     document.getElementById('editBio').value = currentUser.bio || '';
+    toggleEditStudentFields();
     const av = document.getElementById('editAvatarPreview');
     av.innerHTML = currentUser.avatar ? '<img src="' + currentUser.avatar + '">' : getInitials(currentUser.name);
     document.getElementById('removeAvatarBtn').style.display = currentUser.avatar ? 'inline-block' : 'none';
@@ -2248,14 +2363,31 @@ function removeCover() {
 }
 async function saveProfile() {
     const name = document.getElementById('editName').value.trim();
+    const dob = document.getElementById('editDob').value;
+    const gender = document.getElementById('editGender').value;
+    const accountType = document.getElementById('editAccountType').value || 'student';
     const university = document.getElementById('editUniversity').value.trim();
     const course = document.getElementById('editCourse').value.trim();
     const year = document.getElementById('editYear').value;
+    const gradYear = document.getElementById('editGradYear').value;
+    const occupation = document.getElementById('editOccupation').value.trim();
+    const company = document.getElementById('editCompany').value.trim();
     const country = document.getElementById('editCountry').value.trim();
     const phone = document.getElementById('editPhone').value.trim().replace(/\s/g,'');
     const bio = document.getElementById('editBio').value.trim();
     if (!name || !university || !country) { alert('Name, university, country required.'); return; }
-    const upd = { name: name, university: university, course: course, year: year, country: country, phone: phone, bio: bio || 'No bio yet.' };
+    const upd = {
+        name, university, country, phone,
+        course: course || '',
+        year: accountType === 'student' ? (year || '') : (accountType === 'alumni' ? 'Alumni' : ''),
+        gradYear: gradYear || '',
+        occupation: occupation || '',
+        company: company || '',
+        dob: dob || '',
+        gender: gender || '',
+        accountType,
+        bio: bio || 'No bio yet.'
+    };
     if (pendingAvatar === null) upd.avatar = null;
     else if (pendingAvatar !== undefined) upd.avatar = pendingAvatar;
     if (pendingCover === null) upd.cover = null;
@@ -3455,8 +3587,11 @@ function openUserProfile(uid) {
                     '<div class="profile-name">' + displayName(u, true) + '</div>' +
                     '<div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div>' +
                     '<div class="profile-academic">' +
+                        accountTypePill(u) +
                         (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') +
-                        (u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') +
+                        (u.accountType === 'student' && u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') +
+                        (u.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(u.gradYear)) + '</span>' : '') +
+                        (u.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(u.occupation) + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</span>' : '') +
                     '</div>' +
                 '</div></div>' +
                 '<div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div>' +

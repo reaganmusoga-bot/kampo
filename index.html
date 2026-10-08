@@ -231,8 +231,61 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .message { max-width:65%; padding:8px 14px; border-radius:16px; font-size:14px; line-height:1.4; word-wrap:break-word; }
 .message.sent { align-self:flex-end; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border-bottom-right-radius:4px; }
 .message.received { align-self:flex-start; background:white; color:#1a1a2e; border-bottom-left-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
-.message .msg-time { font-size:10px; opacity:0.7; margin-top:4px; display:block; text-align:right; }
+.message .msg-meta { display:flex; align-items:center; justify-content:flex-end; gap:4px; margin-top:4px; }
+.message .msg-time { font-size:10px; opacity:0.7; }
+.message.sent .msg-time { opacity:0.85; }
+.message .msg-ticks { font-size:12px; letter-spacing:-2px; line-height:1; opacity:0.85; font-weight:700; }
+.message .msg-ticks.sent { color: rgba(255,255,255,0.75); }
+.message .msg-ticks.delivered { color: rgba(255,255,255,0.9); }
+.message .msg-ticks.read { color: #7dd3fc; } /* light blue on purple bubble = read */
 .message .msg-media { max-width:260px; border-radius:10px; margin:4px 0; display:block; cursor:pointer; }
+.online-friends-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #d1fae5; color: #059669; font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 12px; margin-top: 8px;
+}
+.online-friends-pill .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+    animation: livePulse 1.2s ease-in-out infinite;
+}
+.hub-card {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    padding: 16px 14px; border: none; border-radius: 12px; background: #f8f9fa;
+    cursor: pointer; text-align: left; transition: all 0.15s;
+}
+.hub-card:hover { background: #eef2ff; transform: translateY(-2px); }
+.hub-card span { font-size: 28px; }
+.hub-card strong { font-size: 14px; color: #1a1a2e; }
+.hub-card small { font-size: 11px; color: #888; }
+.post-reactions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.react-btn {
+    background: #f0f2f5; border: none; border-radius: 16px; padding: 4px 10px;
+    font-size: 13px; cursor: pointer; font-weight: 600; color: #555;
+}
+.react-btn.active { background: #eef2ff; color: #667eea; }
+.react-btn:hover { background: #e4e6eb; }
+.poll-box { background: #f8f9fa; border-radius: 10px; padding: 12px; margin-top: 10px; }
+.poll-option {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+    background: white; border-radius: 8px; margin-bottom: 6px; cursor: pointer;
+    border: 2px solid #e0e0e0; position: relative; overflow: hidden;
+}
+.poll-option:hover { border-color: #667eea; }
+.poll-option .poll-bar {
+    position: absolute; left: 0; top: 0; bottom: 0; background: rgba(102,126,234,0.12);
+    z-index: 0; transition: width 0.3s;
+}
+.poll-option span { position: relative; z-index: 1; font-size: 13px; font-weight: 600; }
+.typing-indicator {
+    font-size: 12px; color: #667eea; font-style: italic; padding: 4px 20px;
+    display: none;
+}
+.typing-indicator.show { display: block; }
+.feature-card {
+    background: white; border-radius: 12px; padding: 14px; margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.voice-rec-btn.recording { background: #fee2e2 !important; color: #dc2626 !important; animation: livePulse 1s infinite; }
 .chat-media-preview { display: none; padding: 10px 20px; background: #f8f9fb; border-top: 1px solid #eee; position: relative; flex-shrink: 0; }
 .chat-media-preview.active { display: block; }
 .chat-media-preview img, .chat-media-preview video { max-height: 140px; border-radius: 8px; display: block; }
@@ -732,9 +785,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             <span>Groups</span>
             <span class="bn-badge" id="bnGrpBadge">0</span>
         </button>
-        <button class="bottom-nav-item" data-page="students" onclick="showPage('students')">
-            <span class="bn-icon">🌍</span>
-            <span>Discover</span>
+        <button class="bottom-nav-item" data-page="more" onclick="showPage('more')">
+            <span class="bn-icon">✨</span>
+            <span>More</span>
         </button>
     </nav>
 
@@ -754,6 +807,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                             <strong id="sidebarFriends">0</strong><span>Friends</span>
                         </div>
                     </div>
+                    <div class="online-friends-pill" id="sidebarOnlineFriends" style="display:none;" onclick="showPage('requests'); switchReqTab('friends');">
+                        <span class="dot"></span>
+                        <span id="sidebarOnlineCount">0</span> online
+                    </div>
                 </div>
             </div>
             <div class="sidebar-card">
@@ -763,6 +820,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div class="sidebar-link" onclick="showPage('notifications')"><span class="icon">🔔</span> Notifications<span class="link-badge" id="sideNotifBadge" style="display:none;">0</span></div>
                 <div class="sidebar-link" onclick="showPage('groups')"><span class="icon">👪</span> Groups<span class="link-badge" id="sideGrpBadge" style="display:none;">0</span></div>
                 <div class="sidebar-link" onclick="showPage('students')"><span class="icon">🌍</span> Discover Students</div>
+                <div class="sidebar-link" onclick="showPage('events')"><span class="icon">📅</span> Events</div>
+                <div class="sidebar-link" onclick="showPage('market')"><span class="icon">🛒</span> Marketplace</div>
+                <div class="sidebar-link" onclick="showPage('confessions')"><span class="icon">🙊</span> Confessions</div>
+                <div class="sidebar-link" onclick="showPage('study')"><span class="icon">⏱️</span> Study Rooms</div>
+                <div class="sidebar-link" onclick="showPage('more')"><span class="icon">✨</span> More</div>
                 <div class="sidebar-link" onclick="showPage('profile')"><span class="icon">👤</span> My Profile</div>
                 <div class="sidebar-link" onclick="openEditProfile()"><span class="icon">✏️</span> Edit Profile</div>
                 <div class="sidebar-link" id="adminSidebarLink" onclick="showPage('admin')" style="display:none;"><span class="icon">⚙️</span> Admin Panel</div>
@@ -800,10 +862,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                         <button class="remove-media" onclick="clearPostMedia()">✕</button>
                         <div id="postMediaContent"></div>
                     </div>
+                    <div id="pollBuilder" style="display:none;margin-top:10px;padding:12px;background:#f8f9fa;border-radius:10px;">
+                        <div class="form-group" style="margin-bottom:8px;"><label>Poll question</label>
+                            <input type="text" id="pollQuestion" placeholder="Ask something..."></div>
+                        <div class="form-group" style="margin-bottom:6px;"><input type="text" id="pollOpt1" placeholder="Option 1"></div>
+                        <div class="form-group" style="margin-bottom:6px;"><input type="text" id="pollOpt2" placeholder="Option 2"></div>
+                        <div class="form-group" style="margin-bottom:6px;"><input type="text" id="pollOpt3" placeholder="Option 3 (optional)"></div>
+                        <button type="button" class="action-btn" onclick="clearPollBuilder()">Remove poll</button>
+                    </div>
                     <div class="post-actions">
                         <div class="action-btns">
                             <button class="action-btn" id="photoBtn" onclick="triggerPhotoUpload()">📷 Photo</button>
                             <button class="action-btn" id="videoBtn" onclick="triggerVideoUpload()">🎥 Video</button>
+                            <button class="action-btn" id="pollBtn" onclick="togglePollBuilder()">📊 Poll</button>
                             <button class="action-btn" onclick="openAddStoryModal()">📸 Story</button>
                             <button class="action-btn" onclick="openLiveSetup()">🔴 Go Live</button>
                             <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleMediaSelect(event, 'image')">
@@ -893,6 +964,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                         <div class="profile-stats">
                             <div class="stat"><strong id="profilePosts">0</strong><span>Posts</span></div>
                             <div class="stat"><strong id="profileFriends">0</strong><span>Friends</span></div>
+                            <div class="stat"><strong id="profileOnlineFriends" style="color:#22c55e;">0</strong><span>Online</span></div>
                         </div>
                         <div class="profile-call-row" id="profileCallRow"></div>
                     </div>
@@ -905,6 +977,74 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div class="sidebar-card">
                     <h3>🌍 Discover Students Worldwide</h3>
                     <div id="studentsContainer"></div>
+                </div>
+            </div>
+
+            <!-- MORE HUB -->
+            <div class="page" id="page-more">
+                <div class="sidebar-card" style="padding:18px;">
+                    <h3 style="margin:0 0 14px;font-size:16px;text-transform:none;letter-spacing:0;color:#1a1a2e;">✨ Explore Kampo</h3>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;">
+                        <button class="hub-card" onclick="showPage('events')"><span>📅</span><strong>Events</strong><small>Campus hangouts</small></button>
+                        <button class="hub-card" onclick="showPage('market')"><span>🛒</span><strong>Marketplace</strong><small>Buy & sell</small></button>
+                        <button class="hub-card" onclick="showPage('confessions')"><span>🙊</span><strong>Confessions</strong><small>Anonymous</small></button>
+                        <button class="hub-card" onclick="showPage('study')"><span>⏱️</span><strong>Study Rooms</strong><small>Focus together</small></button>
+                        <button class="hub-card" onclick="showPage('students')"><span>🌍</span><strong>Discover</strong><small>Find students</small></button>
+                        <button class="hub-card" onclick="showPage('mentors')"><span>🎓</span><strong>Mentors</strong><small>Alumni & pros</small></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENTS -->
+            <div class="page" id="page-events">
+                <div class="groups-toolbar">
+                    <input type="text" id="eventsSearch" placeholder="🔍 Search events..." oninput="renderEvents()">
+                    <button class="btn-create-group" onclick="openEventModal()">➕ Create Event</button>
+                </div>
+                <div id="eventsList"></div>
+            </div>
+
+            <!-- MARKETPLACE -->
+            <div class="page" id="page-market">
+                <div class="groups-toolbar">
+                    <input type="text" id="marketSearch" placeholder="🔍 Search items..." oninput="renderMarket()">
+                    <button class="btn-create-group" onclick="openMarketModal()">➕ List Item</button>
+                </div>
+                <div class="groups-grid" id="marketGrid"></div>
+            </div>
+
+            <!-- CONFESSIONS -->
+            <div class="page" id="page-confessions">
+                <div class="create-post">
+                    <p style="font-size:13px;color:#666;margin-bottom:10px;">🙊 Post anonymously. Be kind — harassment can still be reported.</p>
+                    <textarea id="confessionText" placeholder="What's on your mind? (anonymous)" style="width:100%;border:none;background:#f8f9fa;border-radius:8px;padding:12px;min-height:70px;font-family:inherit;font-size:15px;outline:none;"></textarea>
+                    <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+                        <button class="btn-post" onclick="postConfession()">Post anonymously</button>
+                    </div>
+                </div>
+                <div id="confessionsList"></div>
+            </div>
+
+            <!-- STUDY ROOMS -->
+            <div class="page" id="page-study">
+                <div class="sidebar-card" style="padding:16px;margin-bottom:14px;">
+                    <h3 style="margin:0 0 10px;font-size:15px;text-transform:none;letter-spacing:0;color:#1a1a2e;">⏱️ Study Rooms</h3>
+                    <p style="font-size:13px;color:#666;margin-bottom:12px;">Start a focus session. Friends can join via video.</p>
+                    <div class="form-group"><label>Session title</label>
+                        <input type="text" id="studyTitle" placeholder="e.g. Organic Chemistry review"></div>
+                    <div class="form-group"><label>Duration (minutes)</label>
+                        <select id="studyDuration"><option value="25">25 (Pomodoro)</option><option value="50">50</option><option value="90">90</option></select></div>
+                    <button class="btn-post" onclick="startStudyRoom()">🚀 Start Study Room</button>
+                </div>
+                <div id="studyRoomsList"></div>
+            </div>
+
+            <!-- MENTORS -->
+            <div class="page" id="page-mentors">
+                <div class="sidebar-card">
+                    <h3>🎓 Mentorship</h3>
+                    <p style="font-size:13px;color:#666;margin:8px 0 14px;">Alumni & professionals open to mentoring students.</p>
+                    <div id="mentorsList"></div>
                 </div>
             </div>
 
@@ -1088,10 +1228,83 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <input type="tel" id="editPhone"></div>
             <div class="form-group"><label>Bio</label>
                 <textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;"></textarea></div>
+            <div class="form-group"><label>LinkedIn URL</label>
+                <input type="url" id="editLinkedin" placeholder="https://linkedin.com/in/..."></div>
+            <div class="form-group"><label>GitHub URL</label>
+                <input type="url" id="editGithub" placeholder="https://github.com/..."></div>
+            <div class="form-group"><label>Portfolio / Website</label>
+                <input type="url" id="editWebsite" placeholder="https://..."></div>
+            <div class="form-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" id="editMentorOpen" style="width:auto;"> Open to mentoring students
+                </label>
+            </div>
+            <div class="form-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" id="editSeekingMentor" style="width:auto;"> Looking for a mentor
+                </label>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeEditProfile()">Cancel</button>
             <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Event modal -->
+<div class="modal-backdrop" id="eventModal">
+    <div class="modal">
+        <div class="modal-header"><h3>📅 Create Event</h3><button class="close-btn" onclick="closeEventModal()">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Title *</label><input type="text" id="eventTitle"></div>
+            <div class="form-group"><label>Description</label><textarea id="eventDesc" rows="3"></textarea></div>
+            <div class="form-group"><label>Location</label><input type="text" id="eventLocation" placeholder="e.g. Main Library"></div>
+            <div class="form-group"><label>Date & time</label><input type="datetime-local" id="eventWhen"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeEventModal()">Cancel</button>
+            <button class="btn-save" onclick="saveEvent()">Create</button>
+        </div>
+    </div>
+</div>
+
+<!-- Market modal -->
+<div class="modal-backdrop" id="marketModal">
+    <div class="modal">
+        <div class="modal-header"><h3>🛒 List Item</h3><button class="close-btn" onclick="closeMarketModal()">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Title *</label><input type="text" id="marketTitle"></div>
+            <div class="form-group"><label>Price (UGX / local currency)</label><input type="text" id="marketPrice" placeholder="e.g. 50000"></div>
+            <div class="form-group"><label>Category</label>
+                <select id="marketCategory"><option>Textbooks</option><option>Electronics</option><option>Furniture</option><option>Clothing</option><option>Other</option></select></div>
+            <div class="form-group"><label>Description</label><textarea id="marketDesc" rows="3"></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeMarketModal()">Cancel</button>
+            <button class="btn-save" onclick="saveMarketItem()">List</button>
+        </div>
+    </div>
+</div>
+
+<!-- Report modal -->
+<div class="modal-backdrop" id="reportModal">
+    <div class="modal">
+        <div class="modal-header"><h3>🚩 Report</h3><button class="close-btn" onclick="closeReportModal()">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Reason</label>
+                <select id="reportReason">
+                    <option value="spam">Spam</option>
+                    <option value="harassment">Harassment</option>
+                    <option value="hate">Hate speech</option>
+                    <option value="inappropriate">Inappropriate content</option>
+                    <option value="other">Other</option>
+                </select></div>
+            <div class="form-group"><label>Details (optional)</label><textarea id="reportDetails" rows="3"></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeReportModal()">Cancel</button>
+            <button class="btn-save" onclick="submitReport()">Submit report</button>
         </div>
     </div>
 </div>
@@ -1272,6 +1485,11 @@ const MAX_VIDEO_DURATION = 30;
    ============================================================ */
 let currentUser = null;
 let users = [], posts = [], messages = [], groups = [], stories = [], lives = [], notifications = [];
+let events = [], marketItems = [], confessions = [], studyRooms = [];
+let pendingPoll = false;
+let reportTarget = null; // { type: 'user'|'post'|'confession', id }
+let typingTimeout = null;
+let voiceRecorder = null, voiceChunks = [], pendingVoice = null;
 let activePage = 'feed';
 let activeConversation = null;
 let activeGroup = null;
@@ -1433,6 +1651,15 @@ function accountTypePill(user) {
 function displayName(user, large) {
     if (!user) return 'Unknown';
     return `<span class="name-with-badge">${escapeHtml(user.name || 'Unknown')}${userBadgeHtml(user, large)}</span>`;
+}
+function portfolioLinksHtml(user) {
+    if (!user || !user.portfolio) return '';
+    const p = user.portfolio;
+    let h = '';
+    if (p.linkedin) h += '<a class="academic-pill" href="' + escapeHtml(p.linkedin) + '" target="_blank" rel="noopener" style="text-decoration:none;">LinkedIn</a>';
+    if (p.github) h += '<a class="academic-pill" href="' + escapeHtml(p.github) + '" target="_blank" rel="noopener" style="text-decoration:none;">GitHub</a>';
+    if (p.website) h += '<a class="academic-pill" href="' + escapeHtml(p.website) + '" target="_blank" rel="noopener" style="text-decoration:none;">Website</a>';
+    return h;
 }
 function setAvatarElement(el, user, sizeClass) {
     if (!el) return;
@@ -1889,6 +2116,37 @@ async function startListeners() {
         lives = s.docs.map(d => ({ ...d.data(), id: d.id }));
         renderLiveStrip();
     }, e => console.warn('lives', e));
+    fbDb.collection('events').orderBy('when','asc').limit(100).onSnapshot(s => {
+        events = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        if (activePage === 'events') renderEvents();
+    }, e => {
+        fbDb.collection('events').limit(100).onSnapshot(s2 => {
+            events = s2.docs.map(d => ({ ...d.data(), id: d.id })).sort((a,b)=>(a.when||0)-(b.when||0));
+            if (activePage === 'events') renderEvents();
+        }, ()=>{});
+    });
+    fbDb.collection('market').orderBy('timestamp','desc').limit(100).onSnapshot(s => {
+        marketItems = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        if (activePage === 'market') renderMarket();
+    }, e => {
+        fbDb.collection('market').limit(100).onSnapshot(s2 => {
+            marketItems = s2.docs.map(d => ({ ...d.data(), id: d.id }));
+            if (activePage === 'market') renderMarket();
+        }, ()=>{});
+    });
+    fbDb.collection('confessions').orderBy('timestamp','desc').limit(100).onSnapshot(s => {
+        confessions = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        if (activePage === 'confessions') renderConfessions();
+    }, e => {
+        fbDb.collection('confessions').limit(100).onSnapshot(s2 => {
+            confessions = s2.docs.map(d => ({ ...d.data(), id: d.id })).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+            if (activePage === 'confessions') renderConfessions();
+        }, ()=>{});
+    });
+    fbDb.collection('studyRooms').where('active','==',true).onSnapshot(s => {
+        studyRooms = s.docs.map(d => ({ ...d.data(), id: d.id }));
+        if (activePage === 'study') renderStudyRooms();
+    }, e => console.warn('study', e));
     unsubNotifications = fbDb.collection('notifications')
         .where('to', '==', uid)
         .orderBy('timestamp', 'desc')
@@ -1929,12 +2187,48 @@ async function reloadMessages() {
     const map = new Map();
     [...o.docs, ...i.docs].forEach(d => map.set(d.id, { ...d.data(), id: d.id }));
     messages = [...map.values()].sort((a,b) => a.timestamp - b.timestamp);
+
+    // Mark incoming messages as delivered when we receive them
+    const undelivered = messages.filter(m => m.to === uid && !m.delivered);
+    undelivered.forEach(m => {
+        m.delivered = true;
+        fbDb.collection('messages').doc(m.id).update({ delivered: true }).catch(()=>{});
+    });
+
     renderConversations();
     if (activeConversation) {
-        _lastRenderedConvo = null;
-        openConversation(activeConversation);
+        // Soft refresh: update ticks without full rebuild if possible
+        const panel = document.getElementById('chatMessages');
+        if (panel && _lastRenderedConvo === activeConversation) {
+            updateMessageTicksInDom(activeConversation);
+            appendNewMessages(activeConversation);
+        } else {
+            _lastRenderedConvo = null;
+            openConversation(activeConversation);
+        }
     }
     updateBadges();
+}
+function messageStatusTicks(m) {
+    if (!m || m.from !== currentUser.id) return '';
+    // ✓ sent · ✓✓ delivered · ✓✓ blue = read
+    if (m.read) return '<span class="msg-ticks read" title="Read">✓✓</span>';
+    if (m.delivered) return '<span class="msg-ticks delivered" title="Delivered">✓✓</span>';
+    return '<span class="msg-ticks sent" title="Sent">✓</span>';
+}
+function updateMessageTicksInDom(partnerId) {
+    const panel = document.getElementById('chatMessages');
+    if (!panel) return;
+    const convo = messages.filter(m =>
+        (m.from === partnerId && m.to === currentUser.id) ||
+        (m.from === currentUser.id && m.to === partnerId)
+    );
+    convo.forEach(m => {
+        if (m.from !== currentUser.id) return;
+        const el = panel.querySelector('.message[data-msg-id="' + m.id + '"] .msg-ticks');
+        if (!el) return;
+        el.outerHTML = messageStatusTicks(m);
+    });
 }
 
 /* ============================================================
@@ -1966,12 +2260,27 @@ function updateProfileUI() {
         (currentUser.course ? '<span class="academic-pill">📚 ' + escapeHtml(currentUser.course) + '</span>' : '') +
         (currentUser.accountType === 'student' && currentUser.year ? '<span class="academic-pill">🎓 ' + escapeHtml(currentUser.year) + '</span>' : '') +
         (currentUser.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(currentUser.gradYear)) + '</span>' : '') +
-        (currentUser.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(currentUser.occupation) + (currentUser.company ? ' @ ' + escapeHtml(currentUser.company) : '') + '</span>' : '');
+        (currentUser.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(currentUser.occupation) + (currentUser.company ? ' @ ' + escapeHtml(currentUser.company) : '') + '</span>' : '') +
+        (currentUser.mentorOpen ? '<span class="academic-pill">🎓 Mentoring</span>' : '') +
+        (currentUser.seekingMentor ? '<span class="academic-pill">🔍 Seeking mentor</span>' : '') +
+        portfolioLinksHtml(currentUser);
     const myPosts = posts.filter(p => p.userId === currentUser.id);
     document.getElementById('sidebarPosts').textContent = myPosts.length;
     document.getElementById('sidebarFriends').textContent = (currentUser.friends || []).length;
     document.getElementById('profilePosts').textContent = myPosts.length;
     document.getElementById('profileFriends').textContent = (currentUser.friends || []).length;
+    // Active (online) friends
+    const onlineFriends = (currentUser.friends || [])
+        .map(id => users.find(u => u.id === id))
+        .filter(u => u && isUserOnline(u)).length;
+    const onlineEl = document.getElementById('profileOnlineFriends');
+    if (onlineEl) onlineEl.textContent = onlineFriends;
+    const sideOnline = document.getElementById('sidebarOnlineFriends');
+    const sideOnlineCount = document.getElementById('sidebarOnlineCount');
+    if (sideOnline && sideOnlineCount) {
+        sideOnlineCount.textContent = onlineFriends;
+        sideOnline.style.display = onlineFriends > 0 ? 'inline-flex' : 'none';
+    }
     document.getElementById('totalUsers').textContent = users.length;
     document.getElementById('totalPosts').textContent = posts.length;
     document.getElementById('totalGroups').textContent = groups.length;
@@ -2024,6 +2333,11 @@ function showPage(page) {
     if (page === 'group-detail' && activeGroup) renderGroupDetail(activeGroup);
     if (page === 'admin') renderAdminIfVisible();
     if (page === 'feed') renderPymk();
+    if (page === 'events') renderEvents();
+    if (page === 'market') renderMarket();
+    if (page === 'confessions') renderConfessions();
+    if (page === 'study') renderStudyRooms();
+    if (page === 'mentors') renderMentors();
 }
 
 /* ============================================================
@@ -2031,7 +2345,9 @@ function showPage(page) {
    ============================================================ */
 function togglePostBtn() {
     const c = document.getElementById('postContent').value.trim();
-    document.getElementById('postBtn').disabled = (c.length === 0 && !pendingPostMedia);
+    const hasPoll = pendingPoll && document.getElementById('pollQuestion')?.value?.trim() &&
+        document.getElementById('pollOpt1')?.value?.trim() && document.getElementById('pollOpt2')?.value?.trim();
+    document.getElementById('postBtn').disabled = (c.length === 0 && !pendingPostMedia && !hasPoll);
 }
 function triggerPhotoUpload() { document.getElementById('photoInput').click(); }
 function triggerVideoUpload() { document.getElementById('videoInput').click(); }
@@ -2071,9 +2387,34 @@ function clearPostMedia() {
     document.getElementById('videoBtn').classList.remove('active');
     togglePostBtn();
 }
+function togglePollBuilder() {
+    pendingPoll = !pendingPoll;
+    document.getElementById('pollBuilder').style.display = pendingPoll ? 'block' : 'none';
+    document.getElementById('pollBtn').classList.toggle('active', pendingPoll);
+    togglePostBtn();
+}
+function clearPollBuilder() {
+    pendingPoll = false;
+    document.getElementById('pollBuilder').style.display = 'none';
+    document.getElementById('pollBtn').classList.remove('active');
+    ['pollQuestion','pollOpt1','pollOpt2','pollOpt3'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    togglePostBtn();
+}
+function getPollPayload() {
+    if (!pendingPoll) return null;
+    const q = (document.getElementById('pollQuestion') || {}).value?.trim();
+    const o1 = (document.getElementById('pollOpt1') || {}).value?.trim();
+    const o2 = (document.getElementById('pollOpt2') || {}).value?.trim();
+    const o3 = (document.getElementById('pollOpt3') || {}).value?.trim();
+    if (!q || !o1 || !o2) return null;
+    const options = [{ text: o1, votes: [] }, { text: o2, votes: [] }];
+    if (o3) options.push({ text: o3, votes: [] });
+    return { question: q, options };
+}
 async function createPost() {
     const content = document.getElementById('postContent').value.trim();
-    if (!content && !pendingPostMedia) return;
+    const poll = getPollPayload();
+    if (!content && !pendingPostMedia && !poll) return;
     setBusy(true);
     try {
         const ref = await fbDb.collection('posts').add({
@@ -2083,22 +2424,20 @@ async function createPost() {
             mediaType: pendingPostMedia ? pendingPostMedia.type : null,
             groupId: null,
             likes: [], comments: [],
+            reactions: {},
+            poll: poll,
             timestamp: Date.now()
         });
-        // Notify friends about the new post
         const friends = currentUser.friends || [];
         const preview = content
             ? (content.length > 80 ? content.slice(0, 80) + '…' : content)
-            : (pendingPostMedia ? (pendingPostMedia.type === 'image' ? '📷 Photo' : '🎥 Video') : 'New post');
+            : (poll ? '📊 Poll: ' + poll.question : (pendingPostMedia ? (pendingPostMedia.type === 'image' ? '📷 Photo' : '🎥 Video') : 'New post'));
         await Promise.all(friends.slice(0, 40).map(fid =>
-            createNotification(fid, 'friend_post', {
-                fromId: currentUser.id,
-                postId: ref.id,
-                text: preview
-            })
+            createNotification(fid, 'friend_post', { fromId: currentUser.id, postId: ref.id, text: preview })
         ));
         document.getElementById('postContent').value = '';
         clearPostMedia();
+        clearPollBuilder();
         document.getElementById('postBtn').disabled = true;
         showToast('Post created! 📝');
     } catch (e) { alert('Failed: ' + e.message); }
@@ -2106,7 +2445,8 @@ async function createPost() {
 }
 function renderFeed() {
     const c = document.getElementById('feedContainer');
-    const fp = posts.filter(p => !p.groupId);
+    const blocked = new Set((currentUser && currentUser.blocked) || []);
+    const fp = posts.filter(p => !p.groupId && !blocked.has(p.userId));
     if (fp.length === 0) {
         c.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><p>No posts yet. Be the first!</p></div>';
         return;
@@ -2157,12 +2497,15 @@ function renderPost(post, inGroup) {
         '</div>' +
         (post.content ? '<div class="post-content">' + escapeHtml(post.content) + '</div>' : '') +
         mediaHtml +
+        renderPollHtml(post) +
+        '<div class="post-reactions">' + renderReactionsHtml(post, inGroup) + '</div>' +
         '<div class="post-actions-bar">' +
             '<button class="post-action-btn ' + (isLiked ? 'liked' : '') + '" onclick="toggleLike(\'' + post.id + '\', ' + inGroup + ')">' +
                 (isLiked ? '❤️' : '🤍') + ' ' + (post.likes||[]).length +
             '</button>' +
             '<button class="post-action-btn" onclick="toggleComments(\'' + post.id + '\')">💬 ' + (post.comments||[]).length + '</button>' +
             (isOwn ? '<button class="post-action-btn" onclick="deletePost(\'' + post.id + '\', ' + inGroup + ')">🗑️ Delete</button>' : '') +
+            (!isOwn ? '<button class="post-action-btn" onclick="openReportModal(\'post\',\'' + post.id + '\')">🚩</button>' : '') +
         '</div>' +
         '<div class="comments-section ' + (post._commentsOpen ? 'open' : '') + '" id="comments-' + post.id + '">' +
             commentsHtml +
@@ -2296,6 +2639,11 @@ function openEditProfile() {
     document.getElementById('editCountry').value = currentUser.country || '';
     document.getElementById('editPhone').value = currentUser.phone || '';
     document.getElementById('editBio').value = currentUser.bio || '';
+    document.getElementById('editLinkedin').value = (currentUser.portfolio && currentUser.portfolio.linkedin) || '';
+    document.getElementById('editGithub').value = (currentUser.portfolio && currentUser.portfolio.github) || '';
+    document.getElementById('editWebsite').value = (currentUser.portfolio && currentUser.portfolio.website) || '';
+    document.getElementById('editMentorOpen').checked = !!currentUser.mentorOpen;
+    document.getElementById('editSeekingMentor').checked = !!currentUser.seekingMentor;
     toggleEditStudentFields();
     const av = document.getElementById('editAvatarPreview');
     av.innerHTML = currentUser.avatar ? '<img src="' + currentUser.avatar + '">' : getInitials(currentUser.name);
@@ -2386,7 +2734,14 @@ async function saveProfile() {
         dob: dob || '',
         gender: gender || '',
         accountType,
-        bio: bio || 'No bio yet.'
+        bio: bio || 'No bio yet.',
+        portfolio: {
+            linkedin: document.getElementById('editLinkedin').value.trim(),
+            github: document.getElementById('editGithub').value.trim(),
+            website: document.getElementById('editWebsite').value.trim()
+        },
+        mentorOpen: document.getElementById('editMentorOpen').checked,
+        seekingMentor: document.getElementById('editSeekingMentor').checked
     };
     if (pendingAvatar === null) upd.avatar = null;
     else if (pendingAvatar !== undefined) upd.avatar = pendingAvatar;
@@ -2475,11 +2830,14 @@ function openConversation(id) {
     const layout = document.querySelector('.messages-layout');
     if (layout) layout.classList.add('chat-open');
     messages.forEach(m => {
-        if (m.from === id && m.to === currentUser.id && !m.read) {
-            fbDb.collection('messages').doc(m.id).update({ read: true }).catch(()=>{});
+        if (m.from === id && m.to === currentUser.id && (!m.read || !m.delivered)) {
+            m.read = true;
+            m.delivered = true;
+            fbDb.collection('messages').doc(m.id).update({ read: true, delivered: true }).catch(()=>{});
         }
     });
     if (_lastRenderedConvo === id && document.getElementById('chatMessages')) {
+        updateMessageTicksInDom(id);
         appendNewMessages(id);
         renderConversations();
         return;
@@ -2505,13 +2863,15 @@ function openConversation(id) {
             '</div>' +
         '</div>' +
         '<div class="chat-messages" id="chatMessages">' + html + '</div>' +
+        '<div class="typing-indicator" id="typingIndicator">typing…</div>' +
         '<div class="chat-media-preview" id="chatMediaPreview">' +
             '<button class="remove-media" onclick="clearChatMedia()">✕</button>' +
             '<div id="chatMediaContent"></div>' +
         '</div>' +
         '<div class="chat-input-area">' +
-            '<button class="media-btn" onclick="triggerChatMedia()">📎</button>' +
-            '<input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" onkeydown="if(event.key===\'Enter\' && !event.shiftKey){event.preventDefault();sendMessage();}">' +
+            '<button class="media-btn" onclick="triggerChatMedia()" title="Photo/Video">📎</button>' +
+            '<button class="media-btn voice-rec-btn" id="voiceBtn" onclick="toggleVoiceRecord()" title="Voice note">🎤</button>' +
+            '<input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" oninput="onChatTyping()" onkeydown="if(event.key===\'Enter\' && !event.shiftKey){event.preventDefault();sendMessage();}">' +
             '<button class="send-btn" onclick="sendMessage()">➤</button>' +
         '</div>';
     setTimeout(() => {
@@ -2519,6 +2879,7 @@ function openConversation(id) {
         if (b) b.scrollTop = b.scrollHeight;
         const i = document.getElementById('chatInput');
         if (i) i.focus();
+        watchTyping(id);
     }, 30);
     renderConversations();
 }
@@ -2528,13 +2889,19 @@ function renderMessageBubble(m) {
     if (m.media) {
         if (m.mediaType === 'image') {
             inner += '<img src="' + m.media + '" class="msg-media" onclick="event.stopPropagation();openLightbox(this.src)">';
+        } else if (m.mediaType === 'audio') {
+            inner += '<audio src="' + m.media + '" class="msg-media" controls style="max-width:220px;"></audio>';
         } else {
             inner += '<video src="' + m.media + '" class="msg-media" controls preload="metadata"></video>';
         }
     }
-    return '<div class="message ' + (m.from === currentUser.id ? 'sent' : 'received') + '" data-msg-id="' + m.id + '">' +
+    const isSent = m.from === currentUser.id;
+    return '<div class="message ' + (isSent ? 'sent' : 'received') + '" data-msg-id="' + m.id + '">' +
         inner +
-        '<span class="msg-time">' + timeAgo(m.timestamp) + '</span>' +
+        '<div class="msg-meta">' +
+            '<span class="msg-time">' + timeAgo(m.timestamp) + '</span>' +
+            (isSent ? messageStatusTicks(m) : '') +
+        '</div>' +
     '</div>';
 }
 function appendNewMessages(id) {
@@ -2598,6 +2965,7 @@ async function sendMessage() {
             media: pendingChatMedia ? pendingChatMedia.data : null,
             mediaType: pendingChatMedia ? pendingChatMedia.type : null,
             timestamp: Date.now(),
+            delivered: false,
             read: false
         });
         // Light notification for recipient
@@ -3603,6 +3971,8 @@ function openUserProfile(uid) {
                     (isF
                         ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')">💬 Message</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\');showPage(\'feed\');">Remove</button>'
                         : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') +
+                    '<button class="btn-action btn-action-secondary" onclick="blockUser(\'' + u.id + '\')">🚫 Block</button>' +
+                    '<button class="btn-action btn-action-secondary" onclick="openReportModal(\'user\',\'' + u.id + '\')">🚩 Report</button>' +
                     '<button class="btn-action btn-action-secondary" onclick="showPage(\'feed\')">← Back</button>' +
                 '</div>' +
                 '<div class="profile-call-row">' +
@@ -3817,7 +4187,405 @@ document.addEventListener('keydown', (e) => {
 /* ============================================================
    READY
    ============================================================ */
-console.log('✅ Kampo loaded — Firebase + all features active');
+/* ============================================================
+   REACTIONS & POLLS
+   ============================================================ */
+const REACTION_EMOJIS = ['🔥','😂','💯','👏','😮','😢'];
+function renderReactionsHtml(post, inG) {
+    const reactions = post.reactions || {};
+    return REACTION_EMOJIS.map(em => {
+        const arr = reactions[em] || [];
+        const active = arr.includes(currentUser.id);
+        return '<button class="react-btn' + (active ? ' active' : '') + '" onclick="toggleReaction(\'' + post.id + '\',\'' + em + '\',' + !!inG + ')">' +
+            em + (arr.length ? ' ' + arr.length : '') + '</button>';
+    }).join('');
+}
+function renderPollHtml(post) {
+    if (!post.poll || !post.poll.options) return '';
+    const total = post.poll.options.reduce((s,o) => s + (o.votes||[]).length, 0) || 1;
+    const voted = post.poll.options.some(o => (o.votes||[]).includes(currentUser.id));
+    return '<div class="poll-box"><div style="font-weight:700;font-size:14px;margin-bottom:8px;">📊 ' + escapeHtml(post.poll.question) + '</div>' +
+        post.poll.options.map((o,i) => {
+            const pct = Math.round(((o.votes||[]).length / total) * 100);
+            const mine = (o.votes||[]).includes(currentUser.id);
+            return '<div class="poll-option" onclick="votePoll(\'' + post.id + '\',' + i + ')">' +
+                '<div class="poll-bar" style="width:' + (voted ? pct : 0) + '%"></div>' +
+                '<span>' + escapeHtml(o.text) + (voted ? ' · ' + pct + '%' : '') + (mine ? ' ✓' : '') + '</span></div>';
+        }).join('') +
+        '<div style="font-size:11px;color:#888;margin-top:4px;">' + (total === 1 && !voted ? '0' : total) + ' votes</div></div>';
+}
+async function toggleReaction(postId, emoji, inG) {
+    if (inG) return;
+    try {
+        const ref = fbDb.collection('posts').doc(postId);
+        const snap = await ref.get();
+        const data = snap.data();
+        const reactions = Object.assign({}, data.reactions || {});
+        const arr = reactions[emoji] ? [...reactions[emoji]] : [];
+        const idx = arr.indexOf(currentUser.id);
+        if (idx >= 0) arr.splice(idx, 1); else arr.push(currentUser.id);
+        reactions[emoji] = arr;
+        await ref.update({ reactions });
+    } catch (e) { console.error(e); }
+}
+async function votePoll(postId, optIndex) {
+    try {
+        const ref = fbDb.collection('posts').doc(postId);
+        const snap = await ref.get();
+        const poll = JSON.parse(JSON.stringify(snap.data().poll));
+        if (!poll || !poll.options[optIndex]) return;
+        // remove previous vote
+        poll.options.forEach(o => { o.votes = (o.votes || []).filter(id => id !== currentUser.id); });
+        poll.options[optIndex].votes.push(currentUser.id);
+        await ref.update({ poll });
+    } catch (e) { console.error(e); }
+}
+
+/* ============================================================
+   TYPING INDICATOR
+   ============================================================ */
+function onChatTyping() {
+    if (!activeConversation || !currentUser) return;
+    fbDb.collection('users').doc(currentUser.id).update({
+        typingTo: activeConversation,
+        typingAt: Date.now()
+    }).catch(()=>{});
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+        fbDb.collection('users').doc(currentUser.id).update({ typingTo: null }).catch(()=>{});
+    }, 2000);
+}
+function watchTyping(partnerId) {
+    const el = document.getElementById('typingIndicator');
+    if (!el) return;
+    const u = users.find(x => x.id === partnerId);
+    if (u && u.typingTo === currentUser.id && u.typingAt && Date.now() - u.typingAt < 3000) {
+        el.textContent = (u.name || 'Someone').split(' ')[0] + ' is typing…';
+        el.classList.add('show');
+    } else el.classList.remove('show');
+}
+// refresh typing from users listener
+const _origUsersSnap = null;
+
+/* ============================================================
+   VOICE NOTES
+   ============================================================ */
+async function toggleVoiceRecord() {
+    const btn = document.getElementById('voiceBtn');
+    if (voiceRecorder && voiceRecorder.state === 'recording') {
+        voiceRecorder.stop();
+        return;
+    }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        voiceChunks = [];
+        voiceRecorder = new MediaRecorder(stream);
+        voiceRecorder.ondataavailable = e => { if (e.data.size) voiceChunks.push(e.data); };
+        voiceRecorder.onstop = async () => {
+            stream.getTracks().forEach(t => t.stop());
+            btn.classList.remove('recording');
+            btn.textContent = '🎤';
+            const blob = new Blob(voiceChunks, { type: 'audio/webm' });
+            if (blob.size > 500 * 1024) { alert('Voice note too long. Keep it under ~30s.'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                pendingVoice = reader.result;
+                pendingChatMedia = { data: pendingVoice, type: 'audio' };
+                const p = document.getElementById('chatMediaPreview');
+                const c = document.getElementById('chatMediaContent');
+                if (p && c) {
+                    c.innerHTML = '<audio src="' + pendingVoice + '" controls style="max-width:100%;"></audio>';
+                    p.classList.add('active');
+                }
+                showToast('Voice note ready — press send');
+            };
+            reader.readAsDataURL(blob);
+        };
+        voiceRecorder.start();
+        btn.classList.add('recording');
+        btn.textContent = '⏹';
+        showToast('Recording… tap again to stop');
+    } catch (e) { alert('Microphone permission needed for voice notes.'); }
+}
+
+/* ============================================================
+   BLOCK & REPORT
+   ============================================================ */
+function isBlocked(uid) {
+    return (currentUser.blocked || []).includes(uid);
+}
+async function blockUser(uid) {
+    if (!confirm('Block this user? You will not see their posts or messages.')) return;
+    try {
+        await fbDb.collection('users').doc(currentUser.id).update({ blocked: FV.arrayUnion(uid) });
+        // also unfriend
+        if ((currentUser.friends || []).includes(uid)) {
+            await fbDb.collection('users').doc(currentUser.id).update({ friends: FV.arrayRemove(uid) });
+            await fbDb.collection('users').doc(uid).update({ friends: FV.arrayRemove(currentUser.id) });
+        }
+        showToast('User blocked');
+        showPage('feed');
+    } catch (e) { alert(e.message); }
+}
+function openReportModal(type, id) {
+    reportTarget = { type, id };
+    document.getElementById('reportModal').classList.add('active');
+}
+function closeReportModal() {
+    document.getElementById('reportModal').classList.remove('active');
+    reportTarget = null;
+}
+async function submitReport() {
+    if (!reportTarget) return;
+    const reason = document.getElementById('reportReason').value;
+    const details = document.getElementById('reportDetails').value.trim();
+    try {
+        await fbDb.collection('reports').add({
+            from: currentUser.id,
+            targetType: reportTarget.type,
+            targetId: reportTarget.id,
+            reason, details,
+            timestamp: Date.now()
+        });
+        closeReportModal();
+        showToast('Report submitted. Thanks.');
+    } catch (e) { alert(e.message); }
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+function openEventModal() { document.getElementById('eventModal').classList.add('active'); }
+function closeEventModal() { document.getElementById('eventModal').classList.remove('active'); }
+async function saveEvent() {
+    const title = document.getElementById('eventTitle').value.trim();
+    const description = document.getElementById('eventDesc').value.trim();
+    const location = document.getElementById('eventLocation').value.trim();
+    const whenStr = document.getElementById('eventWhen').value;
+    if (!title || !whenStr) { alert('Title and date required'); return; }
+    try {
+        await fbDb.collection('events').add({
+            title, description, location,
+            when: new Date(whenStr).getTime(),
+            university: currentUser.university || '',
+            creatorId: currentUser.id,
+            attendees: [currentUser.id],
+            timestamp: Date.now()
+        });
+        closeEventModal();
+        showToast('Event created! 📅');
+        ['eventTitle','eventDesc','eventLocation','eventWhen'].forEach(id => document.getElementById(id).value = '');
+    } catch (e) { alert(e.message); }
+}
+function renderEvents() {
+    const c = document.getElementById('eventsList');
+    if (!c) return;
+    const q = (document.getElementById('eventsSearch')?.value || '').toLowerCase();
+    let list = events.filter(e => e.when >= Date.now() - 86400000);
+    if (q) list = list.filter(e => (e.title||'').toLowerCase().includes(q) || (e.location||'').toLowerCase().includes(q));
+    if (!list.length) { c.innerHTML = '<div class="empty-state"><div class="emoji">📅</div><p>No upcoming events.</p></div>'; return; }
+    c.innerHTML = list.map(e => {
+        const host = getUser(e.creatorId);
+        const going = (e.attendees||[]).includes(currentUser.id);
+        return '<div class="feature-card">' +
+            '<div style="font-weight:800;font-size:16px;">' + escapeHtml(e.title) + '</div>' +
+            '<div style="font-size:13px;color:#666;margin:6px 0;">📍 ' + escapeHtml(e.location||'TBA') + ' · 🕒 ' + new Date(e.when).toLocaleString() + '</div>' +
+            (e.description ? '<div style="font-size:14px;margin-bottom:8px;">' + escapeHtml(e.description) + '</div>' : '') +
+            '<div style="font-size:12px;color:#888;margin-bottom:10px;">Host: ' + escapeHtml(host.name) + ' · ' + (e.attendees||[]).length + ' going</div>' +
+            '<button class="btn-follow ' + (going?'following':'') + '" onclick="toggleEventRsvp(\'' + e.id + '\')">' + (going?'Going ✓':'RSVP') + '</button></div>';
+    }).join('');
+}
+async function toggleEventRsvp(id) {
+    const e = events.find(x => x.id === id);
+    if (!e) return;
+    const has = (e.attendees||[]).includes(currentUser.id);
+    try {
+        await fbDb.collection('events').doc(id).update({
+            attendees: has ? FV.arrayRemove(currentUser.id) : FV.arrayUnion(currentUser.id)
+        });
+    } catch (err) { console.error(err); }
+}
+
+/* ============================================================
+   MARKETPLACE
+   ============================================================ */
+function openMarketModal() { document.getElementById('marketModal').classList.add('active'); }
+function closeMarketModal() { document.getElementById('marketModal').classList.remove('active'); }
+async function saveMarketItem() {
+    const title = document.getElementById('marketTitle').value.trim();
+    const price = document.getElementById('marketPrice').value.trim();
+    const category = document.getElementById('marketCategory').value;
+    const description = document.getElementById('marketDesc').value.trim();
+    if (!title) { alert('Title required'); return; }
+    try {
+        await fbDb.collection('market').add({
+            title, price, category, description,
+            sellerId: currentUser.id,
+            university: currentUser.university || '',
+            sold: false,
+            timestamp: Date.now()
+        });
+        closeMarketModal();
+        showToast('Item listed! 🛒');
+        ['marketTitle','marketPrice','marketDesc'].forEach(id => document.getElementById(id).value = '');
+    } catch (e) { alert(e.message); }
+}
+function renderMarket() {
+    const c = document.getElementById('marketGrid');
+    if (!c) return;
+    const q = (document.getElementById('marketSearch')?.value || '').toLowerCase();
+    let list = marketItems.filter(m => !m.sold);
+    if (q) list = list.filter(m => (m.title||'').toLowerCase().includes(q) || (m.category||'').toLowerCase().includes(q));
+    if (!list.length) { c.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="emoji">🛒</div><p>No items listed yet.</p></div>'; return; }
+    c.innerHTML = list.map(m => {
+        const seller = getUser(m.sellerId);
+        return '<div class="group-card" style="cursor:default;">' +
+            '<div class="group-card-body">' +
+            '<div class="group-card-name">' + escapeHtml(m.title) + '</div>' +
+            '<div style="font-weight:800;color:#667eea;margin:4px 0;">' + escapeHtml(m.price || 'Negotiable') + '</div>' +
+            '<div class="group-card-desc">' + escapeHtml(m.description || m.category) + '</div>' +
+            '<div class="group-card-meta"><span style="font-size:12px;color:#888;">' + escapeHtml(seller.name) + '</span>' +
+            (m.sellerId !== currentUser.id
+                ? '<button class="group-card-action join" onclick="startConversation(\'' + m.sellerId + '\')">Message</button>'
+                : '<button class="group-card-action joined" onclick="markSold(\'' + m.id + '\')">Mark sold</button>') +
+            '</div></div></div>';
+    }).join('');
+}
+async function markSold(id) {
+    try { await fbDb.collection('market').doc(id).update({ sold: true }); showToast('Marked as sold'); }
+    catch (e) { console.error(e); }
+}
+
+/* ============================================================
+   CONFESSIONS
+   ============================================================ */
+async function postConfession() {
+    const text = document.getElementById('confessionText').value.trim();
+    if (!text) return;
+    try {
+        await fbDb.collection('confessions').add({
+            text,
+            university: currentUser.university || '',
+            likes: [],
+            timestamp: Date.now()
+            // no userId — anonymous
+        });
+        document.getElementById('confessionText').value = '';
+        showToast('Posted anonymously 🙊');
+    } catch (e) { alert(e.message); }
+}
+function renderConfessions() {
+    const c = document.getElementById('confessionsList');
+    if (!c) return;
+    if (!confessions.length) { c.innerHTML = '<div class="empty-state"><div class="emoji">🙊</div><p>No confessions yet.</p></div>'; return; }
+    c.innerHTML = confessions.map(cf => {
+        const liked = (cf.likes||[]).includes(currentUser.id);
+        return '<div class="feature-card">' +
+            '<div style="font-size:12px;color:#888;margin-bottom:6px;">Anonymous · ' + escapeHtml(cf.university||'') + ' · ' + timeAgo(cf.timestamp) + '</div>' +
+            '<div style="font-size:15px;line-height:1.5;">' + escapeHtml(cf.text) + '</div>' +
+            '<div style="margin-top:10px;display:flex;gap:8px;">' +
+            '<button class="react-btn' + (liked?' active':'') + '" onclick="likeConfession(\'' + cf.id + '\')">' + (liked?'❤️':'🤍') + ' ' + (cf.likes||[]).length + '</button>' +
+            '<button class="react-btn" onclick="openReportModal(\'confession\',\'' + cf.id + '\')">🚩 Report</button></div></div>';
+    }).join('');
+}
+async function likeConfession(id) {
+    try {
+        const ref = fbDb.collection('confessions').doc(id);
+        const snap = await ref.get();
+        const likes = snap.data().likes || [];
+        const has = likes.includes(currentUser.id);
+        await ref.update({ likes: has ? FV.arrayRemove(currentUser.id) : FV.arrayUnion(currentUser.id) });
+    } catch (e) { console.error(e); }
+}
+
+/* ============================================================
+   STUDY ROOMS
+   ============================================================ */
+async function startStudyRoom() {
+    const title = document.getElementById('studyTitle').value.trim() || 'Study session';
+    const duration = parseInt(document.getElementById('studyDuration').value, 10) || 25;
+    const room = 'kampo-study-' + currentUser.id + '-' + Date.now();
+    try {
+        const ref = await fbDb.collection('studyRooms').add({
+            title, duration, room,
+            hostId: currentUser.id,
+            active: true,
+            startedAt: Date.now(),
+            endsAt: Date.now() + duration * 60000
+        });
+        showToast('Study room started ⏱️');
+        openJitsiCall(room, 'video', '⏱️ ' + title);
+        // auto-end flag after duration (best effort)
+        setTimeout(() => {
+            fbDb.collection('studyRooms').doc(ref.id).update({ active: false }).catch(()=>{});
+        }, duration * 60000);
+    } catch (e) { alert(e.message); }
+}
+function renderStudyRooms() {
+    const c = document.getElementById('studyRoomsList');
+    if (!c) return;
+    const active = studyRooms.filter(r => r.active && (!r.endsAt || r.endsAt > Date.now()));
+    if (!active.length) { c.innerHTML = '<div class="empty-state"><div class="emoji">⏱️</div><p>No active study rooms. Start one!</p></div>'; return; }
+    c.innerHTML = active.map(r => {
+        const host = getUser(r.hostId);
+        const left = r.endsAt ? Math.max(0, Math.round((r.endsAt - Date.now()) / 60000)) : r.duration;
+        return '<div class="feature-card" style="display:flex;align-items:center;gap:12px;">' +
+            userAvatarHtml(host, 44) +
+            '<div style="flex:1;"><div style="font-weight:700;">' + escapeHtml(r.title) + '</div>' +
+            '<div style="font-size:12px;color:#888;">' + escapeHtml(host.name) + ' · ' + left + ' min left</div></div>' +
+            '<button class="btn-follow" onclick="openJitsiCall(\'' + r.room + '\',\'video\',\'⏱️ ' + escapeHtml(r.title).replace(/'/g,'') + '\')">Join</button></div>';
+    }).join('');
+}
+
+/* ============================================================
+   MENTORS
+   ============================================================ */
+function renderMentors() {
+    const c = document.getElementById('mentorsList');
+    if (!c) return;
+    const mentors = users.filter(u => u.mentorOpen && u.id !== currentUser.id && !isBlocked(u.id));
+    const seekers = users.filter(u => u.seekingMentor && u.id !== currentUser.id && !isBlocked(u.id));
+    let html = '<h4 style="margin:0 0 10px;font-size:14px;color:#666;">Open to mentor</h4>';
+    if (!mentors.length) html += '<p style="color:#888;font-size:14px;">No mentors yet. Alumni can enable this in Edit Profile.</p>';
+    else html += mentors.map(u => mentorRow(u)).join('');
+    html += '<h4 style="margin:20px 0 10px;font-size:14px;color:#666;">Looking for a mentor</h4>';
+    if (!seekers.length) html += '<p style="color:#888;font-size:14px;">Nobody listed yet.</p>';
+    else html += seekers.map(u => mentorRow(u)).join('');
+    c.innerHTML = html;
+}
+function mentorRow(u) {
+    const links = [];
+    if (u.portfolio?.linkedin) links.push('<a href="' + escapeHtml(u.portfolio.linkedin) + '" target="_blank" rel="noopener" style="font-size:12px;color:#667eea;">LinkedIn</a>');
+    if (u.portfolio?.github) links.push('<a href="' + escapeHtml(u.portfolio.github) + '" target="_blank" rel="noopener" style="font-size:12px;color:#667eea;">GitHub</a>');
+    return '<div class="suggestion-item">' + userAvatarHtml(u, 44) +
+        '<div class="s-info" onclick="openUserProfile(\'' + u.id + '\')" style="cursor:pointer;">' +
+        '<div class="s-name">' + displayName(u) + '</div>' +
+        '<div class="s-uni">' + escapeHtml(u.occupation || u.course || '') + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</div>' +
+        (links.length ? '<div style="margin-top:4px;">' + links.join(' · ') + '</div>' : '') +
+        '</div><button class="btn-follow" onclick="startConversation(\'' + u.id + '\')">💬 Chat</button></div>';
+}
+
+/* Filter blocked users from feed */
+const _renderFeedOrig = typeof renderFeed === 'function' ? renderFeed : null;
+
+/* Enhance users listener for typing UI */
+setInterval(() => {
+    if (activeConversation && activePage === 'messages') watchTyping(activeConversation);
+}, 1500);
+
+/* Modal backdrop close for new modals */
+['eventModal','marketModal','reportModal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', e => {
+        if (e.target.id === id) {
+            if (id === 'eventModal') closeEventModal();
+            if (id === 'marketModal') closeMarketModal();
+            if (id === 'reportModal') closeReportModal();
+        }
+    });
+});
+
+console.log('✅ Kampo loaded — full campus suite active');
 </script>
 </body>
 </html>

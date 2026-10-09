@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+    console.log('Sending push:', JSON.stringify(req.body));
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');

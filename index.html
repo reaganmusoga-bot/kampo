@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kampo — Connect with University Students Worldwide</title>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "03ea78d5-6a1b-4e59-b2c1-208b397e594c",
+      allowLocalhostAsSecureOrigin: true,
+      notifyButton: { enable: false }
+    });
+    console.log('🔔 OneSignal initialized');
+  });
+</script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 img { max-width:100%; }
@@ -1219,6 +1231,27 @@ let currentStoryViewer = null;
 let storyViewTimer = null;
 let currentCall = null;
 let _lastRenderedConvo = null;
+
+/* ============================================================
+   OneSignal — link Firebase user to OneSignal
+   ============================================================ */
+async function linkOneSignalUser() {
+    if (!currentUser || !currentUser.id) return;
+    try {
+        if (!window.OneSignalDeferred) return;
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            try {
+                await OneSignal.Notifications.requestPermission();
+                await OneSignal.login(currentUser.id);
+                console.log('🔔 OneSignal linked to user', currentUser.id);
+            } catch (e) {
+                console.warn('OneSignal link failed:', e);
+            }
+        });
+    } catch (e) {
+        console.warn('OneSignal setup error:', e);
+    }
+}
 /* ============================================================
    HELPERS
    ============================================================ */
@@ -1630,6 +1663,7 @@ fbAuth.onAuthStateChanged(async (u) => {
         document.getElementById('appScreen').classList.add('active');
         await startListeners();
         startPresence();
+        linkOneSignalUser();
         updateProfileUI();
         updateAdminVisibility();
         showPage('feed');
@@ -2669,10 +2703,7 @@ function openCreateGroup() {
     document.getElementById('groupPhotoPreview').innerHTML = '<span style="color:#aaa;">Cover</span>';
     document.getElementById('groupModal').classList.add('active');
 }
-function closeGroupModal() {
-    document.getElementById('groupModal').classList.remove('active');
-    editingGroupId = null; pendingGroupPhoto = null;
-}
+function closeGroupModal() { document.getElementById('groupModal').classList.remove('active'); editingGroupId = null; pendingGroupPhoto = null; }
 function triggerGroupPhotoUpload() { document.getElementById('groupPhotoInput').click(); }
 async function handleGroupPhotoSelect(e) {
     const f = e.target.files[0];
@@ -3411,7 +3442,7 @@ function mentorRow(u) {
 }
 
 /* ============================================================
-   TYPING INDICATOR REFRESH
+   TYPING REFRESH
    ============================================================ */
 setInterval(() => { if (activeConversation && activePage === 'messages') watchTyping(activeConversation); }, 1500);
 
@@ -3449,7 +3480,7 @@ document.addEventListener('keydown', (e) => {
     });
 });
 
-console.log('✅ Kampo loaded — Cloudinary + Firebase + all features active');
+console.log('✅ Kampo loaded — Cloudinary + Firebase + OneSignal — all features active');
 </script>
 </body>
 </html>

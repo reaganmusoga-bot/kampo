@@ -1413,6 +1413,49 @@ const RATE_LIMITS = {
 };
 
 function checkRateLimit(action) {
+  /* ============================================================
+   RATE LIMITING — Layer 2 (server-side via Firestore)
+   ============================================================ */
+async function checkServerRateLimit(action) {
+    const limit = RATE_LIMITS[action];
+    if (!limit || !currentUser) return true;
+
+    try {
+        const docId = currentUser.id + '_' + action;
+        const ref = fbDb.collection('rateLimits').doc(docId);
+        const now = Date.now();
+        const windowStart = now - limit.windowMs;
+
+        // Read current counts
+        const snap = await ref.get();
+        let events = [];
+        if (snap.exists) {
+            events = (snap.data().events || []).filter(ts => ts > windowStart);
+        }
+
+        if (events.length >= limit.max) {
+            const oldestInWindow = events[0];
+            const waitMs = limit.windowMs - (now - oldestInWindow);
+            const waitText = waitMs < 60000
+                ? Math.ceil(waitMs / 1000) + 's'
+                : Math.ceil(waitMs / 60000) + ' min';
+            showToast('⏱️ Server limit reached — try again in ' + waitText);
+            return false;
+        }
+
+        // Record and save
+        events.push(now);
+        // Keep only events from the last 24h to prevent unbounded growth
+        const cutoff24h = now - 24 * 60 * 60 * 1000;
+        events = events.filter(ts => ts > cutoff24h);
+
+        await ref.set({ events: events, updatedAt: now }, { merge: true });
+        return true;
+    } catch (e) {
+        console.warn('checkServerRateLimit failed:', e);
+        return true; // fail open
+    }
+}
     const limit = RATE_LIMITS[action];
     if (!limit) return true; // no limit defined, allow
 
@@ -1565,6 +1608,21 @@ async function handleLogin() {
     } finally { setBusy(false); }
 }
 async function handleRegister() {
+      // Signup rate limit — 3/hour per browser
+    const signupKey = 'kampo_signup_rl';
+    const now = Date.now();
+    let recentSignups = [];
+    try { recentSignups = JSON.parse(localStorage.getItem(signupKey) || '[]'); } catch(e){}
+    recentSignups = recentSignups.filter(ts => now - ts < 60 * 60 * 1000);
+    if (recentSignups.length >= 3) {
+        document.getElementById('regError').textContent = 'Too many signups from this browser. Try again in an hour.';
+        document.getElementById('regError').style.display = 'block';
+        return;
+    }
+    recentSignups.push(now);
+    localStorage.setItem(signupKey, JSON.stringify(recentSignups));
+
+    const name = document.getElementById('regName').value.trim();
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim().toLowerCase();
     const phone = document.getElementById('regPhone').value.trim().replace(/\s/g,'');
@@ -2098,6 +2156,7 @@ function getPollPayload() {
 async function createPost() {
     if (!requireVerification()) return;
     if (!checkRateLimit('post')) return;
+    if (!(await checkServerRateLimit('post'))) return;   //
     const content = document.getElementById('postContent').value.trim();
     const poll = getPollPayload();
     if (!content && !pendingPostMedia && !poll) return;
@@ -2217,6 +2276,7 @@ function triggerCommentMedia(postId) {
 }
 async function addComment(postId, inG) {
     if (!checkRateLimit('comment')) return;
+  if (!(await checkServerRateLimit('comment'))) return;   //
     const inp = document.getElementById('comment-input-' + postId);
     const text = inp.value.trim();
     const media = pendingCommentMedia[postId];
@@ -2536,6 +2596,7 @@ function clearChatMedia() {
 async function sendMessage() {
     if (!requireVerification()) return;
     if (!checkRateLimit('message')) return;
+   if (!(await checkServerRateLimit('message'))) return;  //
     const i = document.getElementById('chatInput');
     if (!i) return;
     const text = i.value.trim();
@@ -2730,6 +2791,7 @@ function updateBadges() {
 async function sendFriendRequest(toId) {
     if (!requireVerification()) return;
     if (!checkRateLimit('friendRequest')) return;
+  if (!(await checkServerRateLimit('friendRequest'))) return;  //
     if ((currentUser.friends||[]).includes(toId)) { showToast('Already friends!'); return; }
     if ((currentUser.sentRequests||[]).includes(toId)) { showToast('Already sent.'); return; }
     try {
@@ -2900,6 +2962,7 @@ async function handleGroupPhotoSelect(e) {
 async function saveGroup() {
     if (!requireVerification()) return;
     if (!checkRateLimit('groupCreate')) return;
+  if (!(await checkServerRateLimit('groupCreate'))) return;   //
     const name = document.getElementById('groupNameInput').value.trim();
     const description = document.getElementById('groupDescInput').value.trim();
     const privacy = document.getElementById('groupPrivacyInput').value;
@@ -3125,6 +3188,7 @@ async function handleStoryMediaVideo(e) { return handleStoryMedia(e); }
 async function postStory() {
     if (!pendingStoryMedia) { alert('Pick media.'); return; }
     if (!checkRateLimit('storyPost')) return;
+  if (!(await checkServerRateLimit('storyPost'))) return;   // 
     const caption = document.getElementById('storyCaption').value.trim();
     try {
         await fbDb.collection('stories').add({ userId: currentUser.id, media: pendingStoryMedia.data, mediaType: pendingStoryMedia.type, caption: caption, timestamp: Date.now(), views: [] });
@@ -3482,6 +3546,7 @@ function openEventModal() { document.getElementById('eventModal').classList.add(
 function closeEventModal() { document.getElementById('eventModal').classList.remove('active'); }
 async function saveEvent() {
     if (!checkRateLimit('eventCreate')) return;
+  if (!(await checkServerRateLimit('eventCreate'))) return;   //
     const title = document.getElementById('eventTitle').value.trim();
     const description = document.getElementById('eventDesc').value.trim();
     const location = document.getElementById('eventLocation').value.trim();
@@ -3521,6 +3586,7 @@ function openMarketModal() { document.getElementById('marketModal').classList.ad
 function closeMarketModal() { document.getElementById('marketModal').classList.remove('active'); }
 async function saveMarketItem() {
     if (!checkRateLimit('marketList')) return;
+  if (!(await checkServerRateLimit('marketList'))) return;   //
     const title = document.getElementById('marketTitle').value.trim();
     const price = document.getElementById('marketPrice').value.trim();
     const category = document.getElementById('marketCategory').value;
@@ -3552,6 +3618,7 @@ async function markSold(id) { try { await fbDb.collection('market').doc(id).upda
    ============================================================ */
 async function postConfession() {
     if (!checkRateLimit('confession')) return;
+  if (!(await checkServerRateLimit('confession'))) return;   //
     const text = document.getElementById('confessionText').value.trim();
     if (!text) return;
     try {

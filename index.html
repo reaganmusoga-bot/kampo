@@ -487,6 +487,115 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .account-type-pill.alumni { background: #fef3c7; color: #d97706; }
 .account-type-pill.professional { background: #d1fae5; color: #059669; }
 .account-type-pill.educator { background: #ede9fe; color: #7c3aed; }
+  /* MICRO-ANIMATIONS */
+.post-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.post-card:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+
+.btn-post:not(:disabled) {
+    transition: all 0.15s ease;
+}
+.btn-post:not(:disabled):hover {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(102,126,234,0.35);
+}
+.btn-post:not(:disabled):active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-primary:active,
+.btn-accept:active,
+.btn-decline:active,
+.btn-follow:active,
+.btn-action:active {
+    transform: scale(0.97) !important;
+}
+
+.post-action-btn {
+    transition: all 0.15s ease;
+}
+.post-action-btn:active {
+    transform: scale(0.94);
+}
+
+.nav-icon-btn {
+    transition: all 0.2s ease;
+}
+.nav-icon-btn:active {
+    transform: scale(0.9);
+}
+
+.avatar {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.avatar:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+}
+
+.react-btn {
+    transition: all 0.15s ease;
+}
+.react-btn:hover {
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.react-btn:active {
+    transform: scale(0.95);
+}
+.react-btn.active {
+    animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+.conversation-item {
+    transition: all 0.15s ease;
+}
+.conversation-item:active {
+    background: #e0e5ff;
+}
+
+.message {
+    animation: msgIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.sidebar-link {
+    transition: all 0.15s ease;
+}
+.sidebar-link:active {
+    transform: scale(0.98);
+}
+
+.suggestion-item .btn-follow:active {
+    transform: scale(0.95);
+}
+
+/* Smooth modals */
+.modal-backdrop.active .modal {
+    animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Live pulse stronger */
+.live-dot-pulse {
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.7);
+    animation: livePulseStrong 1.5s infinite;
+}
+@keyframes livePulseStrong {
+    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
 /* SKELETONS */
 .skeleton {
     background: linear-gradient(90deg, #f0f2f5 0%, #e4e6eb 50%, #f0f2f5 100%);
@@ -510,8 +619,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .skeleton-line.w-100 { width: 100%; }
 .skeleton-media { height: 200px; border-radius: 10px; margin: 14px 0; }
 /* TOAST + LOADER */
-.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:#1a1a2e; color:white; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; opacity:0; transition:all 0.4s ease; z-index:999; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast {
+    position:fixed; bottom:90px; left:50%;
+    transform:translateX(-50%) translateY(20px) scale(0.9);
+    background:#1a1a2e; color:white;
+    padding:14px 22px; border-radius:14px;
+    font-size:14px; font-weight:600;
+    opacity:0; transition:all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index:9999; pointer-events:none;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    max-width: 88vw; text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    line-height: 1.4;
+}
+.toast.show {
+    opacity:1;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+@media (min-width: 800px) {
+    .toast { bottom: 30px; max-width: 480px; }
+}
 .auth-loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; align-items: center; justify-content: center; color: white; }
 .auth-loading.active { display: flex; }
 .auth-loading .spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -554,6 +682,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mobile-only { display: none !important; }
 .desktop-only { display: flex !important; }
 @media (max-width:800px) {
+      /* Bigger tap targets on mobile */
+    .post-action-btn { padding: 12px 8px; font-size: 15px; }
+    .btn-action { padding: 12px 22px; font-size: 15px; }
+    .btn-follow { padding: 8px 16px; font-size: 13px; }
+    .btn-accept, .btn-decline { padding: 10px 18px; font-size: 14px; }
+    .sidebar-link { padding: 14px 12px; }
+    .tab { padding: 14px 10px; }
+    .nav-icon-btn { padding: 10px; }
+    /* Bottom nav bigger */
+    .bottom-nav-item { padding: 10px 4px; font-size: 11px; }
+    .bottom-nav-item .bn-icon { font-size: 24px; }
+    /* Input fields bigger */
+    .form-group input, .form-group select, .form-group textarea {
+        padding: 14px 16px; font-size: 16px;
+    }
+    /* Chat input bigger */
+    .chat-input-area input[type="text"] { height: 48px; font-size: 16px; }
+    .chat-input-area .media-btn,
+    .chat-input-area .send-btn { width: 48px; height: 48px; }
+    /* No horizontal overflow */
+    body { overflow-x: hidden; }
+    .main-layout { overflow-x: hidden; }
     .left-sidebar { display:none; }
     .conversations-panel { width:100%; }
     .chat-panel { display:none; }
@@ -2301,7 +2451,7 @@ function renderFeed() {
         return;
     }
     if (fp.length === 0) {
-        c.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><p>No posts yet. Be the first!</p></div>';
+        c.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><p>No posts yet</p><div class="sub">Be the first to share something with the community</div></div>';
         return;
     }
     c.innerHTML = fp.map(p => renderPost(p, false)).join('');

@@ -1621,8 +1621,6 @@ async function handleRegister() {
     }
     recentSignups.push(now);
     localStorage.setItem(signupKey, JSON.stringify(recentSignups));
-
-    const name = document.getElementById('regName').value.trim();
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim().toLowerCase();
     const phone = document.getElementById('regPhone').value.trim().replace(/\s/g,'');

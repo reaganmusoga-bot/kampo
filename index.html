@@ -1397,6 +1397,54 @@ function groupCoverStyle(g) {
 function setBusy(s) {
     document.getElementById('authLoading').classList.toggle('active', s);
 }
+  /* ============================================================
+   RATE LIMITING — Layer 1 (client-side)
+   ============================================================ */
+const RATE_LIMITS = {
+    post:         { max: 5,  windowMs: 60 * 1000 },       // 5 posts / minute
+    message:      { max: 20, windowMs: 60 * 1000 },       // 20 messages / minute
+    friendRequest:{ max: 10, windowMs: 60 * 1000 },       // 10 requests / minute
+    comment:      { max: 15, windowMs: 60 * 1000 },       // 15 comments / minute
+    groupCreate:  { max: 3,  windowMs: 24 * 60 * 60 * 1000 }, // 3 groups / day
+    storyPost:    { max: 10, windowMs: 60 * 60 * 1000 },  // 10 stories / hour
+    confession:   { max: 3,  windowMs: 60 * 60 * 1000 },  // 3 confessions / hour
+    eventCreate:  { max: 5,  windowMs: 24 * 60 * 60 * 1000 }, // 5 events / day
+    marketList:   { max: 10, windowMs: 24 * 60 * 60 * 1000 }  // 10 listings / day
+};
+
+function checkRateLimit(action) {
+    const limit = RATE_LIMITS[action];
+    if (!limit) return true; // no limit defined, allow
+
+    if (!currentUser) return true;
+
+    const key = 'kampo_rl_' + currentUser.id + '_' + action;
+    const now = Date.now();
+
+    try {
+        const stored = JSON.parse(localStorage.getItem(key) || '[]');
+        // Filter to only recent events within the window
+        const recent = stored.filter(ts => now - ts < limit.windowMs);
+
+        if (recent.length >= limit.max) {
+            const oldestInWindow = recent[0];
+            const waitMs = limit.windowMs - (now - oldestInWindow);
+            const waitSec = Math.ceil(waitMs / 1000);
+            const waitMin = Math.ceil(waitMs / 60000);
+            const waitText = waitMs < 60000 ? waitSec + 's' : waitMin + ' min';
+            showToast('⏱️ Slow down — try again in ' + waitText);
+            return false;
+        }
+
+        // Record this action
+        recent.push(now);
+        localStorage.setItem(key, JSON.stringify(recent));
+        return true;
+    } catch (e) {
+        console.warn('checkRateLimit failed:', e);
+        return true; // fail open (don't block user on error)
+    }
+}
 
 /* ============================================================
    AUTH UI
@@ -2049,6 +2097,7 @@ function getPollPayload() {
 }
 async function createPost() {
     if (!requireVerification()) return;
+    if (!checkRateLimit('post')) return;
     const content = document.getElementById('postContent').value.trim();
     const poll = getPollPayload();
     if (!content && !pendingPostMedia && !poll) return;
@@ -2167,6 +2216,7 @@ function triggerCommentMedia(postId) {
     inp.click();
 }
 async function addComment(postId, inG) {
+    if (!checkRateLimit('comment')) return;
     const inp = document.getElementById('comment-input-' + postId);
     const text = inp.value.trim();
     const media = pendingCommentMedia[postId];
@@ -2485,6 +2535,7 @@ function clearChatMedia() {
 }
 async function sendMessage() {
     if (!requireVerification()) return;
+    if (!checkRateLimit('message')) return;
     const i = document.getElementById('chatInput');
     if (!i) return;
     const text = i.value.trim();
@@ -2678,6 +2729,7 @@ function updateBadges() {
    ============================================================ */
 async function sendFriendRequest(toId) {
     if (!requireVerification()) return;
+    if (!checkRateLimit('friendRequest')) return;
     if ((currentUser.friends||[]).includes(toId)) { showToast('Already friends!'); return; }
     if ((currentUser.sentRequests||[]).includes(toId)) { showToast('Already sent.'); return; }
     try {
@@ -2847,6 +2899,7 @@ async function handleGroupPhotoSelect(e) {
 }
 async function saveGroup() {
     if (!requireVerification()) return;
+    if (!checkRateLimit('groupCreate')) return;
     const name = document.getElementById('groupNameInput').value.trim();
     const description = document.getElementById('groupDescInput').value.trim();
     const privacy = document.getElementById('groupPrivacyInput').value;
@@ -3071,6 +3124,7 @@ async function handleStoryMedia(e) {
 async function handleStoryMediaVideo(e) { return handleStoryMedia(e); }
 async function postStory() {
     if (!pendingStoryMedia) { alert('Pick media.'); return; }
+    if (!checkRateLimit('storyPost')) return;
     const caption = document.getElementById('storyCaption').value.trim();
     try {
         await fbDb.collection('stories').add({ userId: currentUser.id, media: pendingStoryMedia.data, mediaType: pendingStoryMedia.type, caption: caption, timestamp: Date.now(), views: [] });
@@ -3427,6 +3481,7 @@ async function submitReport() {
 function openEventModal() { document.getElementById('eventModal').classList.add('active'); }
 function closeEventModal() { document.getElementById('eventModal').classList.remove('active'); }
 async function saveEvent() {
+    if (!checkRateLimit('eventCreate')) return;
     const title = document.getElementById('eventTitle').value.trim();
     const description = document.getElementById('eventDesc').value.trim();
     const location = document.getElementById('eventLocation').value.trim();
@@ -3465,6 +3520,7 @@ async function toggleEventRsvp(id) {
 function openMarketModal() { document.getElementById('marketModal').classList.add('active'); }
 function closeMarketModal() { document.getElementById('marketModal').classList.remove('active'); }
 async function saveMarketItem() {
+    if (!checkRateLimit('marketList')) return;
     const title = document.getElementById('marketTitle').value.trim();
     const price = document.getElementById('marketPrice').value.trim();
     const category = document.getElementById('marketCategory').value;
@@ -3495,6 +3551,7 @@ async function markSold(id) { try { await fbDb.collection('market').doc(id).upda
    CONFESSIONS
    ============================================================ */
 async function postConfession() {
+    if (!checkRateLimit('confession')) return;
     const text = document.getElementById('confessionText').value.trim();
     if (!text) return;
     try {

@@ -43,10 +43,14 @@ export default async function handler(req, res) {
             body: JSON.stringify(payload)
         });
         const data = await r.json();
-        if (!r.ok) {
-            console.error('OneSignal error:', data);
-            return res.status(r.status).json({ error: 'OneSignal failed', details: data });
-        }
+   if (!r.ok) {
+    console.error('OneSignal error:', JSON.stringify(data));
+    return res.status(r.status).json({
+        error: 'OneSignal failed',
+        details: data,
+        sent: payload
+    });
+}
         return res.status(200).json({ success: true, id: data.id });
     } catch (e) {
         console.error('Fetch error:', e);

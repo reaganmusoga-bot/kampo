@@ -487,7 +487,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .account-type-pill.alumni { background: #fef3c7; color: #d97706; }
 .account-type-pill.professional { background: #d1fae5; color: #059669; }
 .account-type-pill.educator { background: #ede9fe; color: #7c3aed; }
-
+/* SKELETONS */
+.skeleton {
+    background: linear-gradient(90deg, #f0f2f5 0%, #e4e6eb 50%, #f0f2f5 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+.skeleton-post {
+    background: white; border-radius: 12px; padding: 18px;
+    margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.skeleton-row { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+.skeleton-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; }
+.skeleton-line { height: 12px; border-radius: 6px; margin-bottom: 8px; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-70 { width: 70%; }
+.skeleton-line.w-100 { width: 100%; }
+.skeleton-media { height: 200px; border-radius: 10px; margin: 14px 0; }
 /* TOAST + LOADER */
 .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:#1a1a2e; color:white; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; opacity:0; transition:all 0.4s ease; z-index:999; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
@@ -2260,7 +2281,29 @@ function renderFeed() {
     const blocked = new Set((currentUser && currentUser.blocked) || []);
     const isAdmin = currentUser && currentUser.role === 'admin';
     const fp = posts.filter(p => !p.groupId && !blocked.has(p.userId) && (isAdmin || !p.hidden));
-    if (fp.length === 0) { c.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><p>No posts yet. Be the first!</p></div>'; return; }
+
+    if (fp.length === 0 && posts.length === 0) {
+        // No data loaded at all — show skeletons
+        c.innerHTML = Array(3).fill(0).map(() => `
+            <div class="skeleton-post">
+                <div class="skeleton-row">
+                    <div class="skeleton skeleton-avatar"></div>
+                    <div style="flex:1;">
+                        <div class="skeleton skeleton-line w-40"></div>
+                        <div class="skeleton skeleton-line w-70"></div>
+                    </div>
+                </div>
+                <div class="skeleton skeleton-line w-100"></div>
+                <div class="skeleton skeleton-line w-70"></div>
+                <div class="skeleton skeleton-media"></div>
+            </div>
+        `).join('');
+        return;
+    }
+    if (fp.length === 0) {
+        c.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><p>No posts yet. Be the first!</p></div>';
+        return;
+    }
     c.innerHTML = fp.map(p => renderPost(p, false)).join('');
 }
 function renderPost(post, inGroup) {

@@ -2476,6 +2476,37 @@ async function createNotification(toId, type, extra) {
             read: false,
             timestamp: Date.now()
         });
+
+        // Fire a real push via serverless function
+        const senderName = currentUser.name || 'Someone';
+        let pushTitle = 'Kampo';
+        let pushBody = '';
+        if (type === 'message') {
+            pushTitle = senderName;
+            pushBody = (extra && extra.text) || '📎 New message';
+        } else if (type === 'friend_request') {
+            pushTitle = 'Friend request';
+            pushBody = senderName + ' wants to be your friend';
+        } else if (type === 'friend_accepted') {
+            pushTitle = 'Friend request accepted';
+            pushBody = senderName + ' accepted your request';
+        } else if (type === 'friend_post') {
+            pushTitle = senderName + ' posted';
+            pushBody = (extra && extra.text) || 'Check the feed';
+        } else {
+            pushBody = (extra && extra.text) || 'New activity on Kampo';
+        }
+
+        fetch('/api/notify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                toUserId: toId,
+                title: pushTitle,
+                body: pushBody,
+                url: 'https://kampo-two.vercel.app'
+            })
+        }).catch(err => console.warn('Push send failed:', err));
     } catch (e) { console.warn('createNotification failed', e); }
 }
 function renderNotifications() {

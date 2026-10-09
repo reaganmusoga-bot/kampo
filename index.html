@@ -618,6 +618,150 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .skeleton-line.w-70 { width: 70%; }
 .skeleton-line.w-100 { width: 100%; }
 .skeleton-media { height: 200px; border-radius: 10px; margin: 14px 0; }
+  /* WELCOME MODAL */
+.welcome-modal {
+    display: none; position: fixed; inset: 0; z-index: 5000;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+    align-items: center; justify-content: center; padding: 20px;
+}
+.welcome-modal.active { display: flex; }
+.welcome-inner {
+    background: white; border-radius: 24px; padding: 44px 32px;
+    max-width: 460px; width: 100%; text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    animation: authBoxIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative; overflow: hidden;
+}
+.welcome-illustration {
+    font-size: 84px; margin-bottom: 20px; display: block;
+    animation: floaty 3s ease-in-out infinite;
+    line-height: 1;
+}
+.welcome-title {
+    font-size: 26px; font-weight: 800; color: #1a1a2e;
+    margin-bottom: 12px; line-height: 1.3;
+}
+.welcome-desc {
+    font-size: 15px; color: #666; line-height: 1.6;
+    margin-bottom: 32px;
+}
+.welcome-dots {
+    display: flex; justify-content: center; gap: 8px; margin-bottom: 24px;
+}
+.welcome-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #d0d2d6; transition: all 0.3s;
+}
+.welcome-dot.active {
+    width: 24px; border-radius: 4px;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+}
+.welcome-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; border: none; padding: 14px 40px;
+    border-radius: 12px; font-weight: 700; font-size: 16px;
+    cursor: pointer; transition: all 0.2s; width: 100%;
+    box-shadow: 0 8px 20px rgba(102,126,234,0.35);
+}
+.welcome-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(102,126,234,0.45); }
+.welcome-btn:active { transform: translateY(0) scale(0.98); }
+.welcome-skip {
+    background: none; border: none; color: #999;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    margin-top: 12px; padding: 8px;
+}
+.welcome-skip:hover { color: #667eea; }
+
+/* SETUP CHECKLIST */
+.setup-checklist {
+    background: white; border-radius: 14px; padding: 20px;
+    margin-bottom: 16px; box-shadow: 0 4px 16px rgba(102,126,234,0.12);
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, rgba(102,126,234,0.4), rgba(118,75,162,0.3)) border-box;
+    position: relative;
+    animation: fadeIn 0.5s ease;
+}
+.setup-checklist h3 {
+    font-size: 16px; font-weight: 800; color: #1a1a2e;
+    margin-bottom: 4px; display: flex; align-items: center; gap: 8px;
+    text-transform: none; letter-spacing: 0;
+}
+.setup-checklist .sub {
+    font-size: 13px; color: #666; margin-bottom: 16px;
+}
+.setup-checklist .progress-bar {
+    height: 6px; background: #e4e6eb; border-radius: 3px;
+    margin-bottom: 18px; overflow: hidden;
+}
+.setup-checklist .progress-fill {
+    height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 3px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.setup-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 10px;
+    cursor: pointer; transition: all 0.15s;
+    margin-bottom: 6px;
+}
+.setup-step:hover { background: #f0f2f5; }
+.setup-step.done { opacity: 0.55; }
+.setup-step.done .step-title { text-decoration: line-through; }
+.setup-step .step-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #f0f2f5; display: flex; align-items: center;
+    justify-content: center; font-size: 14px; flex-shrink: 0;
+    border: 2px solid #e4e6eb;
+    transition: all 0.2s;
+}
+.setup-step.done .step-icon {
+    background: linear-gradient(135deg,#22c55e,#16a34a);
+    border-color: #16a34a; color: white;
+}
+.setup-step .step-info { flex: 1; min-width: 0; }
+.setup-step .step-title { font-weight: 700; font-size: 14px; color: #1a1a2e; }
+.setup-step .step-desc { font-size: 12px; color: #888; margin-top: 2px; }
+.setup-step .step-arrow { color: #ccc; font-size: 16px; }
+.setup-checklist .dismiss {
+    position: absolute; top: 12px; right: 12px;
+    background: none; border: none; color: #bbb;
+    font-size: 18px; cursor: pointer; padding: 4px 8px;
+    border-radius: 6px;
+}
+.setup-checklist .dismiss:hover { background: #f0f2f5; color: #666; }
+
+/* PROFILE COMPLETENESS */
+.profile-completeness {
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(217,119,6,0.05));
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 12px; padding: 14px 16px; margin-top: 12px;
+    display: flex; align-items: center; gap: 12px;
+}
+.profile-completeness .pc-icon { font-size: 24px; }
+.profile-completeness .pc-content { flex: 1; min-width: 0; }
+.profile-completeness .pc-title {
+    font-weight: 700; font-size: 13px; color: #d97706;
+}
+.profile-completeness .pc-desc {
+    font-size: 12px; color: #92400e; margin-top: 2px;
+}
+.profile-completeness .pc-bar {
+    height: 5px; background: rgba(245,158,11,0.2);
+    border-radius: 3px; margin-top: 8px; overflow: hidden;
+}
+.profile-completeness .pc-fill {
+    height: 100%; background: linear-gradient(90deg,#f59e0b,#d97706);
+    border-radius: 3px; transition: width 0.4s;
+}
+.profile-completeness .pc-cta {
+    background: linear-gradient(135deg,#f59e0b,#d97706); color: white;
+    border: none; padding: 8px 14px; border-radius: 8px;
+    font-weight: 700; font-size: 12px; cursor: pointer;
+    white-space: nowrap; transition: all 0.2s;
+}
+.profile-completeness .pc-cta:hover { transform: translateY(-1px); }
 /* TOAST + LOADER */
 .toast {
     position:fixed; bottom:90px; left:50%;
@@ -1395,7 +1539,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </div>
     </div>
 </div>
-
+<!-- WELCOME MODAL -->
+<div class="welcome-modal" id="welcomeModal">
+    <div class="welcome-inner">
+        <div id="welcomeContent"></div>
+        <div class="welcome-dots" id="welcomeDots"></div>
+        <button class="welcome-btn" id="welcomeNextBtn" onclick="welcomeNext()">Next</button>
+        <button class="welcome-skip" onclick="closeWelcomeModal()">Skip tour</button>
+    </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE SDK -->
@@ -1987,9 +2139,10 @@ async function handleRegister() {
             verified: false, badge: null,
             friends: [], friendRequests: [], sentRequests: [],
             avatar: null, cover: null,
-            joined: Date.now(), lastLogin: Date.now(),
+                       joined: Date.now(), lastLogin: Date.now(),
             online: true, lastSeen: Date.now(),
-            emailVerified: false, phoneVerified: false
+            emailVerified: false, phoneVerified: false,
+            onboarded: false, dismissedChecklist: false
         });
 
         recentSignups.push(now);
@@ -2091,10 +2244,16 @@ fbAuth.onAuthStateChanged(async (u) => {
         await startListeners();
         startPresence();
         linkOneSignalUser();
-        checkEmailVerified();
+                checkEmailVerified();
         updateProfileUI();
         updateAdminVisibility();
         showPage('feed');
+        // Show welcome modal for first-time users
+        setTimeout(() => {
+            if (currentUser && !currentUser.onboarded) {
+                showWelcomeModal();
+            }
+        }, 800);
     } catch (e) { console.error(e); }
     finally { setBusy(false); }
 });
@@ -2455,6 +2614,7 @@ function renderFeed() {
         return;
     }
     c.innerHTML = fp.map(p => renderPost(p, false)).join('');
+      renderSetupChecklist();
 }
 function renderPost(post, inGroup) {
     const user = getUser(post.userId);
@@ -2582,6 +2742,7 @@ function renderProfilePosts() {
     const up = posts.filter(p => p.userId === currentUser.id);
     if (up.length === 0) { c.innerHTML = '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>'; return; }
     c.innerHTML = up.map(p => renderPost(p, false)).join('');
+      renderProfileCompleteness();
 }
 
 /* ============================================================
@@ -4111,6 +4272,182 @@ function mentorRow(u) {
     if (u.portfolio?.linkedin) links.push('<a href="' + escapeHtml(u.portfolio.linkedin) + '" target="_blank" rel="noopener" style="font-size:12px;color:#667eea;">LinkedIn</a>');
     if (u.portfolio?.github) links.push('<a href="' + escapeHtml(u.portfolio.github) + '" target="_blank" rel="noopener" style="font-size:12px;color:#667eea;">GitHub</a>');
     return '<div class="suggestion-item">' + userAvatarHtml(u, 44) + '<div class="s-info" onclick="openUserProfile(\'' + u.id + '\')" style="cursor:pointer;"><div class="s-name">' + displayName(u) + '</div><div class="s-uni">' + escapeHtml(u.occupation || u.course || '') + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</div>' + (links.length ? '<div style="margin-top:4px;">' + links.join(' · ') + '</div>' : '') + '</div><button class="btn-follow" onclick="startConversation(\'' + u.id + '\')">💬 Chat</button></div>';
+}
+  /* ============================================================
+   ONBOARDING — Welcome Modal
+   ============================================================ */
+const WELCOME_SLIDES = [
+    {
+        emoji: '🌍',
+        title: 'Welcome to Kampo',
+        desc: 'Connect with university students from every corner of the world. Share ideas, find study partners, and build your global network.'
+    },
+    {
+        emoji: '💬',
+        title: 'Chat, post, go live',
+        desc: 'Message friends, share photos and videos, go live with your campus, and join groups for your courses, hobbies, and interests.'
+    },
+    {
+        emoji: '🎓',
+        title: 'Your campus, everywhere',
+        desc: 'Whether you\'re at Makerere, Oxford, or Tokyo — find your people here. Let\'s get you set up.'
+    }
+];
+let currentWelcomeSlide = 0;
+
+function showWelcomeModal() {
+    currentWelcomeSlide = 0;
+    renderWelcomeSlide();
+    document.getElementById('welcomeModal').classList.add('active');
+}
+
+function renderWelcomeSlide() {
+    const s = WELCOME_SLIDES[currentWelcomeSlide];
+    document.getElementById('welcomeContent').innerHTML =
+        '<span class="welcome-illustration">' + s.emoji + '</span>' +
+        '<h2 class="welcome-title">' + escapeHtml(s.title) + '</h2>' +
+        '<p class="welcome-desc">' + escapeHtml(s.desc) + '</p>';
+
+    const dots = document.getElementById('welcomeDots');
+    dots.innerHTML = WELCOME_SLIDES.map((_, i) =>
+        '<div class="welcome-dot' + (i === currentWelcomeSlide ? ' active' : '') + '"></div>'
+    ).join('');
+
+    const btn = document.getElementById('welcomeNextBtn');
+    btn.textContent = currentWelcomeSlide === WELCOME_SLIDES.length - 1 ? 'Get Started 🚀' : 'Next';
+}
+
+function welcomeNext() {
+    if (currentWelcomeSlide < WELCOME_SLIDES.length - 1) {
+        currentWelcomeSlide++;
+        renderWelcomeSlide();
+    } else {
+        closeWelcomeModal();
+    }
+}
+
+function closeWelcomeModal() {
+    document.getElementById('welcomeModal').classList.remove('active');
+    // Mark as seen in Firestore so it never shows again
+    if (currentUser && currentUser.id) {
+        fbDb.collection('users').doc(currentUser.id).update({
+            onboarded: true,
+            onboardedAt: Date.now()
+        }).catch(() => {});
+        currentUser.onboarded = true;
+    }
+    // Refresh the checklist in case it should now appear
+    setTimeout(renderSetupChecklist, 100);
+}
+
+/* ============================================================
+   ONBOARDING — Setup Checklist
+   ============================================================ */
+function getSetupSteps() {
+    const hasAvatar = !!(currentUser && currentUser.avatar);
+    const hasBio = !!(currentUser && currentUser.bio && currentUser.bio !== 'No bio yet.');
+    const hasFriends = (currentUser && currentUser.friends && currentUser.friends.length > 0);
+    const hasPost = posts.some(p => p.userId === currentUser.id);
+    return [
+        { key: 'avatar', icon: '📷', title: 'Add a profile photo', desc: 'So people know who you are', done: hasAvatar, action: () => openEditProfile() },
+        { key: 'bio', icon: '✏️', title: 'Write a short bio', desc: 'Tell the community about yourself', done: hasBio, action: () => openEditProfile() },
+        { key: 'friends', icon: '🤝', title: 'Add your first friend', desc: 'Connect with students worldwide', done: hasFriends, action: () => showPage('students') },
+        { key: 'post', icon: '📝', title: 'Share your first post', desc: 'Say hi to the Kampo community', done: hasPost, action: () => { showPage('feed'); setTimeout(() => document.getElementById('postContent')?.focus(), 300); } }
+    ];
+}
+
+function renderSetupChecklist() {
+    const container = document.getElementById('feedContainer');
+    if (!container || !currentUser) return;
+
+    // Only show for users who've been around less than 7 days
+    const daysSinceJoin = (Date.now() - (currentUser.joined || 0)) / (1000*60*60*24);
+    if (daysSinceJoin > 7) return;
+
+    // Only show if user hasn't dismissed it
+    if (currentUser.dismissedChecklist) return;
+
+    const steps = getSetupSteps();
+    const doneCount = steps.filter(s => s.done).length;
+    if (doneCount === steps.length) return; // all done, hide
+
+    const pct = Math.round((doneCount / steps.length) * 100);
+
+    const checklistHtml = '<div class="setup-checklist" id="setupChecklist">' +
+        '<button class="dismiss" onclick="dismissChecklist()">✕</button>' +
+        '<h3>🚀 Get started on Kampo</h3>' +
+        '<div class="sub">' + doneCount + ' of ' + steps.length + ' steps complete</div>' +
+        '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+        steps.map(s =>
+            '<div class="setup-step' + (s.done ? ' done' : '') + '" onclick="' + (s.done ? '' : 'setupStepClick(\'' + s.key + '\')') + '">' +
+                '<div class="step-icon">' + (s.done ? '✓' : s.icon) + '</div>' +
+                '<div class="step-info">' +
+                    '<div class="step-title">' + escapeHtml(s.title) + '</div>' +
+                    '<div class="step-desc">' + escapeHtml(s.desc) + '</div>' +
+                '</div>' +
+                (s.done ? '' : '<div class="step-arrow">›</div>') +
+            '</div>'
+        ).join('') +
+    '</div>';
+
+    // Prepend to feed
+    container.insertAdjacentHTML('afterbegin', checklistHtml);
+}
+
+function setupStepClick(key) {
+    const steps = getSetupSteps();
+    const step = steps.find(s => s.key === key);
+    if (step && step.action) step.action();
+}
+
+function dismissChecklist() {
+    const el = document.getElementById('setupChecklist');
+    if (el) el.style.display = 'none';
+    if (currentUser && currentUser.id) {
+        fbDb.collection('users').doc(currentUser.id).update({
+            dismissedChecklist: true
+        }).catch(() => {});
+        currentUser.dismissedChecklist = true;
+    }
+}
+
+/* ============================================================
+   ONBOARDING — Profile Completeness
+   ============================================================ */
+function getProfileCompleteness() {
+    if (!currentUser) return { pct: 100, missing: [] };
+    const checks = [
+        { key: 'avatar', label: 'profile photo', done: !!currentUser.avatar },
+        { key: 'bio', label: 'bio', done: !!(currentUser.bio && currentUser.bio !== 'No bio yet.') },
+        { key: 'course', label: 'course', done: !!currentUser.course },
+        { key: 'year', label: 'year', done: !!currentUser.year },
+        { key: 'dob', label: 'date of birth', done: !!currentUser.dob }
+    ];
+    const doneCount = checks.filter(c => c.done).length;
+    const pct = Math.round((doneCount / checks.length) * 100);
+    const missing = checks.filter(c => !c.done).map(c => c.label);
+    return { pct, missing };
+}
+
+function renderProfileCompleteness() {
+    if (!currentUser) return;
+    const container = document.getElementById('profilePostsContainer');
+    if (!container) return;
+
+    const { pct, missing } = getProfileCompleteness();
+    if (pct === 100) return; // fully complete, don't show
+
+    const html = '<div class="profile-completeness">' +
+        '<div class="pc-icon">✨</div>' +
+        '<div class="pc-content">' +
+            '<div class="pc-title">Profile ' + pct + '% complete</div>' +
+            '<div class="pc-desc">Add your ' + missing.slice(0, 2).join(' and ') + ' to get noticed</div>' +
+            '<div class="pc-bar"><div class="pc-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<button class="pc-cta" onclick="openEditProfile()">Complete</button>' +
+    '</div>';
+
+    container.insertAdjacentHTML('afterbegin', html);
 }
 
 /* ============================================================

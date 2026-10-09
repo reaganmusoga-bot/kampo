@@ -39,7 +39,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .avatar-52 { width:52px; height:52px; font-size:20px; }
 .avatar-80 { width:80px; height:80px; font-size:32px; }
 .avatar-100 { width:100px; height:100px; font-size:36px; }
-.avatar-nav { width:38px; height:38px; font-size:16px; }
+.avatar-nav {     width:38px; height:38px; font-size:16px;     cursor: pointer;     transition: transform 0.2s, box-shadow 0.2s;     border: 2px solid transparent; } .avatar-nav:hover {     transform: scale(1.05);     box-shadow: 0 0 0 3px rgba(102,126,234,0.2); } .avatar-nav:active { transform: scale(0.98); }
 .avatar-profile-big { width:140px; height:140px; font-size:52px; border:5px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
 /* AUTH */
@@ -762,6 +762,65 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     white-space: nowrap; transition: all 0.2s;
 }
 .profile-completeness .pc-cta:hover { transform: translateY(-1px); }
+  /* USER MENU (avatar dropdown) */
+.nav-avatar-wrap { position: relative; }
+.user-menu {
+    display: none;
+    position: absolute; top: calc(100% + 12px); right: 0;
+    background: white; border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
+    min-width: 240px; padding: 8px; z-index: 1000;
+    animation: userMenuIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.user-menu.open { display: block; }
+@keyframes userMenuIn {
+    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.user-menu::before {
+    content: '';
+    position: absolute; top: -6px; right: 16px;
+    width: 12px; height: 12px;
+    background: white; transform: rotate(45deg);
+    box-shadow: -2px -2px 4px rgba(0,0,0,0.02);
+}
+.user-menu-header {
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+}
+.user-menu-header .um-name {
+    font-weight: 700; font-size: 14px; color: #1a1a2e;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-menu-header .um-email {
+    font-size: 12px; color: #888;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-menu-divider {
+    height: 1px; background: #f0f0f0; margin: 6px 4px;
+}
+.user-menu-item {
+    width: 100%; background: none; border: none;
+    padding: 11px 14px; border-radius: 8px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; font-weight: 600; color: #1a1a2e;
+    cursor: pointer; transition: background 0.15s;
+    text-align: left; font-family: inherit;
+}
+.user-menu-item:hover { background: #f0f2f5; }
+.user-menu-item:active { background: #e4e6eb; }
+.user-menu-item .um-icon { font-size: 18px; width: 22px; text-align: center; flex-shrink: 0; }
+.user-menu-item .um-badge {
+    margin-left: auto;
+    background: #e74c3c; color: white;
+    font-size: 10px; font-weight: 700;
+    min-width: 18px; height: 18px;
+    border-radius: 9px; padding: 0 6px;
+    display: flex; align-items: center; justify-content: center;
+}
+.user-menu-danger { color: #e74c3c; }
+.user-menu-danger:hover { background: #fee2e2; }
+.user-menu-danger:active { background: #fecaca; }
 /* TOAST + LOADER */
 .toast {
     position:fixed; bottom:90px; left:50%;
@@ -1005,8 +1064,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
             <button class="nav-icon-btn desktop-nav-extra" onclick="showPage('notifications')" title="Notifications">🔔<span class="badge" id="navNotifBadge" style="display:none;">0</span></button>
             <button class="nav-icon-btn desktop-nav-extra" onclick="showPage('groups')" title="Groups">👪<span class="badge" id="navGrpBadge" style="display:none;">0</span></button>
             <button class="nav-icon-btn desktop-nav-extra" id="adminNavBtn" onclick="showPage('admin')" title="Admin" style="display:none;">⚙️</button>
-            <div class="avatar avatar-nav" id="navAvatar" onclick="showPage('profile')" title="Profile">U</div>
-            <button class="nav-icon-btn" onclick="handleLogout()" title="Logout">🚪</button>
+                        <div class="nav-avatar-wrap" id="navAvatarWrap">
+                <div class="avatar avatar-nav" id="navAvatar" onclick="toggleUserMenu(event)" title="Account">U</div>
+                <div class="user-menu" id="userMenu">
+                    <div class="user-menu-header" id="userMenuHeader"></div>
+                    <div class="user-menu-divider"></div>
+                    <button class="user-menu-item" onclick="userMenuAction('profile')">
+                        <span class="um-icon">👤</span>
+                        <span>View Profile</span>
+                    </button>
+                    <button class="user-menu-item" onclick="userMenuAction('edit')">
+                        <span class="um-icon">✏️</span>
+                        <span>Edit Profile</span>
+                    </button>
+                    <button class="user-menu-item" onclick="userMenuAction('notifications')">
+                        <span class="um-icon">🔔</span>
+                        <span>Notifications</span>
+                        <span class="um-badge" id="umNotifBadge" style="display:none;">0</span>
+                    </button>
+                    <div class="user-menu-divider"></div>
+                    <button class="user-menu-item user-menu-danger" onclick="userMenuAction('logout')">
+                        <span class="um-icon">🚪</span>
+                        <span>Log out</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -3212,7 +3294,18 @@ function updateBadges() {
     groups.forEach(g => { if ((g.admins||[]).includes(currentUser.id)) gb += (g.joinRequests||[]).length; });
     ['navMsgBadge','sideMsgBadge'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = u; el.style.display = u > 0 ? 'inline-block' : 'none'; } });
     ['navReqBadge','sideReqBadge'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = r; el.style.display = r > 0 ? 'inline-block' : 'none'; } });
-    ['navNotifBadge','sideNotifBadge'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = n; el.style.display = n > 0 ? 'inline-block' : 'none'; } });
+       ['navNotifBadge','sideNotifBadge','umNotifBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = n;
+            // umNotifBadge uses flex display, others use inline-block
+            if (id === 'umNotifBadge') {
+                el.style.display = n > 0 ? 'flex' : 'none';
+            } else {
+                el.style.display = n > 0 ? 'inline-block' : 'none';
+            }
+        }
+    });
     ['navGrpBadge','sideGrpBadge'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = gb; el.style.display = gb > 0 ? 'inline-block' : 'none'; } });
     const setBn = (id, count) => { const el = document.getElementById(id); if (!el) return; el.textContent = count; el.style.display = count > 0 ? 'flex' : 'none'; };
     setBn('bnMsgBadge', u); setBn('bnReqBadge', r); setBn('bnNotifBadge', n); setBn('bnGrpBadge', gb);
@@ -4449,6 +4542,57 @@ function renderProfileCompleteness() {
 
     container.insertAdjacentHTML('afterbegin', html);
 }
+  /* ============================================================
+   USER MENU (avatar dropdown)
+   ============================================================ */
+function toggleUserMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('userMenu');
+    if (!menu) return;
+    const isOpen = menu.classList.contains('open');
+    if (isOpen) {
+        menu.classList.remove('open');
+    } else {
+        renderUserMenuHeader();
+        menu.classList.add('open');
+    }
+}
+
+function closeUserMenu() {
+    const menu = document.getElementById('userMenu');
+    if (menu) menu.classList.remove('open');
+}
+
+function renderUserMenuHeader() {
+    const header = document.getElementById('userMenuHeader');
+    if (!header || !currentUser) return;
+    header.innerHTML = userAvatarHtml(currentUser, 40) +
+        '<div style="min-width:0;flex:1;">' +
+            '<div class="um-name">' + escapeHtml(currentUser.name) + '</div>' +
+            '<div class="um-email">' + escapeHtml(currentUser.email || '') + '</div>' +
+        '</div>';
+}
+
+function userMenuAction(action) {
+    closeUserMenu();
+    if (action === 'profile') showPage('profile');
+    else if (action === 'edit') openEditProfile();
+    else if (action === 'notifications') showPage('notifications');
+    else if (action === 'logout') handleLogout();
+}
+
+// Close menu when clicking anywhere else
+document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('navAvatarWrap');
+    if (wrap && !wrap.contains(e.target)) {
+        closeUserMenu();
+    }
+});
+
+// Close menu on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeUserMenu();
+});
 
 /* ============================================================
    TYPING REFRESH

@@ -1,0 +1,9 @@
+{
+  "name": "kampo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kampo — connect with university students worldwide",
+  "dependencies": {
+    "agora-token": "^2.0.3"
+  }
+}

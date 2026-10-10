@@ -1,8 +1,11 @@
 {
-  "version": 2,
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "version": 2
+}
+EOFcat > vercel.json << 'EOF'
+{
+  "version": 2
+}
+EOFcat > vercel.json << 'EOF'
+{
+  "version": 2
 }

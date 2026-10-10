@@ -5455,6 +5455,7 @@ async function startListeners() {
             if (activePage === 'moderation' && currentModTab === 'log') renderModeration();
         }, e => console.warn('modlog', e));
     }
+	startIncomingCallListener();
 }
 function stopListeners() {
     [unsubUsers, unsubPosts, unsubMessagesTo, unsubMessagesFrom, unsubGroups, unsubStories, unsubLives, unsubMyDoc, unsubNotifications, unsubReports, unsubModLog].forEach(u => {
@@ -5463,6 +5464,7 @@ function stopListeners() {
     unsubUsers = unsubPosts = unsubMessagesTo = unsubMessagesFrom = null;
     unsubGroups = unsubStories = unsubLives = unsubMyDoc = unsubNotifications = null;
     unsubReports = unsubModLog = null;
+	stopIncomingCallListener();
 }
 async function reloadMessages() {
     const uid = currentUser.id;
@@ -8813,7 +8815,22 @@ async function startAgoraCall(partnerId, type) {
 
     const channelName = makeAgoraChannel(currentUser.id, partnerId);
     const myUid = uidFromString(currentUser.id);
-
+    // Ring the receiver: create a "call" document they'll hear
+    let callDocRef;
+    try {
+        callDocRef = await fbDb.collection('calls').add({
+            from: currentUser.id,
+            to: partnerId,
+            channel: channelName,
+            type: type,
+            status: 'ringing',
+            createdAt: Date.now(),
+            callerSnapshot: snapshotUser(currentUser)
+        });
+    } catch (e) {
+        showToast('❌ Could not place call: ' + e.message);
+        return;
+    }
     // Open the call modal first so the user sees the loading state
     const modal = document.getElementById('callModal');
     const container = document.getElementById('callFrameContainer');
@@ -8870,13 +8887,73 @@ async function startAgoraCall(partnerId, type) {
 
         // 8. Wire up controls
         wireAgoraControls(type);
-
+        // Watch the call document for the receiver's response
+        const callStatusWatcher = fbDb.collection('calls').doc(callDocRef.id).onSnapshot(snap => {
+            if (!snap.exists) return;
+            const data = snap.data();
+            const titleEl = document.getElementById('callTitle');
+            if (data.status === 'accepted') {
+                if (titleEl) titleEl.textContent = '🎥 Connected';
+            } else if (data.status === 'declined') {
+                showToast(partner.name.split(' ')[0] + ' declined');
+                try { callStatusWatcher(); } catch (e) {}
+                setTimeout(() => endAgoraCall(), 500);
+            } else if (data.status === 'missed' || data.status === 'busy') {
+                showToast(partner.name.split(' ')[0] + (data.status === 'busy' ? ' is on another call' : ' didn\'t answer'));
+                try { callStatusWatcher(); } catch (e) {}
+                setTimeout(() => endAgoraCall(), 500);
+            }
+        });
         showToast('Call started — waiting for ' + partner.name.split(' ')[0] + '…');
 
     } catch (err) {
         console.error('Agora call failed:', err);
         showToast('❌ Could not start call: ' + err.message);
         await endAgoraCall();
+    }
+}
+	/* ============================================================
+   CALL SIGNALING — Firestore doorbell
+   ============================================================ */
+let incomingCallUnsub = null;
+let currentIncomingCall = null;
+
+function startIncomingCallListener() {
+    if (!currentUser || !currentUser.id) return;
+    if (incomingCallUnsub) incomingCallUnsub();
+
+    incomingCallUnsub = fbDb.collection('calls')
+        .where('to', '==', currentUser.id)
+        .where('status', '==', 'ringing')
+        .onSnapshot(snap => {
+            // Ignore calls we've already handled
+            snap.docChanges().forEach(change => {
+                if (change.type === 'added') {
+                    const call = { ...change.doc.data(), id: change.doc.id };
+                    // Don't ring for our own call
+                    if (call.from === currentUser.id) return;
+                    // Don't show if we're already in a call
+                    if (agoraClient) {
+                        // Auto-decline: we're busy
+                        fbDb.collection('calls').doc(call.id).update({ status: 'busy' });
+                        return;
+                    }
+                    // Don't ring for calls older than 60 seconds
+                    if (Date.now() - call.createdAt > 60000) {
+                        fbDb.collection('calls').doc(call.id).update({ status: 'missed' });
+                        return;
+                    }
+                    currentIncomingCall = call;
+                    showIncomingCallScreen(call);
+                }
+            });
+        }, err => console.warn('incoming calls listener', err));
+}
+
+function stopIncomingCallListener() {
+    if (incomingCallUnsub) {
+        try { incomingCallUnsub(); } catch (e) {}
+        incomingCallUnsub = null;
     }
 }
 
@@ -8970,6 +9047,14 @@ function wireAgoraControls(type) {
 
 /* Clean up when the call ends */
 async function endAgoraCall() {
+	    // Mark any active call document as ended
+    try {
+        const activeCalls = await fbDb.collection('calls')
+            .where('from', '==', currentUser.id)
+            .where('status', 'in', ['ringing', 'accepted'])
+            .get();
+        activeCalls.forEach(d => d.ref.update({ status: 'ended', endedAt: Date.now() }));
+    } catch (e) {}
     try {
         if (agoraLocalTracks.audio) { agoraLocalTracks.audio.stop(); agoraLocalTracks.audio.close(); }
         if (agoraLocalTracks.video) { agoraLocalTracks.video.stop(); agoraLocalTracks.video.close(); }

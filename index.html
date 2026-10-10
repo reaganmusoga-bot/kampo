@@ -2508,6 +2508,249 @@ html[data-theme="dark"] .invite-hero {
     .share-btn { flex: 1; justify-content: center; padding: 11px 10px; }
     .invite-link-row input { font-size: 12px; }
 }
+	/* ============================================================
+   NOTIFICATION PERMISSION UI
+   ============================================================ */
+.notif-prompt-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    z-index: 4500;
+    background: rgba(15,17,21,0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    align-items: center; justify-content: center;
+    padding: 20px;
+    animation: kmodalFade 0.18s ease;
+}
+.notif-prompt-backdrop.active { display: flex; }
+
+.notif-prompt {
+    background: var(--bg-elevated);
+    border-radius: 20px;
+    padding: 30px 26px 22px;
+    max-width: 420px; width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+    animation: kmodalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+.notif-prompt::before {
+    content: '';
+    position: absolute; top: -60px; left: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(102,126,234,0.25), transparent 70%);
+    pointer-events: none;
+}
+.notif-prompt .np-bell {
+    font-size: 60px; line-height: 1;
+    display: inline-block;
+    margin-bottom: 14px;
+    animation: bellSwing 2.2s ease-in-out infinite;
+    position: relative; z-index: 1;
+}
+@keyframes bellSwing {
+    0%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(14deg); }
+    30% { transform: rotate(-10deg); }
+    45% { transform: rotate(8deg); }
+    60% { transform: rotate(-4deg); }
+    75% { transform: rotate(0deg); }
+}
+.notif-prompt .np-title {
+    font-size: 22px; font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px; line-height: 1.3;
+    position: relative; z-index: 1;
+}
+.notif-prompt .np-desc {
+    font-size: 14.5px; color: var(--text-soft);
+    line-height: 1.55;
+    margin-bottom: 22px;
+    position: relative; z-index: 1;
+}
+.notif-prompt .np-list {
+    text-align: left;
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    position: relative; z-index: 1;
+}
+.notif-prompt .np-list-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13.5px; color: var(--text);
+    line-height: 1.45;
+    padding: 5px 0;
+}
+.notif-prompt .np-list-item .ic { font-size: 16px; flex-shrink: 0; line-height: 1.45; }
+.notif-prompt .np-actions {
+    display: flex; gap: 10px;
+    position: relative; z-index: 1;
+}
+.notif-prompt .np-btn {
+    flex: 1;
+    padding: 13px 16px;
+    border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: transform 0.12s, box-shadow 0.15s, background 0.15s;
+}
+.notif-prompt .np-btn:active { transform: scale(0.97); }
+.notif-prompt .np-btn-enable {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 8px 20px rgba(102,126,234,0.35);
+}
+.notif-prompt .np-btn-enable:hover { box-shadow: 0 12px 28px rgba(102,126,234,0.45); }
+.notif-prompt .np-btn-later {
+    background: var(--bg-sunken);
+    color: var(--text-soft);
+}
+.notif-prompt .np-btn-later:hover { background: var(--bg-hover); color: var(--text); }
+
+/* Blocked banner inside notifications page */
+.notif-blocked-banner {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08));
+    border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+html[data-theme="dark"] .notif-blocked-banner {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(217,119,6,0.08));
+    border-color: rgba(245,158,11,0.4);
+}
+.notif-blocked-banner .nb-icon { font-size: 26px; flex-shrink: 0; line-height: 1; }
+.notif-blocked-banner .nb-body { flex: 1; min-width: 0; }
+.notif-blocked-banner .nb-title {
+    font-size: 14.5px; font-weight: 800;
+    color: #d97706; margin-bottom: 4px;
+}
+html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
+.notif-blocked-banner .nb-desc {
+    font-size: 13px; color: var(--text-soft);
+    line-height: 1.5;
+}
+.notif-blocked-banner .nb-btn {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white; border: none;
+    padding: 9px 14px; border-radius: 9px;
+    font-weight: 700; font-size: 12.5px;
+    cursor: pointer; white-space: nowrap;
+    transition: transform 0.12s, box-shadow 0.15s;
+    margin-top: 8px;
+}
+.notif-blocked-banner .nb-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(245,158,11,0.35); }
+.notif-blocked-banner .nb-btn:active { transform: scale(0.97); }
+
+/* Fix-guide modal */
+.notif-guide-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    z-index: 4600;
+    background: rgba(15,17,21,0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    align-items: center; justify-content: center;
+    padding: 20px;
+}
+.notif-guide-backdrop.active { display: flex; }
+.notif-guide {
+    background: var(--bg-elevated);
+    border-radius: 18px;
+    padding: 26px 24px 20px;
+    max-width: 480px; width: 100%;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+    animation: kmodalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 88vh; overflow-y: auto;
+}
+.notif-guide .ng-title {
+    font-size: 20px; font-weight: 800;
+    color: var(--text); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 10px;
+}
+.notif-guide .ng-sub {
+    font-size: 13.5px; color: var(--text-soft);
+    line-height: 1.5; margin-bottom: 18px;
+}
+.notif-guide .ng-tabs {
+    display: flex; gap: 4px;
+    background: var(--bg-soft);
+    border-radius: 10px; padding: 4px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+.notif-guide .ng-tab {
+    flex: 1;
+    padding: 9px 12px;
+    text-align: center;
+    border: none; background: none;
+    border-radius: 7px;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-mute);
+    cursor: pointer; font-family: inherit;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+.notif-guide .ng-tab.active {
+    background: var(--bg-elevated);
+    color: var(--primary-text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.notif-guide .ng-step {
+    display: flex; gap: 12px;
+    padding: 10px 0;
+    align-items: flex-start;
+}
+.notif-guide .ng-step .num {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.notif-guide .ng-step .txt {
+    font-size: 14px; color: var(--text);
+    line-height: 1.55;
+}
+.notif-guide .ng-step .txt strong { font-weight: 700; }
+.notif-guide .ng-step .txt em {
+    font-style: normal;
+    background: var(--bg-soft);
+    padding: 1px 7px; border-radius: 6px;
+    font-weight: 600; font-size: 13px;
+    color: var(--primary-text);
+}
+.notif-guide .ng-actions {
+    display: flex; gap: 10px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-soft);
+}
+.notif-guide .ng-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: transform 0.12s, background 0.15s;
+}
+.notif-guide .ng-btn:active { transform: scale(0.97); }
+.notif-guide .ng-btn-close {
+    background: var(--bg-sunken);
+    color: var(--text);
+}
+.notif-guide .ng-btn-close:hover { background: var(--bg-hover); }
+.notif-guide .ng-btn-retry {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+.notif-guide .ng-btn-retry:hover { box-shadow: 0 6px 18px rgba(102,126,234,0.4); }
 </style>
 <body>
 
@@ -3397,6 +3640,52 @@ html[data-theme="dark"] .invite-hero {
 <!-- ============================================================
      TOAST
      ============================================================ -->
+	<!-- ============================================================
+     NOTIFICATION SOFT PROMPT
+     ============================================================ -->
+<div class="notif-prompt-backdrop" id="notifPromptBackdrop">
+    <div class="notif-prompt">
+        <div class="np-bell">🔔</div>
+        <div class="np-title">Never miss a message</div>
+        <div class="np-desc">
+            Turn on notifications so you know right away when friends
+            message you, react to your posts, or invite you to something.
+        </div>
+        <div class="np-list">
+            <div class="np-list-item"><span class="ic">💬</span><span>New messages from friends</span></div>
+            <div class="np-list-item"><span class="ic">👥</span><span>Friend requests &amp; group invites</span></div>
+            <div class="np-list-item"><span class="ic">❤️</span><span>Likes, comments &amp; mentions</span></div>
+        </div>
+        <div class="np-actions">
+            <button class="np-btn np-btn-later" onclick="dismissNotifPrompt()">Not now</button>
+            <button class="np-btn np-btn-enable" onclick="acceptNotifPrompt()">Enable</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     NOTIFICATION FIX GUIDE
+     ============================================================ -->
+<div class="notif-guide-backdrop" id="notifGuideBackdrop" onclick="if(event.target===this)closeNotifGuide()">
+    <div class="notif-guide">
+        <div class="ng-title">🔕 Notifications are blocked</div>
+        <div class="ng-sub">
+            Your browser is currently blocking notifications from Kampo. Here's how to fix it — pick your browser below.
+        </div>
+        <div class="ng-tabs" id="ngTabs">
+            <button class="ng-tab active" onclick="switchGuideTab('chrome', this)">Chrome</button>
+            <button class="ng-tab" onclick="switchGuideTab('safari', this)">Safari</button>
+            <button class="ng-tab" onclick="switchGuideTab('firefox', this)">Firefox</button>
+            <button class="ng-tab" onclick="switchGuideTab('edge', this)">Edge</button>
+            <button class="ng-tab" onclick="switchGuideTab('ios', this)">iOS</button>
+        </div>
+        <div id="ngSteps"></div>
+        <div class="ng-actions">
+            <button class="ng-btn ng-btn-close" onclick="closeNotifGuide()">Close</button>
+            <button class="ng-btn ng-btn-retry" onclick="retryNotifPermission()">I've fixed it — retry</button>
+        </div>
+    </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <!-- ============================================================
@@ -3568,7 +3857,7 @@ async function linkOneSignalUser() {
         if (!window.OneSignalDeferred) return;
         window.OneSignalDeferred.push(async function(OneSignal) {
             try {
-                await OneSignal.Notifications.requestPermission();
+                await OneSignal.login(currentUser.id);
                 await OneSignal.login(currentUser.id);
                 console.log('🔔 OneSignal linked to user', currentUser.id);
             } catch (e) {
@@ -7866,7 +8155,312 @@ document.addEventListener('click', (e) => {
         closeMessageMenu();
     }
 });
+/* ============================================================
+   NOTIFICATION PERMISSION MANAGEMENT
+   ============================================================ */
+const NOTIF_PROMPT_KEY = 'kampo_notif_prompt_state';
+// values: 'shown_later' | 'enabled' | 'blocked' | undefined
 
+function getNotifPermission() {
+    if (!('Notification' in window)) return 'unsupported';
+    return Notification.permission; // 'default' | 'granted' | 'denied'
+}
+
+function getNotifPromptState() {
+    try { return localStorage.getItem(NOTIF_PROMPT_KEY) || ''; } catch (e) { return ''; }
+}
+function setNotifPromptState(v) {
+    try { localStorage.setItem(NOTIF_PROMPT_KEY, v); } catch (e) {}
+}
+
+/* ---- 1. SOFT PROMPT ---- */
+function maybeShowNotifPrompt() {
+    const perm = getNotifPermission();
+    if (perm === 'unsupported') return;
+    if (perm === 'granted') return;
+    if (perm === 'denied') {
+        // Don't ask again — show the blocked banner instead (handled elsewhere)
+        return;
+    }
+    // perm === 'default'
+    const state = getNotifPromptState();
+    if (state === 'shown_later') {
+        // Only nag once every 7 days
+        const last = parseInt(localStorage.getItem('kampo_notif_later_at') || '0', 10);
+        if (Date.now() - last < 7 * 24 * 60 * 60 * 1000) return;
+    }
+    // Show after a short delay so the app settles
+    setTimeout(() => {
+        const el = document.getElementById('notifPromptBackdrop');
+        if (el) el.classList.add('active');
+    }, 2000);
+}
+
+function dismissNotifPrompt() {
+    const el = document.getElementById('notifPromptBackdrop');
+    if (el) el.classList.remove('active');
+    setNotifPromptState('shown_later');
+    try { localStorage.setItem('kampo_notif_later_at', String(Date.now())); } catch (e) {}
+}
+
+async function acceptNotifPrompt() {
+    const el = document.getElementById('notifPromptBackdrop');
+    if (el) el.classList.remove('active');
+    const granted = await requestNotifPermission();
+    if (granted) {
+        setNotifPromptState('enabled');
+        showToast('✅ Notifications enabled!');
+    } else {
+        // Either denied or dismissed
+        const perm = getNotifPermission();
+        if (perm === 'denied') {
+            setNotifPromptState('blocked');
+            setTimeout(() => openNotifGuide(), 400);
+        } else {
+            setNotifPromptState('shown_later');
+            try { localStorage.setItem('kampo_notif_later_at', String(Date.now())); } catch (e) {}
+        }
+    }
+    refreshNotifUI();
+}
+
+async function requestNotifPermission() {
+    // Try OneSignal first (it also manages the native permission)
+    try {
+        if (window.OneSignalDeferred) {
+            let granted = false;
+            window.OneSignalDeferred.push(async function (OneSignal) {
+                try {
+                    await OneSignal.Notifications.requestPermission();
+                    granted = OneSignal.Notifications.permission === true;
+                } catch (e) { console.warn('OneSignal perm error', e); }
+            });
+            // Give it a tick to run
+            await new Promise(r => setTimeout(r, 800));
+            if (granted) return true;
+        }
+    } catch (e) { console.warn(e); }
+
+    // Fallback: native Notification API
+    if ('Notification' in window) {
+        try {
+            const res = await Notification.requestPermission();
+            return res === 'granted';
+        } catch (e) { return false; }
+    }
+    return false;
+}
+
+/* ---- 2. BLOCKED-STATE BANNER (in notifications page) ---- */
+function renderNotifBlockedBanner() {
+    const list = document.getElementById('notificationsList');
+    if (!list) return;
+    // Remove any existing banner first
+    const old = document.getElementById('notifBlockedBanner');
+    if (old) old.remove();
+
+    const perm = getNotifPermission();
+    if (perm === 'granted' || perm === 'unsupported') return;
+
+    // Only show when denied OR when we've previously shown the soft prompt and they said "later" too many times
+    const denied = perm === 'denied';
+    if (!denied) return;
+
+    const html =
+        '<div class="notif-blocked-banner" id="notifBlockedBanner">' +
+            '<div class="nb-icon">🔕</div>' +
+            '<div class="nb-body">' +
+                '<div class="nb-title">Notifications are blocked</div>' +
+                '<div class="nb-desc">You won\'t get alerts for new messages, friend requests, or group invites until you turn them back on.</div>' +
+                '<button class="nb-btn" onclick="openNotifGuide()">How to fix →</button>' +
+            '</div>' +
+        '</div>';
+    list.insertAdjacentHTML('afterbegin', html);
+}
+
+/* ---- 3. FIX GUIDE ---- */
+const NOTIF_GUIDES = {
+    chrome: [
+        { txt: 'Click the <strong>lock icon 🔒</strong> or <strong>tune icon ⚙️</strong> in the address bar.' },
+        { txt: 'Find <em>Notifications</em> in the list.' },
+        { txt: 'Change it from <em>Block</em> to <em>Allow</em>.' },
+        { txt: 'Reload this page.' }
+    ],
+    edge: [
+        { txt: 'Click the <strong>lock icon 🔒</strong> in the address bar.' },
+        { txt: 'Select <em>Permissions for this site</em>.' },
+        { txt: 'Set <em>Notifications</em> to <em>Allow</em>.' },
+        { txt: 'Reload this page.' }
+    ],
+    firefox: [
+        { txt: 'Click the <strong>lock icon 🔒</strong> in the address bar.' },
+        { txt: 'Click <em>Connection secure</em> → <em>More information</em>.' },
+        { txt: 'Go to the <em>Permissions</em> tab.' },
+        { txt: 'Under <em>Send Notifications</em>, uncheck <em>Block</em>.' },
+        { txt: 'Reload this page.' }
+    ],
+    safari: [
+        { txt: 'Open <strong>Safari → Settings (⌘,)</strong>.' },
+        { txt: 'Go to the <em>Websites</em> tab.' },
+        { txt: 'Choose <em>Notifications</em> in the left column.' },
+        { txt: 'Find this site and change it to <em>Allow</em>.' },
+        { txt: 'Reload this page.' }
+    ],
+    ios: [
+        { txt: 'Open the <strong>Settings</strong> app.' },
+        { txt: 'Scroll down and tap <em>Safari</em> (or your browser).' },
+        { txt: 'Tap <em>Notifications</em> — or if you added Kampo to your Home Screen, find <em>Kampo</em> in Settings.' },
+        { txt: 'Toggle notifications <em>On</em>.' },
+        { txt: 'Return to Kampo and reload.' }
+    ]
+};
+
+function openNotifGuide() {
+    const el = document.getElementById('notifGuideBackdrop');
+    if (!el) return;
+    switchGuideTab('chrome', document.querySelector('#ngTabs .ng-tab'));
+    el.classList.add('active');
+}
+function closeNotifGuide() {
+    const el = document.getElementById('notifGuideBackdrop');
+    if (el) el.classList.remove('active');
+}
+function switchGuideTab(key, tabEl) {
+    document.querySelectorAll('#ngTabs .ng-tab').forEach(t => t.classList.remove('active'));
+    if (tabEl) tabEl.classList.add('active');
+    const steps = NOTIF_GUIDES[key] || [];
+    const c = document.getElementById('ngSteps');
+    if (!c) return;
+    c.innerHTML = steps.map((s, i) =>
+        '<div class="ng-step">' +
+            '<div class="num">' + (i + 1) + '</div>' +
+            '<div class="txt">' + s.txt + '</div>' +
+        '</div>'
+    ).join('');
+}
+async function retryNotifPermission() {
+    const perm = getNotifPermission();
+    if (perm === 'granted') {
+        closeNotifGuide();
+        setNotifPromptState('enabled');
+        showToast('✅ Notifications are working!');
+        refreshNotifUI();
+        return;
+    }
+    if (perm === 'denied') {
+        // Re-check after a moment — user may have just changed it
+        showToast('Still blocked — please follow the steps, then reload.');
+        return;
+    }
+    // 'default' — we can ask
+    const granted = await requestNotifPermission();
+    if (granted) {
+        closeNotifGuide();
+        setNotifPromptState('enabled');
+        showToast('✅ Notifications enabled!');
+    } else {
+        showToast('Permission not granted.');
+    }
+    refreshNotifUI();
+}
+
+/* ---- 4. UI REFRESH ---- */
+function refreshNotifUI() {
+    // Re-render notifications page so the blocked banner updates
+    if (activePage === 'notifications') {
+        renderNotifications();
+    }
+    // Update the user-menu label if present
+    const menuItem = document.querySelector('.user-menu-item[data-action="notif-settings"]');
+    if (menuItem) {
+        const perm = getNotifPermission();
+        const label = menuItem.querySelector('.um-label');
+        if (label) {
+            if (perm === 'granted') label.textContent = 'Notification Settings ✓';
+            else if (perm === 'denied') label.textContent = 'Notification Settings (blocked)';
+            else label.textContent = 'Notification Settings';
+        }
+    }
+}
+
+/* ---- 5. HOOK INTO EXISTING renderNotifications ---- */
+// Wrap the original function so we always inject the blocked banner
+(function () {
+    const original = window.renderNotifications;
+    if (typeof original !== 'function') return;
+    window.renderNotifications = function () {
+        original.apply(this, arguments);
+        renderNotifBlockedBanner();
+    };
+})();
+
+/* ---- 6. USER MENU ITEM ---- */
+// Add "Notification Settings" to the user menu after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    const menu = document.getElementById('userMenu');
+    if (!menu) return;
+    if (menu.querySelector('[data-action="notif-settings"]')) return;
+    const divider = menu.querySelector('.user-menu-divider');
+    const item = document.createElement('button');
+    item.className = 'user-menu-item';
+    item.setAttribute('data-action', 'notif-settings');
+    item.onclick = () => {
+        closeUserMenu();
+        openNotifSettings();
+    };
+    item.innerHTML =
+        '<span class="um-icon">🔔</span>' +
+        '<span class="um-label">Notification Settings</span>';
+    if (divider && divider.nextSibling) {
+        menu.insertBefore(item, divider.nextSibling);
+    } else {
+        menu.appendChild(item);
+    }
+});
+
+function openNotifSettings() {
+    const perm = getNotifPermission();
+    if (perm === 'granted') {
+        kmodal.alert(
+            'Notifications are enabled. You\'ll get alerts for messages, friend requests, and group invites even when Kampo is closed.',
+            { title: '🔔 Notifications on', icon: '✅', confirmText: 'Great' }
+        );
+        return;
+    }
+    if (perm === 'denied') {
+        openNotifGuide();
+        return;
+    }
+    if (perm === 'unsupported') {
+        kmodal.alert('Your browser does not support notifications.', { title: 'Not supported', icon: '😕' });
+        return;
+    }
+    // 'default' — show soft prompt again
+    const el = document.getElementById('notifPromptBackdrop');
+    if (el) el.classList.add('active');
+}
+
+/* ---- 7. TRIGGER SOFT PROMPT AFTER LOGIN ---- */
+// Hook into auth state — after listeners start, show soft prompt once
+(function () {
+    const orig = window.startPresence;
+    if (typeof orig === 'function') {
+        window.startPresence = function () {
+            orig.apply(this, arguments);
+            // Soft prompt only after the user is in the app
+            setTimeout(maybeShowNotifPrompt, 3000);
+        };
+    }
+})();
+
+// Also re-check permission every time the tab becomes visible
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        refreshNotifUI();
+    }
+});
+
+console.log('🔔 Notification permission UI loaded');
 console.log('✅ Kampo loaded — dark mode + invite + message actions + kmodal + 2000-cap + notification dedupe');
 </script>
 </body>

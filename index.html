@@ -8956,6 +8956,77 @@ function stopIncomingCallListener() {
         incomingCallUnsub = null;
     }
 }
+	/* ============================================================
+   INCOMING CALL SCREEN (functions)
+   ============================================================ */
+let incomingCallTimeout = null;
+
+function showIncomingCallScreen(call) {
+    const caller = users.find(u => u.id === call.from) || call.callerSnapshot;
+    if (!caller) return;
+
+    const wrap = document.getElementById('incomingCallAvatarWrap');
+    if (wrap) wrap.innerHTML = userAvatarHtml(caller, 100);
+
+    const nameEl = document.getElementById('incomingCallName');
+    if (nameEl) nameEl.innerHTML = displayName(caller);
+
+    const uniEl = document.getElementById('incomingCallUniversity');
+    if (uniEl) uniEl.textContent =
+        (caller.university || '') + (caller.country ? ' · ' + caller.country : '');
+
+    const typeEl = document.getElementById('incomingCallType');
+    if (typeEl) typeEl.textContent =
+        call.type === 'audio' ? '📞 Incoming audio call…' : '🎥 Incoming video call…';
+
+    const backdrop = document.getElementById('incomingCallBackdrop');
+    if (backdrop) backdrop.classList.add('active');
+
+    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 300]);
+
+    clearTimeout(incomingCallTimeout);
+    incomingCallTimeout = setTimeout(() => {
+        if (currentIncomingCall && currentIncomingCall.status === 'ringing') {
+            declineIncomingCall(true);
+        }
+    }, 30000);
+}
+
+function hideIncomingCallScreen() {
+    const backdrop = document.getElementById('incomingCallBackdrop');
+    if (backdrop) backdrop.classList.remove('active');
+    clearTimeout(incomingCallTimeout);
+    incomingCallTimeout = null;
+}
+
+async function acceptIncomingCall() {
+    const call = currentIncomingCall;
+    if (!call) return;
+    hideIncomingCallScreen();
+
+    try {
+        await fbDb.collection('calls').doc(call.id).update({ status: 'accepted' });
+    } catch (e) { console.warn(e); }
+
+    currentIncomingCall = null;
+    startAgoraCallAsReceiver(call.from, call.type, call.channel);
+}
+
+async function declineIncomingCall(silent) {
+    const call = currentIncomingCall;
+    if (!call) return;
+    hideIncomingCallScreen();
+    currentIncomingCall = null;
+
+    try {
+        await fbDb.collection('calls').doc(call.id).update({
+            status: silent ? 'missed' : 'declined',
+            endedAt: Date.now()
+        });
+    } catch (e) { console.warn(e); }
+
+    if (!silent) showToast('Call declined');
+}
 
 /* Remote user started publishing audio/video */
 async function handleAgoraUserPublished(user, mediaType) {

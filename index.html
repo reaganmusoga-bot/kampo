@@ -8462,6 +8462,30 @@ document.addEventListener('visibilitychange', () => {
 });
 
 console.log('🔔 Notification permission UI loaded');
+	/* ============================================================
+   DEVICE DETECTION (for iOS notification flow)
+   ============================================================ */
+function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function isStandalone() {
+    // True if the app is running from a Home Screen icon (installed mode)
+    return window.navigator.standalone === true ||
+           window.matchMedia('(display-mode: standalone)').matches ||
+           window.matchMedia('(display-mode: fullscreen)').matches;
+}
+
+function isIOSInBrowser() {
+    // iOS Safari/Chrome in a normal tab (NOT installed to Home Screen)
+    return isIOS() && !isStandalone();
+}
+
+console.log('📱 Device check:', {
+    iOS: isIOS(),
+    standalone: isStandalone(),
+    needsInstall: isIOSInBrowser()
+});
 console.log('✅ Kampo loaded — dark mode + invite + message actions + kmodal + 2000-cap + notification dedupe');
 </script>
 </body>

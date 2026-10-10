@@ -8631,7 +8631,208 @@ function uidFromString(str) {
     }
     return Math.abs(hash) % 1000000000;
 }
+/* ============================================================
+   AGORA CALL ENGINE — start/end functions
+   ============================================================ */
 
+async function startAgoraCall(partnerId, type) {
+    // type: 'audio' or 'video'
+    if (!currentUser || !partnerId) return;
+    if (agoraClient) {
+        showToast('You are already in a call');
+        return;
+    }
+
+    const partner = users.find(u => u.id === partnerId);
+    if (!partner) { showToast('User not found'); return; }
+
+    const channelName = makeAgoraChannel(currentUser.id, partnerId);
+    const myUid = uidFromString(currentUser.id);
+
+    // Open the call modal first so the user sees the loading state
+    const modal = document.getElementById('callModal');
+    const container = document.getElementById('callFrameContainer');
+    document.getElementById('callTitle').textContent =
+        (type === 'audio' ? '📞 Audio' : '🎥 Video') + ' · ' + partner.name.split(' ')[0];
+    document.getElementById('callTypeBadge').textContent = type.toUpperCase();
+    modal.querySelector('.call-close-btn').textContent = 'End Call';
+    container.innerHTML = buildAgoraCallUI(type, partner);
+    modal.classList.add('active');
+
+    try {
+        // 1. Get token from our serverless function
+        const token = await fetchAgoraToken(channelName, myUid);
+
+        // 2. Create the Agora client
+        agoraClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+        agoraCurrentChannel = channelName;
+        agoraCurrentUid = myUid;
+
+        // 3. Set up remote-user listeners BEFORE joining
+        agoraClient.on('user-published', handleAgoraUserPublished);
+        agoraClient.on('user-unpublished', handleAgoraUserUnpublished);
+        agoraClient.on('user-left', handleAgoraUserLeft);
+
+        // 4. Join the channel
+        await agoraClient.join(AGORA_APP_ID, channelName, token, myUid);
+
+        // 5. Create local tracks
+        if (type === 'video') {
+            [agoraLocalTracks.audio, agoraLocalTracks.video] =
+                await AgoraRTC.createMicrophoneAndCameraTracks();
+        } else {
+            agoraLocalTracks.audio = await AgoraRTC.createMicrophoneAudioTrack();
+            agoraLocalTracks.video = null;
+        }
+
+        // 6. Play local video into its slot
+        const localSlot = document.getElementById('agoraLocalVideo');
+        if (localSlot) {
+            if (agoraLocalTracks.video) {
+                agoraLocalTracks.video.play('agoraLocalVideo');
+            } else {
+                localSlot.innerHTML = '<div class="agora-audio-only">' +
+                    userAvatarHtml(currentUser, 100) +
+                    '<div class="agora-audio-label">' + escapeHtml(currentUser.name) + ' (you)</div>' +
+                '</div>';
+            }
+        }
+
+        // 7. Publish local tracks
+        const tracksToPublish = [agoraLocalTracks.audio];
+        if (agoraLocalTracks.video) tracksToPublish.push(agoraLocalTracks.video);
+        await agoraClient.publish(tracksToPublish);
+
+        // 8. Wire up controls
+        wireAgoraControls(type);
+
+        showToast('Call started — waiting for ' + partner.name.split(' ')[0] + '…');
+
+    } catch (err) {
+        console.error('Agora call failed:', err);
+        showToast('❌ Could not start call: ' + err.message);
+        await endAgoraCall();
+    }
+}
+
+/* Remote user started publishing audio/video */
+async function handleAgoraUserPublished(user, mediaType) {
+    await agoraClient.subscribe(user, mediaType);
+    agoraRemoteUsers[user.uid] = agoraRemoteUsers[user.uid] || {};
+
+    if (mediaType === 'video') {
+        agoraRemoteUsers[user.uid].videoTrack = user.videoTrack;
+        const remoteSlot = document.getElementById('agoraRemoteVideo');
+        if (remoteSlot) {
+            remoteSlot.innerHTML = '';   // remove the "waiting" placeholder
+            user.videoTrack.play('agoraRemoteVideo');
+        }
+        document.getElementById('callTitle').textContent = '🎥 In call';
+    }
+
+    if (mediaType === 'audio') {
+        agoraRemoteUsers[user.uid].audioTrack = user.audioTrack;
+        user.audioTrack.play();
+    }
+}
+
+/* Remote user stopped publishing one of their tracks */
+function handleAgoraUserUnpublished(user, mediaType) {
+    if (mediaType === 'video') {
+        const remoteSlot = document.getElementById('agoraRemoteVideo');
+        if (remoteSlot) remoteSlot.innerHTML = '<div class="agora-waiting">Camera off</div>';
+    }
+}
+
+/* Remote user left the channel */
+function handleAgoraUserLeft(user, reason) {
+    const remoteSlot = document.getElementById('agoraRemoteVideo');
+    if (remoteSlot) remoteSlot.innerHTML = '<div class="agora-waiting">They left the call</div>';
+    document.getElementById('callTitle').textContent = 'Call ended';
+    setTimeout(() => endAgoraCall(), 1500);
+}
+
+/* Build the HTML for the call UI — replaces the old iframe */
+function buildAgoraCallUI(type, partner) {
+    return (
+        '<div class="agora-call-ui">' +
+            '<div class="agora-remote-container" id="agoraRemoteVideo">' +
+                '<div class="agora-waiting">' +
+                    userAvatarHtml(partner, 100) +
+                    '<div class="agora-waiting-name">' + escapeHtml(partner.name) + '</div>' +
+                    '<div class="agora-waiting-text">Ringing…</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="agora-local-container" id="agoraLocalVideo"></div>' +
+            '<div class="agora-controls">' +
+                '<button class="agora-btn" id="agoraMuteBtn" title="Mute">🎤</button>' +
+                (type === 'video' ? '<button class="agora-btn" id="agoraCameraBtn" title="Camera">🎥</button>' : '') +
+                '<button class="agora-btn agora-btn-end" id="agoraEndBtn" title="End call">📵</button>' +
+            '</div>' +
+        '</div>'
+    );
+}
+
+/* Wire the mute / camera / end buttons */
+function wireAgoraControls(type) {
+    const muteBtn = document.getElementById('agoraMuteBtn');
+    const camBtn = document.getElementById('agoraCameraBtn');
+    const endBtn = document.getElementById('agoraEndBtn');
+
+    if (muteBtn) {
+        muteBtn.onclick = async () => {
+            if (!agoraLocalTracks.audio) return;
+            const muted = !agoraLocalTracks.audio.muted;
+            await agoraLocalTracks.audio.setMuted(muted);
+            muteBtn.classList.toggle('muted', muted);
+            muteBtn.textContent = muted ? '🔇' : '🎤';
+        };
+    }
+
+    if (camBtn && agoraLocalTracks.video) {
+        camBtn.onclick = async () => {
+            const off = !agoraLocalTracks.video.muted;
+            await agoraLocalTracks.video.setMuted(off);
+            camBtn.classList.toggle('muted', off);
+            camBtn.textContent = off ? '📷' : '🎥';
+        };
+    }
+
+    if (endBtn) {
+        endBtn.onclick = () => endAgoraCall();
+    }
+}
+
+/* Clean up when the call ends */
+async function endAgoraCall() {
+    try {
+        if (agoraLocalTracks.audio) { agoraLocalTracks.audio.stop(); agoraLocalTracks.audio.close(); }
+        if (agoraLocalTracks.video) { agoraLocalTracks.video.stop(); agoraLocalTracks.video.close(); }
+    } catch (e) {}
+    agoraLocalTracks = { audio: null, video: null };
+
+    try {
+        if (agoraClient) {
+            await agoraClient.leave();
+        }
+    } catch (e) {}
+
+    try {
+        if (agoraClient) {
+            agoraClient.removeAllListeners();
+        }
+    } catch (e) {}
+
+    agoraClient = null;
+    agoraRemoteUsers = {};
+    agoraCurrentChannel = null;
+    agoraCurrentUid = null;
+
+    const modal = document.getElementById('callModal');
+    if (modal) modal.classList.remove('active');
+    const container = document.getElementById('callFrameContainer');
+    if (container) container.innerHTML = '';
+}
 console.log('🎥 Agora call engine loaded');
 console.log('✅ Kampo loaded — dark mode + invite + message actions + kmodal + 2000-cap + notification dedupe');
 </script>

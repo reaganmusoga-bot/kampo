@@ -8589,6 +8589,50 @@ console.log('📱 Device check:', {
     standalone: isStandalone(),
     needsInstall: isIOSInBrowser()
 });
+	/* ============================================================
+   AGORA CALL ENGINE
+   ============================================================ */
+const AGORA_APP_ID = '6ed1c4b10d604ade89235f646a63b2a5';
+
+let agoraClient = null;
+let agoraLocalTracks = { audio: null, video: null };
+let agoraRemoteUsers = {};   // { uid: { videoTrack, audioTrack } }
+let agoraCurrentChannel = null;
+let agoraCurrentUid = null;
+
+/* Fetch a token from our Vercel serverless function */
+async function fetchAgoraToken(channelName, uid) {
+    const res = await fetch('/api/agora-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelName, uid })
+    });
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error('Token fetch failed (' + res.status + '): ' + text.slice(0, 200));
+    }
+    const data = await res.json();
+    if (!data.token) throw new Error('No token in response');
+    return data.token;
+}
+
+/* Generate a stable channel name for a 1-on-1 call */
+function makeAgoraChannel(a, b) {
+    const ids = [a, b].sort();
+    return 'kampo-' + ids.join('-').replace(/[^a-z0-9-]/gi, '').slice(0, 60);
+}
+
+/* Generate a numeric uid from a Firestore string uid */
+function uidFromString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash) % 1000000000;
+}
+
+console.log('🎥 Agora call engine loaded');
 console.log('✅ Kampo loaded — dark mode + invite + message actions + kmodal + 2000-cap + notification dedupe');
 </script>
 </body>

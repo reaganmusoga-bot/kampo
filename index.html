@@ -2752,6 +2752,28 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     color: white;
 }
 .notif-guide .ng-btn-retry:hover { box-shadow: 0 6px 18px rgba(102,126,234,0.4); }
+	/* Sidebar blocked-notification indicator */
+.sidebar-link .notif-blocked-dot {
+    display: none;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+    margin-left: auto;
+    flex-shrink: 0;
+    animation: notifDotPulse 1.8s ease-in-out infinite;
+}
+.sidebar-link .notif-blocked-dot.show { display: block; }
+
+@keyframes notifDotPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.7; }
+}
+
+/* If there's already a badge, push the dot to sit just before it */
+.sidebar-link .notif-blocked-dot + .link-badge {
+    margin-left: 6px;
+}
 </style>
 <body>
 
@@ -2957,7 +2979,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                 <div class="sidebar-link active" onclick="showPage('feed')"><span class="icon">📰</span> Feed</div>
                 <div class="sidebar-link" onclick="showPage('messages')"><span class="icon">💬</span> Messages<span class="link-badge" id="sideMsgBadge" style="display:none;">0</span></div>
                 <div class="sidebar-link" onclick="showPage('requests')"><span class="icon">👥</span> Friend Requests<span class="link-badge" id="sideReqBadge" style="display:none;">0</span></div>
-                <div class="sidebar-link" onclick="showPage('notifications')"><span class="icon">🔔</span> Notifications<span class="link-badge" id="sideNotifBadge" style="display:none;">0</span></div>
+                <div class="sidebar-link" onclick="showPage('notifications')"><span class="icon">🔔</span> Notifications<span class="link-badge" id="sideNotifBadge" style="display:none;">0</span><span class="notif-blocked-dot" id="sideNotifBlockedDot" title="Notifications are blocked"></span></div>
                 <div class="sidebar-link" onclick="showPage('groups')"><span class="icon">👪</span> Groups<span class="link-badge" id="sideGrpBadge" style="display:none;">0</span></div>
                 <div class="sidebar-link" onclick="showPage('students')"><span class="icon">🌍</span> Discover Students</div>
                 <div class="sidebar-link" onclick="showPage('invite')"><span class="icon">🎉</span> Invite Friends</div>
@@ -8287,6 +8309,14 @@ async function acceptNotifPrompt() {
         }
     }
     refreshNotifUI();
+	function refreshNotifUI() {
+    updateSidebarNotifDot();          // ← add this
+    // ... existing code below ...
+    if (activePage === 'notifications') {
+        renderNotifications();
+    }
+    // ... rest of the function ...
+}
 }
 
 async function requestNotifPermission() {
@@ -8409,6 +8439,13 @@ async function retryNotifPermission() {
         setNotifPromptState('enabled');
         showToast('✅ Notifications are working!');
         refreshNotifUI();
+		function updateSidebarNotifDot() {
+    const dot = document.getElementById('sideNotifBlockedDot');
+    if (!dot) return;
+    const perm = getNotifPermission();
+    const blocked = (perm === 'denied');
+    dot.classList.toggle('show', blocked);
+}
         return;
     }
     if (perm === 'denied') {
@@ -8524,7 +8561,7 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-console.log('🔔 Notification permission UI loaded');
+// Initial dot state on load setTimeout(updateSidebarNotifDot, 500);  console.log('🔔 Notification permission UI loaded');
 	/* ============================================================
    DEVICE DETECTION (for iOS notification flow)
    ============================================================ */

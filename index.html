@@ -8370,15 +8370,14 @@ const NOTIF_GUIDES = {
         { txt: 'Find this site and change it to <em>Allow</em>.' },
         { txt: 'Reload this page.' }
     ],
-    ios: [
-        { txt: 'Open the <strong>Settings</strong> app.' },
-        { txt: 'Scroll down and tap <em>Safari</em> (or your browser).' },
-        { txt: 'Tap <em>Notifications</em> — or if you added Kampo to your Home Screen, find <em>Kampo</em> in Settings.' },
-        { txt: 'Toggle notifications <em>On</em>.' },
-        { txt: 'Return to Kampo and reload.' }
-    ]
-};
-
+ios: [
+    { txt: 'Open <strong>Kampo in Safari</strong> (not Chrome).' },
+    { txt: 'Tap the <strong>Share</strong> button at the bottom of the screen — it\'s the square with an <strong>arrow pointing up</strong> ↗️.' },
+    { txt: 'Scroll down the share menu and tap <strong>Add to Home Screen</strong>.' },
+    { txt: 'Tap <strong>Add</strong> in the top-right corner.' },
+    { txt: 'Close Safari, then find the new <strong>Kampo icon</strong> on your Home Screen and tap it to open.' },
+    { txt: 'Inside the app, a prompt will ask about notifications — tap <strong>Enable</strong>. Done!' }
+]
 function openNotifGuide() {
     const el = document.getElementById('notifGuideBackdrop');
     if (!el) return;

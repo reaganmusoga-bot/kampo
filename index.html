@@ -3646,20 +3646,20 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
      ============================================================ -->
 <div class="notif-prompt-backdrop" id="notifPromptBackdrop">
     <div class="notif-prompt">
-        <div class="np-bell">🔔</div>
-        <div class="np-title">Never miss a message</div>
-        <div class="np-desc">
+        <div class="np-bell" id="npBell">🔔</div>
+        <div class="np-title" id="npTitle">Never miss a message</div>
+        <div class="np-desc" id="npDesc">
             Turn on notifications so you know right away when friends
             message you, react to your posts, or invite you to something.
         </div>
-        <div class="np-list">
+        <div class="np-list" id="npList">
             <div class="np-list-item"><span class="ic">💬</span><span>New messages from friends</span></div>
             <div class="np-list-item"><span class="ic">👥</span><span>Friend requests &amp; group invites</span></div>
             <div class="np-list-item"><span class="ic">❤️</span><span>Likes, comments &amp; mentions</span></div>
         </div>
         <div class="np-actions">
-            <button class="np-btn np-btn-later" onclick="dismissNotifPrompt()">Not now</button>
-            <button class="np-btn np-btn-enable" onclick="acceptNotifPrompt()">Enable</button>
+            <button class="np-btn np-btn-later" id="npLaterBtn" onclick="dismissNotifPrompt()">Not now</button>
+            <button class="np-btn np-btn-enable" id="npEnableBtn" onclick="acceptNotifPrompt()">Enable</button>
         </div>
     </div>
 </div>
@@ -8179,24 +8179,87 @@ function maybeShowNotifPrompt() {
     const perm = getNotifPermission();
     if (perm === 'unsupported') return;
     if (perm === 'granted') return;
-    if (perm === 'denied') {
-        // Don't ask again — show the blocked banner instead (handled elsewhere)
-        return;
-    }
-    // perm === 'default'
+    if (perm === 'denied') return;
+
     const state = getNotifPromptState();
     if (state === 'shown_later') {
-        // Only nag once every 7 days
         const last = parseInt(localStorage.getItem('kampo_notif_later_at') || '0', 10);
         if (Date.now() - last < 7 * 24 * 60 * 60 * 1000) return;
     }
-    // Show after a short delay so the app settles
+
+    // Adapt the prompt for iOS-before-install
+    if (typeof isIOSInBrowser === 'function' && isIOSInBrowser()) {
+        configurePromptForIOSInstall();
+    } else {
+        configurePromptForEnable();
+    }
+
     setTimeout(() => {
         const el = document.getElementById('notifPromptBackdrop');
         if (el) el.classList.add('active');
     }, 2000);
 }
+function openIOSInstallGuide() {
+    // Hide the soft prompt first
+    const prompt = document.getElementById('notifPromptBackdrop');
+    if (prompt) prompt.classList.remove('active');
 
+    // Open the guide, forced to the iOS tab
+    const guide = document.getElementById('notifGuideBackdrop');
+    if (guide) {
+        guide.classList.add('active');
+        // Find the iOS tab button and activate it
+        const iosTab = Array.from(document.querySelectorAll('#ngTabs .ng-tab'))
+            .find(t => t.textContent.trim().toLowerCase() === 'ios');
+        if (iosTab) switchGuideTab('ios', iosTab);
+    }
+}
+/* ---- Prompt variant: normal "Enable notifications" ---- */
+function configurePromptForEnable() {
+    const bell = document.getElementById('npBell');
+    const title = document.getElementById('npTitle');
+    const desc = document.getElementById('npDesc');
+    const list = document.getElementById('npList');
+    const later = document.getElementById('npLaterBtn');
+    const enable = document.getElementById('npEnableBtn');
+
+    if (bell) bell.textContent = '🔔';
+    if (title) title.textContent = 'Never miss a message';
+    if (desc) desc.textContent = 'Turn on notifications so you know right away when friends message you, react to your posts, or invite you to something.';
+    if (list) list.innerHTML =
+        '<div class="np-list-item"><span class="ic">💬</span><span>New messages from friends</span></div>' +
+        '<div class="np-list-item"><span class="ic">👥</span><span>Friend requests &amp; group invites</span></div>' +
+        '<div class="np-list-item"><span class="ic">❤️</span><span>Likes, comments &amp; mentions</span></div>';
+    if (later) later.textContent = 'Not now';
+    if (enable) {
+        enable.textContent = 'Enable';
+        enable.setAttribute('onclick', 'acceptNotifPrompt()');
+    }
+}
+
+/* ---- Prompt variant: iOS in Safari, needs Home Screen install ---- */
+function configurePromptForIOSInstall() {
+    const bell = document.getElementById('npBell');
+    const title = document.getElementById('npTitle');
+    const desc = document.getElementById('npDesc');
+    const list = document.getElementById('npList');
+    const later = document.getElementById('npLaterBtn');
+    const enable = document.getElementById('npEnableBtn');
+
+    if (bell) bell.textContent = '📲';
+    if (title) title.textContent = 'Get notifications on iPhone';
+    if (desc) desc.textContent = 'To receive alerts, first add Kampo to your Home Screen — it takes about 15 seconds. Then open Kampo from the new icon and turn notifications on.';
+    if (list) list.innerHTML =
+        '<div class="np-list-item"><span class="ic">1️⃣</span><span>Tap the <strong>Share</strong> button in Safari</span></div>' +
+        '<div class="np-list-item"><span class="ic">2️⃣</span><span>Choose <strong>Add to Home Screen</strong></span></div>' +
+        '<div class="np-list-item"><span class="ic">3️⃣</span><span>Open Kampo from your Home Screen</span></div>' +
+        '<div class="np-list-item"><span class="ic">4️⃣</span><span>Tap <strong>Enable Notifications</strong> when asked</span></div>';
+    if (later) later.textContent = 'Maybe later';
+    if (enable) {
+        enable.textContent = 'Show me how';
+        enable.setAttribute('onclick', 'openIOSInstallGuide()');
+    }
+}
 function dismissNotifPrompt() {
     const el = document.getElementById('notifPromptBackdrop');
     if (el) el.classList.remove('active');

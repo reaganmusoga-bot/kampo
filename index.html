@@ -2774,6 +2774,172 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
 .sidebar-link .notif-blocked-dot + .link-badge {
     margin-left: 6px;
 }
+	/* ============================================================
+   AGORA CALL UI
+   ============================================================ */
+.agora-call-ui {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #0a0a0a;
+    overflow: hidden;
+}
+
+.agora-remote-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.agora-remote-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.agora-waiting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.agora-waiting-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+.agora-waiting-text {
+    font-size: 15px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 1px;
+    animation: agoraPulse 2s ease-in-out infinite;
+}
+
+@keyframes agoraPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.agora-local-container {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 160px;
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1a1a2e;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    border: 2px solid rgba(255,255,255,0.15);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.agora-local-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.agora-audio-only {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    width: 100%;
+}
+
+.agora-audio-only .avatar {
+    width: 70px !important;
+    height: 70px !important;
+    font-size: 26px !important;
+}
+
+.agora-audio-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    line-height: 1.3;
+}
+
+.agora-controls {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 14px;
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    z-index: 20;
+}
+
+.agora-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    transition: transform 0.15s, background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.agora-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+.agora-btn:active { transform: scale(0.95); }
+
+.agora-btn.muted {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.agora-btn-end {
+    background: #e74c3c;
+}
+
+.agora-btn-end:hover {
+    background: #c0392b;
+    transform: scale(1.05);
+}
+
+@media (max-width: 700px) {
+    .agora-local-container {
+        width: 110px;
+        height: 150px;
+        top: 80px;
+        right: 12px;
+    }
+    .agora-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    .agora-controls {
+        bottom: 20px;
+        padding: 8px 12px;
+    }
+}
 </style>
 <body>
 
@@ -5978,8 +6144,8 @@ function openConversation(id) {
             presenceAvatarHtml(user, 40, isLive) +
             '<div style="min-width:0;flex:1;"><div class="chat-name">' + displayName(user) + '</div><div class="chat-status' + (online ? ' online' : '') + '">' + lastSeenText(isLive ? user : null) + '</div></div>' +
             '<div style="display:flex;gap:6px;flex-shrink:0;">' +
-                '<button class="btn-call audio" onclick="startCall(\'' + user.id + '\', \'audio\')" style="padding:6px 12px;">📞</button>' +
-                '<button class="btn-call video" onclick="startCall(\'' + user.id + '\', \'video\')" style="padding:6px 12px;">🎥</button>' +
+              '<button class="btn-call audio" onclick="startAgoraCall(\'' + user.id + '\', \'audio\')" style="padding:6px 12px;">📞</button>' +
+'<button class="btn-call video" onclick="startAgoraCall(\'' + user.id + '\', \'video\')" style="padding:6px 12px;">🎥</button>' +
             '</div>' +
         '</div>' +
         '<div class="chat-messages" id="chatMessages">' + html + '</div>' +
@@ -7117,9 +7283,8 @@ function prevStory() { if (!currentStoryViewer) return; if (currentStoryViewer.i
    ============================================================ */
 function makeRoomId(a, b) { const ids = [a, b].sort(); return 'kampo-' + ids.join('-').replace(/[^a-z0-9-]/gi, '').slice(0, 40); }
 function startCall(pid, type) {
-    const p = users.find(u => u.id === pid);
-    if (!p) return;
-    openJitsiCall(makeRoomId(currentUser.id, pid), type, (type === 'audio' ? '📞 Audio' : '🎥 Video') + ' · ' + p.name.split(' ')[0]);
+    // Now routes to Agora instead of Jitsi
+    return startAgoraCall(pid, type);
 }
 function startGroupConference(gid) {
     const g = getGroup(gid);
@@ -7214,7 +7379,7 @@ function openUserProfile(uid) {
     document.getElementById('page-feed').classList.add('active');
     const cs = u.cover ? "background-image:url('" + u.cover + "');background-size:cover;background-position:center;" : '';
     const ah = u.avatar ? '<img src="' + u.avatar + '">' : getInitials(u.name);
-    c.innerHTML = '<div class="profile-header"><div class="profile-cover" style="' + cs + '"></div><div class="profile-info"><div class="profile-avatar-container"><div class="avatar avatar-profile-big">' + ah + '</div></div><div class="profile-name-row"><div><div class="profile-name">' + displayName(u, true) + '</div><div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div><div class="profile-academic">' + accountTypePill(u) + (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') + (u.accountType === 'student' && u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') + (u.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(u.gradYear)) + '</span>' : '') + (u.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(u.occupation) + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</span>' : '') + '</div></div></div><div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div><div class="profile-stats"><div class="stat"><strong>' + up.length + '</strong><span>Posts</span></div><div class="stat"><strong>' + (u.friends||[]).length + '</strong><span>Friends</span></div></div><div class="profile-actions">' + (isF ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')">💬 Message</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\').then(()=>showPage(\'feed\'));">Remove</button>' : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') + '<button class="btn-action btn-action-secondary" onclick="blockUser(\'' + u.id + '\')">🚫 Block</button><button class="btn-action btn-action-secondary" onclick="openReportModal(\'user\',\'' + u.id + '\')">🚩 Report</button><button class="btn-action btn-action-secondary" onclick="showPage(\'feed\')">← Back</button></div><div class="profile-call-row"><button class="btn-call audio" onclick="startCall(\'' + u.id + '\', \'audio\')">📞 Audio</button><button class="btn-call video" onclick="startCall(\'' + u.id + '\', \'video\')">🎥 Video</button></div></div></div>' + (up.length > 0 ? up.map(p => renderPost(p, false)).join('') : '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>');
+    c.innerHTML = '<div class="profile-header"><div class="profile-cover" style="' + cs + '"></div><div class="profile-info"><div class="profile-avatar-container"><div class="avatar avatar-profile-big">' + ah + '</div></div><div class="profile-name-row"><div><div class="profile-name">' + displayName(u, true) + '</div><div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div><div class="profile-academic">' + accountTypePill(u) + (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') + (u.accountType === 'student' && u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') + (u.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(u.gradYear)) + '</span>' : '') + (u.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(u.occupation) + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</span>' : '') + '</div></div></div><div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div><div class="profile-stats"><div class="stat"><strong>' + up.length + '</strong><span>Posts</span></div><div class="stat"><strong>' + (u.friends||[]).length + '</strong><span>Friends</span></div></div><div class="profile-actions">' + (isF ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')">💬 Message</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\').then(()=>showPage(\'feed\'));">Remove</button>' : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') + '<button class="btn-action btn-action-secondary" onclick="blockUser(\'' + u.id + '\')">🚫 Block</button><button class="btn-action btn-action-secondary" onclick="openReportModal(\'user\',\'' + u.id + '\')">🚩 Report</button><button class="btn-action btn-action-secondary" onclick="showPage(\'feed\')">← Back</button></div>'<div class="profile-call-row"><button class="btn-call audio" onclick="startAgoraCall(\'' + u.id + '\', \'audio\')">📞 Audio</button><button class="btn-call video" onclick="startAgoraCall(\'' + u.id + '\', \'video\')">🎥 Video</button></div>' + (up.length > 0 ? up.map(p => renderPost(p, false)).join('') : '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>');
     window.scrollTo(0, 0);
 }
 

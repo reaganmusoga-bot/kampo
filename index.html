@@ -3627,6 +3627,69 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     font-weight: 700;
     cursor: pointer;
 }
+
+.agora-conf-ui {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    background: #0a0a0f;
+    display: flex;
+    flex-direction: column;
+}
+.agora-conf-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    min-height: 0;
+}
+.agora-conf-tile {
+    position: relative;
+    background: #1a1a24;
+    border-radius: 12px;
+    overflow: hidden;
+    min-height: 140px;
+    aspect-ratio: 4/3;
+}
+.agora-conf-tile .conf-video {
+    width: 100%;
+    height: 100%;
+}
+.agora-conf-tile .conf-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.agora-conf-tile .conf-label {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    background: rgba(0,0,0,0.55);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+.conf-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+}
+.agora-conf-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(0,0,0,0.75);
+}
 </style>
 <body>
 
@@ -8532,10 +8595,8 @@ function startGroupConference(gid) {
     const g = getGroup(gid);
     if (!g) return;
     if (!currentUser) return;
-    // Room id must stay stable so everyone joins the same conference
     const room = ('kampo-g-' + String(gid)).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
-    openJitsiCall(room, 'video', '👥 ' + (g.name || 'Group'));
-    // Notify other members
+    startAgoraConference(room, 'video', '👥 ' + (g.name || 'Group'), { groupId: gid });
     const others = (g.members || []).filter(id => id !== currentUser.id).slice(0, 40);
     const title = (g.name || 'Group') + ' conference started';
     others.forEach(id => {
@@ -8546,51 +8607,144 @@ function startGroupConference(gid) {
         }).catch(() => {});
     });
 }
-function openJitsiCall(room, type, title) {
-    currentCall = { room, type, title };
-    const modal = document.getElementById('callModal');
-    document.getElementById('callTitle').textContent = title;
-    document.getElementById('callTypeBadge').textContent = type.toUpperCase();
-    modal.querySelector('.call-close-btn').textContent = 'End Call';
 
-    // Sanitize room id (Jitsi allows alphanumeric, dashes, underscores)
-    const safeRoom = String(room || 'kampo-room').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) || 'kampo-room';
+/* ========== AGORA MULTIPARTY CONFERENCE (groups / study — no Jitsi) ========== */
+let conferenceRemoteUsers = {};
 
-    // Display name: NO extra quotes inside encodeURIComponent (that broke JSON parse)
-    const rawName = (currentUser && currentUser.name) ? String(currentUser.name) : 'Kampo User';
-    const safeName = rawName.replace(/[\u0000-\u001f\\"]/g, '').slice(0, 40) || 'Kampo User';
-
-    // Hash must be: #key=value&key=value  (only ONE leading #)
-    const hashParts = [
-        'userInfo.displayName="' + encodeURIComponent(safeName) + '"',
-        'config.prejoinPageEnabled=false',
-        'config.disableDeepLinking=true',
-        'config.enableWelcomePage=false',
-        'config.requireDisplayName=false',
-        'config.startWithAudioMuted=false',
-        type === 'audio' ? 'config.startWithVideoMuted=true' : 'config.startWithVideoMuted=false',
-        'interfaceConfig.DISABLE_JOIN_LEAVE_NOTIFICATIONS=true'
-    ];
-    const url = 'https://meet.jit.si/' + safeRoom + '#' + hashParts.join('&');
-
-    const container = document.getElementById('callFrameContainer');
-    container.innerHTML =
-        '<div class="call-loading"><div class="spinner"></div><div>Joining conference…</div>' +
-        '<div style="font-size:12px;opacity:0.65;text-align:center;padding:8px 16px;">Allow camera & microphone when asked</div></div>' +
-        '<iframe id="jitsiFrame" src="' + url + '" allow="camera; microphone; fullscreen; display-capture; autoplay" ' +
-        'style="width:100%;height:100%;border:0;border-radius:12px;background:#000;"></iframe>';
-
-    setTimeout(() => {
-        const frame = document.getElementById('jitsiFrame');
-        if (frame) {
-            frame.addEventListener('load', () => {
-                const loading = container.querySelector('.call-loading');
-                if (loading) loading.style.display = 'none';
-            });
-        }
-    }, 50);
-    modal.classList.add('active');
+function buildConferenceUI() {
+    return (
+        '<div class="agora-conf-ui" id="agoraConfUI">' +
+            '<div class="agora-conf-grid" id="agoraConfGrid"></div>' +
+            '<div class="agora-conf-bar">' +
+                '<button type="button" class="live-action-btn" id="confMuteBtn" onclick="toggleConfMute()">🎤 Mute</button>' +
+                '<button type="button" class="live-action-btn" id="confCamBtn" onclick="toggleConfCam()">🎥 Camera</button>' +
+                '<button type="button" class="live-action-btn" onclick="endCall()" style="background:rgba(231,76,60,0.85);">Leave</button>' +
+            '</div>' +
+        '</div>'
+    );
 }
+
+function confTileId(uid) {
+    return 'conf-tile-' + String(uid);
+}
+
+function ensureConfTile(uid, label) {
+    const grid = document.getElementById('agoraConfGrid');
+    if (!grid) return null;
+    let tile = document.getElementById(confTileId(uid));
+    if (!tile) {
+        tile = document.createElement('div');
+        tile.id = confTileId(uid);
+        tile.className = 'agora-conf-tile';
+        tile.innerHTML = '<div class="conf-video" id="conf-video-' + uid + '"></div>' +
+            '<div class="conf-label">' + escapeHtml(label || ('User ' + uid)) + '</div>';
+        grid.appendChild(tile);
+    }
+    return document.getElementById('conf-video-' + uid);
+}
+
+async function startAgoraConference(room, type, title, meta) {
+    if (agoraClient || liveClient) {
+        showToast('Finish your current call or live first');
+        return;
+    }
+    if (typeof AgoraRTC === 'undefined') {
+        showToast('Video engine not loaded. Refresh and try again.');
+        return;
+    }
+
+    const channelName = String(room || ('kampo-conf-' + Date.now())).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
+    const isAudioOnly = type === 'audio';
+    currentCall = { room: channelName, type: type || 'video', title: title || 'Conference', conference: true, meta: meta || {} };
+
+    const modal = document.getElementById('callModal');
+    document.getElementById('callTitle').textContent = title || 'Conference';
+    document.getElementById('callTypeBadge').textContent = 'CONFERENCE';
+    modal.querySelector('.call-close-btn').textContent = 'Leave';
+    const container = document.getElementById('callFrameContainer');
+    container.innerHTML = buildConferenceUI();
+    modal.classList.add('active');
+
+    try {
+        const myUid = uidFromString(currentUser.id + '-c');
+        const token = await fetchAgoraToken(channelName, myUid);
+
+        agoraClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+        conferenceRemoteUsers = {};
+
+        agoraClient.on('user-published', async (user, mediaType) => {
+            await agoraClient.subscribe(user, mediaType);
+            conferenceRemoteUsers[user.uid] = user;
+            const label = 'Participant';
+            const el = ensureConfTile(user.uid, label);
+            if (mediaType === 'video' && user.videoTrack && el) {
+                el.innerHTML = '';
+                user.videoTrack.play(el);
+            }
+            if (mediaType === 'audio' && user.audioTrack) {
+                user.audioTrack.play();
+            }
+        });
+
+        agoraClient.on('user-unpublished', (user, mediaType) => {
+            if (mediaType === 'video') {
+                const el = document.getElementById('conf-video-' + user.uid);
+                if (el) el.innerHTML = '<div class="conf-placeholder">Camera off</div>';
+            }
+        });
+
+        agoraClient.on('user-left', (user) => {
+            const tile = document.getElementById(confTileId(user.uid));
+            if (tile) tile.remove();
+            delete conferenceRemoteUsers[user.uid];
+        });
+
+        await agoraClient.join(AGORA_APP_ID, channelName, token, myUid);
+
+        agoraLocalTracks = { audio: null, video: null };
+        if (isAudioOnly) {
+            agoraLocalTracks.audio = await AgoraRTC.createMicrophoneAudioTrack();
+            await agoraClient.publish([agoraLocalTracks.audio]);
+        } else {
+            [agoraLocalTracks.audio, agoraLocalTracks.video] = await AgoraRTC.createMicrophoneAndCameraTracks();
+            const localEl = ensureConfTile(myUid, (currentUser.name || 'You') + ' (you)');
+            if (localEl && agoraLocalTracks.video) {
+                localEl.innerHTML = '';
+                agoraLocalTracks.video.play(localEl);
+            }
+            await agoraClient.publish([agoraLocalTracks.audio, agoraLocalTracks.video]);
+        }
+
+        showToast('Joined conference');
+    } catch (err) {
+        console.error('Conference failed', err);
+        showToast('❌ Could not join conference: ' + (err.message || err));
+        try { await endAgoraCall(); } catch (e) {}
+    }
+}
+
+// Legacy name kept so any old onclick still works — routes to Agora
+function openJitsiCall(room, type, title) {
+    startAgoraConference(room, type, title, {});
+}
+
+function toggleConfMute() {
+    if (!agoraLocalTracks || !agoraLocalTracks.audio) return;
+    const muted = !agoraLocalTracks.audio.muted;
+    agoraLocalTracks.audio.setMuted(muted);
+    const btn = document.getElementById('confMuteBtn');
+    if (btn) btn.textContent = muted ? '🔇 Unmute' : '🎤 Mute';
+}
+
+function toggleConfCam() {
+    if (!agoraLocalTracks || !agoraLocalTracks.video) return;
+    const off = !agoraLocalTracks.video.muted;
+    agoraLocalTracks.video.setMuted(off);
+    const btn = document.getElementById('confCamBtn');
+    if (btn) btn.textContent = off ? '📷 Camera off' : '🎥 Camera';
+}
+
+
 async function endCall() {
     if (typeof liveClient !== 'undefined' && liveClient) {
         const wasHost = liveIsHost;
@@ -9767,7 +9921,7 @@ async function startStudyRoom() {
     try {
         const ref = await fbDb.collection('studyRooms').add({ title, duration, room, hostId: currentUser.id, active: true, startedAt: Date.now(), endsAt: Date.now() + duration * 60000 });
         showToast('Study room started ⏱️');
-        openJitsiCall(room, 'video', '⏱️ ' + title);
+        startAgoraConference(room, 'video', '⏱️ ' + title, { study: true });
         setTimeout(() => { fbDb.collection('studyRooms').doc(ref.id).update({ active: false }).catch(()=>{}); }, duration * 60000);
     } catch (e) { showToast('❌ ' + e.message); }
 }
@@ -9779,7 +9933,7 @@ function renderStudyRooms() {
     c.innerHTML = active.map(r => {
         const host = getUser(r.hostId);
         const left = r.endsAt ? Math.max(0, Math.round((r.endsAt - Date.now()) / 60000)) : r.duration;
-        return '<div class="feature-card" style="display:flex;align-items:center;gap:12px;">' + userAvatarHtml(host, 44) + '<div style="flex:1;"><div style="font-weight:700;color:var(--text);">' + escapeHtml(r.title) + '</div><div style="font-size:12px;color:var(--text-mute);">' + escapeHtml(host.name) + ' · ' + left + ' min left</div></div><button class="btn-follow" onclick="openJitsiCall(\'' + r.room + '\',\'video\',\'⏱️ ' + escapeHtml(r.title).replace(/'/g,'') + '\')">Join</button></div>';
+        return '<div class="feature-card" style="display:flex;align-items:center;gap:12px;">' + userAvatarHtml(host, 44) + '<div style="flex:1;"><div style="font-weight:700;color:var(--text);">' + escapeHtml(r.title) + '</div><div style="font-size:12px;color:var(--text-mute);">' + escapeHtml(host.name) + ' · ' + left + ' min left</div></div><button class="btn-follow" onclick="startAgoraConference(\'' + r.room + '\',\'video\',\'⏱️ ' + escapeHtml(r.title).replace(/'/g,'') + '\')">Join</button></div>';
     }).join('');
 }
 

@@ -506,15 +506,47 @@ html[data-theme="dark"] img { filter: brightness(0.94); }
 }
 .post-actions .action-btns { display:flex; gap:8px; flex-wrap:wrap; }
 .post-actions .action-btn {
-    background:none; border:none;
-    font-size:14px; cursor:pointer;
-    padding:6px 12px; border-radius:8px;
-    color:var(--text-mute);
-    transition:background 0.2s;
-    display:flex; align-items:center; gap:5px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 20px;
+    color: var(--text-soft);
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
 }
-.post-actions .action-btn:hover { background:var(--bg-hover); }
-.post-actions .action-btn.active { background: var(--primary-soft); color: var(--primary-text); font-weight:700; }
+.post-actions .action-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--border);
+    color: var(--text);
+}
+.post-actions .action-btn.active {
+    background: var(--primary-soft);
+    border-color: transparent;
+    color: var(--primary-text);
+    font-weight: 700;
+}
+.post-actions .action-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+@media (max-width: 600px) {
+    .post-actions .action-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+        gap: 4px;
+    }
+    .post-actions .action-btn .btn-label {
+        /* keep labels on mobile but tighter */
+    }
+}
 .btn-post {
     background:linear-gradient(135deg,#667eea,#764ba2);
     color:white; border:none;
@@ -1100,15 +1132,63 @@ html[data-theme="dark"] .btn-call.conference { background: rgba(245,158,11,0.2);
    REQUESTS
    ============================================================ */
 .request-item {
-    display:flex; align-items:center; gap:12px;
-    padding:14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
     background: var(--bg-elevated);
-    border-radius:10px; margin-bottom:10px;
-    box-shadow:0 1px 4px rgba(0,0,0,0.04);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
-.request-item .r-info { flex:1; min-width:0; }
-.request-item .r-info .r-name { font-weight:700; font-size:15px; color: var(--text); }
-.request-item .r-info .r-uni { font-size:12px; color: var(--text-mute); margin-top:2px; }
+.request-item .r-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+.request-item .r-info .r-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.request-item .r-info .r-uni {
+    font-size: 12px;
+    color: var(--text-mute);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.request-item .r-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+}
+@media (max-width: 600px) {
+    .request-item {
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding: 12px;
+    }
+    .request-item .r-info {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: calc(100% - 130px);
+    }
+    .request-item .r-actions {
+        flex-shrink: 0;
+    }
+    .request-item .r-actions .btn-accept,
+    .request-item .r-actions .btn-decline {
+        padding: 8px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+}
 .request-item .r-actions { display:flex; gap:8px; flex-shrink:0; flex-wrap:wrap; }
 .btn-accept {
     background:linear-gradient(135deg,#667eea,#764ba2);
@@ -3131,7 +3211,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
         <div id="loginForm">
             <h2>Welcome back 👋</h2>
             <div class="form-group"><label>Email</label>
-                <input type="email" id="loginEmail" placeholder="you@university.edu" autocomplete="username"></div>
+                <input type="email" id="loginEmail" placeholder="University email" autocomplete="username"></div>
             <div class="form-group"><label>Password</label>
                 <div class="password-wrap">
                     <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
@@ -3149,9 +3229,9 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
         <!-- REGISTER -->
         <div id="registerForm" style="display:none;">
             <h2>Join Kampo 🚀</h2>
-            <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="John Doe"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@university.edu"></div>
-            <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="+256 700 000 000"><small>Include country code</small></div>
+            <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="Full name"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="University email"></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="Phone number"><small>Include country code (optional)</small></div>
             <div class="form-group"><label>Date of Birth</label><input type="date" id="regDob" max="2015-12-31"></div>
             <div class="form-group"><label>Gender</label>
                 <select id="regGender">
@@ -3168,8 +3248,8 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                     <option value="professional">💼 Working professional</option>
                     <option value="educator">📚 Educator / Lecturer</option>
                 </select></div>
-            <div class="form-group"><label>University / Institution</label><input type="text" id="regUniversity" placeholder="e.g. Makerere University"></div>
-            <div class="form-group" id="regCourseGroup"><label>Course / Program</label><input type="text" id="regCourse" placeholder="e.g. BSc Computer Science"></div>
+            <div class="form-group"><label>University / Institution</label><input type="text" id="regUniversity" placeholder="University or institution"></div>
+            <div class="form-group" id="regCourseGroup"><label>Course / Program</label><input type="text" id="regCourse" placeholder="Course or programme"></div>
             <div class="form-group" id="regYearGroup"><label>Academic Year</label>
                 <select id="regYear">
                     <option value="">Select year...</option>
@@ -3177,14 +3257,14 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                     <option>Year 4</option><option>Year 5</option><option>Year 6</option>
                     <option>Postgraduate</option><option>PhD</option>
                 </select></div>
-            <div class="form-group" id="regGradYearGroup" style="display:none;"><label>Graduation Year</label><input type="number" id="regGradYear" placeholder="e.g. 2022" min="1970" max="2035"></div>
-            <div class="form-group" id="regOccupationGroup" style="display:none;"><label>Occupation / Job Title</label><input type="text" id="regOccupation" placeholder="e.g. Software Engineer"></div>
-            <div class="form-group" id="regCompanyGroup" style="display:none;"><label>Company / Organisation (optional)</label><input type="text" id="regCompany" placeholder="e.g. Andela"></div>
-            <div class="form-group"><label>Country</label><input type="text" id="regCountry" placeholder="e.g. Uganda"></div>
+            <div class="form-group" id="regGradYearGroup" style="display:none;"><label>Graduation Year</label><input type="number" id="regGradYear" placeholder="Year" min="1970" max="2035"></div>
+            <div class="form-group" id="regOccupationGroup" style="display:none;"><label>Occupation / Job Title</label><input type="text" id="regOccupation" placeholder="Job title"></div>
+            <div class="form-group" id="regCompanyGroup" style="display:none;"><label>Company / Organisation (optional)</label><input type="text" id="regCompany" placeholder="Organisation"></div>
+            <div class="form-group"><label>Country</label><input type="text" id="regCountry" placeholder="Country"></div>
             <div class="form-group">
                 <label>Password</label>
                 <div class="password-wrap">
-                    <input type="password" id="regPassword" placeholder="Strong password" oninput="updatePwStrength()">
+                    <input type="password" id="regPassword" placeholder="Password" oninput="updatePwStrength()">
                     <button type="button" class="pw-toggle" onclick="togglePw('regPassword', this)">👁️</button>
                 </div>
                 <div class="pw-strength">
@@ -3202,7 +3282,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
             <div class="form-group">
                 <label>Confirm Password</label>
                 <div class="password-wrap">
-                    <input type="password" id="regPasswordConfirm" placeholder="Repeat password" oninput="checkPasswordMatch()">
+                    <input type="password" id="regPasswordConfirm" placeholder="Confirm password" oninput="checkPasswordMatch()">
                     <button type="button" class="pw-toggle" onclick="togglePw('regPasswordConfirm', this)">👁️</button>
                 </div>
                 <div class="pw-match" id="pwMatch"></div>
@@ -3218,7 +3298,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
         <div id="recoveryForm" style="display:none;">
             <h2>Reset Password 🔐</h2>
             <p style="color:#666;font-size:14px;margin-bottom:15px;">Enter your email. We'll send a reset link.</p>
-            <div class="form-group"><label>Email</label><input type="email" id="recoveryInput" placeholder="you@university.edu"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="recoveryInput" placeholder="University email"></div>
             <div class="error-msg" id="recoveryError"></div>
             <div class="success-msg" id="recoverySuccess"></div>
             <button class="btn btn-primary" onclick="handleRecoveryLookup()">Send Reset Link</button>
@@ -3379,11 +3459,11 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                     </div>
                     <div class="post-actions">
                         <div class="action-btns">
-                            <button class="action-btn" id="photoBtn" onclick="triggerPhotoUpload()">📷 Photo</button>
-                            <button class="action-btn" id="videoBtn" onclick="triggerVideoUpload()">🎥 Video</button>
-                            <button class="action-btn" id="pollBtn" onclick="togglePollBuilder()">📊 Poll</button>
-                            <button class="action-btn" onclick="openAddStoryModal()">📸 Story</button>
-                            <button class="action-btn" onclick="openLiveSetup()">🔴 Go Live</button>
+                            <button class="action-btn" id="photoBtn" onclick="triggerPhotoUpload()" title="Add photo"><span>📷</span><span class="btn-label">Photo</span></button>
+                            <button class="action-btn" id="videoBtn" onclick="triggerVideoUpload()" title="Add video"><span>🎥</span><span class="btn-label">Video</span></button>
+                            <button class="action-btn" id="pollBtn" onclick="togglePollBuilder()" title="Create poll"><span>📊</span><span class="btn-label">Poll</span></button>
+                            <button class="action-btn" onclick="openAddStoryModal()" title="Add story"><span>✨</span><span class="btn-label">Story</span></button>
+                            <button class="action-btn" onclick="openLiveSetup()" title="Go live"><span>🔴</span><span class="btn-label">Live</span></button>
                             <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleMediaSelect(event, 'image')">
                             <input type="file" id="videoInput" accept="video/*" style="display:none;" onchange="handleMediaSelect(event, 'video')">
                         </div>
@@ -3622,7 +3702,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                 <div class="sidebar-card" style="padding:16px;margin-bottom:14px;">
                     <h3 style="margin:0 0 10px;font-size:15px;text-transform:none;letter-spacing:0;color:var(--text);">⏱️ Study Rooms</h3>
                     <p style="font-size:13px;color:var(--text-soft);margin-bottom:12px;">Start a focus session. Friends can join via video.</p>
-                    <div class="form-group"><label>Session title</label><input type="text" id="studyTitle" placeholder="e.g. Organic Chemistry review"></div>
+                    <div class="form-group"><label>Session title</label><input type="text" id="studyTitle" placeholder="Session title"></div>
                     <div class="form-group"><label>Duration (minutes)</label>
                         <select id="studyDuration">
                             <option value="25">25 (Pomodoro)</option>
@@ -3812,7 +3892,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
             <div class="edit-avatar-section">
                 <div class="edit-avatar-preview avatar avatar-100" id="editAvatarPreview">U</div>
                 <div class="edit-avatar-actions">
-                    <h4>Profile Photo</h4><p>Cloudinary</p>
+                    <h4>Profile Photo</h4><p>Tap to upload a clear photo of yourself</p>
                     <button onclick="triggerAvatarUpload()">📷 Change</button>
                     <button onclick="removeAvatar()" id="removeAvatarBtn" style="display:none;">🗑️ Remove</button>
                 </div>
@@ -3822,7 +3902,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                     <span style="color:var(--text-faint);font-size:13px;">No cover</span>
                 </div>
                 <div class="edit-avatar-actions">
-                    <h4>Cover Photo</h4><p>Cloudinary</p>
+                    <h4>Cover Photo</h4><p>Optional banner image for your profile</p>
                     <button onclick="triggerCoverUpload()">🖼️ Change</button>
                     <button onclick="removeCover()" id="removeCoverBtn" style="display:none;">🗑️ Remove</button>
                 </div>
@@ -3856,19 +3936,23 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                     <option>Postgraduate</option><option>PhD</option>
                 </select>
             </div>
-            <div class="form-group" id="editGradYearGroup" style="display:none;"><label>Graduation Year</label><input type="number" id="editGradYear" placeholder="e.g. 2022" min="1970" max="2035"></div>
-            <div class="form-group" id="editOccupationGroup" style="display:none;"><label>Occupation / Job Title</label><input type="text" id="editOccupation" placeholder="e.g. Software Engineer"></div>
-            <div class="form-group" id="editCompanyGroup" style="display:none;"><label>Company / Organisation</label><input type="text" id="editCompany" placeholder="e.g. Andela"></div>
+            <div class="form-group" id="editGradYearGroup" style="display:none;"><label>Graduation Year</label><input type="number" id="editGradYear" placeholder="Year" min="1970" max="2035"></div>
+            <div class="form-group" id="editOccupationGroup" style="display:none;"><label>Occupation / Job Title</label><input type="text" id="editOccupation" placeholder="Job title"></div>
+            <div class="form-group" id="editCompanyGroup" style="display:none;"><label>Company / Organisation</label><input type="text" id="editCompany" placeholder="Organisation"></div>
             <div class="form-group"><label>Country</label><input type="text" id="editCountry"></div>
             <div class="form-group"><label>Phone</label><input type="tel" id="editPhone"></div>
             <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;"></textarea></div>
-            <div class="form-group" style="display:flex;align-items:center;gap:10px;">
-                <input type="checkbox" id="editPrivateAccount" style="width:18px;height:18px;accent-color:#667eea;">
-                <label for="editPrivateAccount" style="margin:0;font-weight:600;">🔒 Private account — only friends can see your posts & full profile</label>
+            <div class="form-group">
+                <label>Account privacy</label>
+                <select id="editPrivateAccount">
+                    <option value="public">🌍 Public — anyone on Kampo can see your posts</option>
+                    <option value="private">🔒 Private — only friends can see your posts & full profile</option>
+                </select>
+                <small>You can change this anytime</small>
             </div>
-            <div class="form-group"><label>LinkedIn URL</label><input type="url" id="editLinkedin" placeholder="https://linkedin.com/in/..."></div>
-            <div class="form-group"><label>GitHub URL</label><input type="url" id="editGithub" placeholder="https://github.com/..."></div>
-            <div class="form-group"><label>Portfolio / Website</label><input type="url" id="editWebsite" placeholder="https://..."></div>
+            <div class="form-group"><label>LinkedIn URL</label><input type="url" id="editLinkedin" placeholder="LinkedIn profile URL"></div>
+            <div class="form-group"><label>GitHub URL</label><input type="url" id="editGithub" placeholder="GitHub profile URL"></div>
+            <div class="form-group"><label>Portfolio / Website</label><input type="url" id="editWebsite" placeholder="Website URL"></div>
             <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="editMentorOpen" style="width:auto;"> Open to mentoring students</label></div>
             <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="editSeekingMentor" style="width:auto;"> Looking for a mentor</label></div>
         </div>
@@ -3986,7 +4070,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
         <div class="modal-body">
             <div class="form-group"><label>Title *</label><input type="text" id="eventTitle"></div>
             <div class="form-group"><label>Description</label><textarea id="eventDesc" rows="3"></textarea></div>
-            <div class="form-group"><label>Location</label><input type="text" id="eventLocation" placeholder="e.g. Main Library"></div>
+            <div class="form-group"><label>Location</label><input type="text" id="eventLocation" placeholder="Location"></div>
             <div class="form-group"><label>Date & time</label><input type="datetime-local" id="eventWhen"></div>
         </div>
         <div class="modal-footer">
@@ -4004,7 +4088,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
         <div class="modal-header"><h3>🛒 List Item</h3><button class="close-btn" onclick="closeMarketModal()">✕</button></div>
         <div class="modal-body">
             <div class="form-group"><label>Title *</label><input type="text" id="marketTitle"></div>
-            <div class="form-group"><label>Price (UGX / local currency)</label><input type="text" id="marketPrice" placeholder="e.g. 50000"></div>
+            <div class="form-group"><label>Price (UGX / local currency)</label><input type="text" id="marketPrice" placeholder="Price"></div>
             <div class="form-group"><label>Category</label>
                 <select id="marketCategory">
                     <option>Textbooks</option><option>Electronics</option><option>Furniture</option><option>Clothing</option><option>Other</option>
@@ -6136,7 +6220,7 @@ function openEditProfile() {
     document.getElementById('editPhone').value = currentUser.phone || '';
     document.getElementById('editBio').value = currentUser.bio || '';
     const privEl = document.getElementById('editPrivateAccount');
-    if (privEl) privEl.checked = !!currentUser.privateAccount;
+    if (privEl) privEl.value = currentUser.privateAccount ? 'private' : 'public';
     document.getElementById('editLinkedin').value = (currentUser.portfolio && currentUser.portfolio.linkedin) || '';
     document.getElementById('editGithub').value = (currentUser.portfolio && currentUser.portfolio.github) || '';
     document.getElementById('editWebsite').value = (currentUser.portfolio && currentUser.portfolio.website) || '';
@@ -6234,7 +6318,7 @@ async function saveProfile() {
         },
         mentorOpen: document.getElementById('editMentorOpen').checked,
         seekingMentor: document.getElementById('editSeekingMentor').checked,
-        privateAccount: !!(document.getElementById('editPrivateAccount') && document.getElementById('editPrivateAccount').checked)
+        privateAccount: (document.getElementById('editPrivateAccount') && document.getElementById('editPrivateAccount').value === 'private')
     };
     if (pendingAvatar === null) upd.avatar = null;
     else if (pendingAvatar !== undefined) upd.avatar = pendingAvatar;
@@ -7092,7 +7176,7 @@ async function renderRequests() {
         c.innerHTML = fr.map(u => '<div class="request-item">' + userAvatarHtml(u, 52) +
             '<div class="r-info"><div class="r-name">' + displayName(u) + '</div>' +
             '<div class="r-uni">' + escapeHtml(u.university||'') + '</div></div>' +
-            '<div class="r-actions"><button class="btn-accept" onclick="startConversation(\'' + u.id + '\')">💬 Message</button>' +
+            '<div class="r-actions"><button class="btn-accept" onclick="startConversation(\'' + u.id + '\')" title="Message">💬 Chat</button>' +
             '<button class="btn-decline" onclick="removeFriend(\'' + u.id + '\')">Remove</button></div></div>').join('');
     }
 }
@@ -7629,7 +7713,7 @@ function openUserProfile(uid) {
     document.getElementById('page-feed').classList.add('active');
     const cs = u.cover ? "background-image:url('" + u.cover + "');background-size:cover;background-position:center;" : '';
     const ah = u.avatar ? '<img src="' + u.avatar + '">' : getInitials(u.name);
-    c.innerHTML = '<div class="profile-header"><div class="profile-cover" style="' + cs + '"></div><div class="profile-info"><div class="profile-avatar-container"><div class="avatar avatar-profile-big">' + ah + '</div></div><div class="profile-name-row"><div><div class="profile-name">' + displayName(u, true) + '</div><div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div><div class="profile-academic">' + accountTypePill(u) + (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') + (u.accountType === 'student' && u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') + (u.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(u.gradYear)) + '</span>' : '') + (u.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(u.occupation) + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</span>' : '') + '</div></div></div><div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div><div class="profile-stats"><div class="stat"><strong>' + up.length + '</strong><span>Posts</span></div><div class="stat"><strong>' + (u.friends||[]).length + '</strong><span>Friends</span></div></div><div class="profile-actions">' + (isF ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')">💬 Message</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\').then(()=>showPage(\'feed\'));">Remove</button>' : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') + '<button class="btn-action btn-action-secondary" onclick="blockUser(\'' + u.id + '\')">🚫 Block</button><button class="btn-action btn-action-secondary" onclick="openReportModal(\'user\',\'' + u.id + '\')">🚩 Report</button><button class="btn-action btn-action-secondary" onclick="openUserProfile"><button class="btn-call audio" onclick="startAgoraCall(\'' + u.id + '\', \'audio\')">📞 Audio</button><button class="btn-call video" onclick="startAgoraCall(\'' + u.id + '\', \'video\')">🎥 Video</button></div>' + (up.length > 0 ? up.map(p => renderPost(p, false)).join('') : '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>');
+    c.innerHTML = '<div class="profile-header"><div class="profile-cover" style="' + cs + '"></div><div class="profile-info"><div class="profile-avatar-container"><div class="avatar avatar-profile-big">' + ah + '</div></div><div class="profile-name-row"><div><div class="profile-name">' + displayName(u, true) + '</div><div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div><div class="profile-academic">' + accountTypePill(u) + (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') + (u.accountType === 'student' && u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') + (u.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(u.gradYear)) + '</span>' : '') + (u.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(u.occupation) + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</span>' : '') + '</div></div></div><div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div><div class="profile-stats"><div class="stat"><strong>' + up.length + '</strong><span>Posts</span></div><div class="stat"><strong>' + (u.friends||[]).length + '</strong><span>Friends</span></div></div><div class="profile-actions">' + (isF ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')" title="Message">💬 Chat</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\').then(()=>showPage(\'feed\'));">Remove</button>' : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') + '<button class="btn-action btn-action-secondary" onclick="blockUser(\'' + u.id + '\')">🚫 Block</button><button class="btn-action btn-action-secondary" onclick="openReportModal(\'user\',\'' + u.id + '\')">🚩 Report</button><button class="btn-action btn-action-secondary" onclick="openUserProfile"><button class="btn-call audio" onclick="startAgoraCall(\'' + u.id + '\', \'audio\')">📞 Audio</button><button class="btn-call video" onclick="startAgoraCall(\'' + u.id + '\', \'video\')">🎥 Video</button></div>' + (up.length > 0 ? up.map(p => renderPost(p, false)).join('') : '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>');
     window.scrollTo(0, 0);
 }
 

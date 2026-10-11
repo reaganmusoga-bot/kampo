@@ -1495,6 +1495,34 @@ html[data-theme="dark"] .admin-pill { background: rgba(217,119,6,0.25); color: #
     margin-bottom: 0;
     padding-bottom: 0;
 }
+
+.ep-danger-zone {
+    border: 1px solid rgba(231,76,60,0.35);
+    border-radius: 12px;
+    padding: 16px !important;
+    background: rgba(231,76,60,0.06);
+    margin-top: 8px;
+}
+.ep-danger-text {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin: 0 0 12px;
+    line-height: 1.45;
+}
+.btn-delete-account {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    background: #e74c3c;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.15s;
+}
+.btn-delete-account:hover { filter: brightness(1.05); }
+.btn-delete-account:active { transform: scale(0.98); }
 .ep-section-title {
     font-size: 12px;
     font-weight: 700;
@@ -4315,6 +4343,13 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                 </div>
             </div>
 
+            <!-- Danger zone -->
+            <div class="ep-section ep-danger-zone">
+                <div class="ep-section-title" style="color:#e74c3c;">Danger zone</div>
+                <p class="ep-danger-text">Permanently delete your Kampo account and profile. This cannot be undone.</p>
+                <button type="button" class="btn-delete-account" onclick="deleteOwnAccount()">Delete my account</button>
+            </div>
+
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeEditProfile()">Cancel</button>
@@ -5945,6 +5980,77 @@ async function handleRecoveryLookup() {
         err.textContent = e.code === 'auth/user-not-found' ? 'No account found.' : e.message;
         err.style.display = 'block';
     } finally { setBusy(false); }
+}
+
+
+async function deleteOwnAccount() {
+    if (!currentUser || !fbAuth.currentUser) {
+        showToast('Not signed in');
+        return;
+    }
+    const ok = await kmodal.confirm(
+        'This will permanently delete your account, profile, and sign you out. Your posts and messages may remain until cleaned up. This cannot be undone.',
+        { title: 'Delete account?', confirmText: 'Delete forever', danger: true }
+    );
+    if (!ok) return;
+
+    // Second confirm with name
+    const typed = await kmodal.prompt(
+        'Type DELETE to confirm account deletion.',
+        {
+            title: 'Confirm deletion',
+            inputPlaceholder: 'Type DELETE',
+            inputRequired: true,
+            confirmText: 'Delete my account',
+            danger: true
+        }
+    );
+    if (!typed || String(typed).trim().toUpperCase() !== 'DELETE') {
+        showToast('Deletion cancelled');
+        return;
+    }
+
+    setBusy(true);
+    const uid = currentUser.id;
+    try {
+        // End presence / listeners first
+        try {
+            if (verificationInterval) { clearInterval(verificationInterval); verificationInterval = null; }
+            await setMyPresence(false);
+            stopPresence();
+            clearActiveChat();
+            stopListeners();
+        } catch (e) { console.warn(e); }
+
+        // Delete user document
+        try {
+            await fbDb.collection('users').doc(uid).delete();
+        } catch (e) {
+            console.warn('user doc delete', e);
+            // Still try auth delete
+        }
+
+        // Delete Auth account (may require recent login)
+        try {
+            await fbAuth.currentUser.delete();
+        } catch (e) {
+            if (e && (e.code === 'auth/requires-recent-login')) {
+                showToast('For security, sign out, sign in again, then delete your account.');
+                setBusy(false);
+                return;
+            }
+            throw e;
+        }
+
+        closeEditProfile();
+        showToast('Account deleted');
+        // Auth state listener will clear UI
+    } catch (e) {
+        console.error(e);
+        showToast('❌ Could not delete account: ' + (e.message || 'error'));
+    } finally {
+        setBusy(false);
+    }
 }
 
 async function handleLogout() {

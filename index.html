@@ -1561,6 +1561,150 @@ html[data-theme="dark"] .admin-pill { background: rgba(217,119,6,0.25); color: #
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ============================================================
+   INCOMING CALL SCREEN
+   ============================================================ */
+.incoming-call-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2600;
+    background: linear-gradient(160deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: incomingFadeIn 0.35s ease;
+}
+.incoming-call-backdrop.active { display: flex; }
+@keyframes incomingFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.incoming-call-card {
+    text-align: center;
+    color: white;
+    max-width: 340px;
+    width: 100%;
+}
+.incoming-call-avatar-wrap {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 6px rgba(102,126,234,0.4), 0 20px 50px rgba(0,0,0,0.4);
+    animation: incomingPulse 1.8s ease-in-out infinite;
+}
+.incoming-call-avatar-wrap .avatar {
+    width: 120px !important;
+    height: 120px !important;
+    font-size: 48px !important;
+}
+@keyframes incomingPulse {
+    0%, 100% { box-shadow: 0 0 0 6px rgba(102,126,234,0.4), 0 20px 50px rgba(0,0,0,0.4); }
+    50% { box-shadow: 0 0 0 18px rgba(102,126,234,0.15), 0 20px 50px rgba(0,0,0,0.4); }
+}
+.incoming-call-name {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.incoming-call-uni {
+    font-size: 14px;
+    opacity: 0.75;
+    margin-bottom: 10px;
+}
+.incoming-call-type {
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 40px;
+}
+.incoming-call-actions {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+}
+.incoming-call-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.incoming-call-btn:active { transform: scale(0.92); }
+.incoming-call-btn.decline { background: #e74c3c; color: white; }
+.incoming-call-btn.accept {
+    background: #22c55e;
+    color: white;
+    animation: acceptBounce 1.2s ease-in-out infinite;
+}
+@keyframes acceptBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+.incoming-call-btn-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 10px;
+    opacity: 0.85;
+}
+
+/* Mobile search */
+.mobile-search-btn { display: none; }
+.mobile-search-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    background: var(--bg);
+    flex-direction: column;
+}
+.mobile-search-overlay.active { display: flex; }
+.mobile-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border);
+}
+.mobile-search-bar input {
+    flex: 1;
+    padding: 11px 16px;
+    border: 2px solid var(--border);
+    border-radius: 22px;
+    font-size: 15px;
+    outline: none;
+    background: var(--bg-soft);
+    color: var(--text);
+}
+.mobile-search-bar input:focus { border-color: var(--primary); }
+.mobile-search-close {
+    background: var(--bg-sunken);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--text);
+    flex-shrink: 0;
+}
+.mobile-search-results {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 14px;
+}
+
+/* ============================================================
    LIVE
    ============================================================ */
 .live-strip {
@@ -2220,6 +2364,7 @@ html[data-theme="dark"] .online-friends-pill { background: rgba(34,197,94,0.2); 
 
 @media (max-width:600px) {
     .nav-search { display: none; }
+    .mobile-search-btn { display: flex !important; }
     .main-layout { padding: 0 10px; margin: 10px auto; }
     .auth-box { padding: 25px; }
     .message { max-width: 85%; }
@@ -3100,6 +3245,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
             <input type="text" id="globalSearch" placeholder="🔍 Search students, posts, groups..." oninput="handleSearch(this.value)">
         </div>
         <div class="nav-actions">
+            <button class="nav-icon-btn mobile-search-btn" onclick="openMobileSearch()" title="Search" aria-label="Search">🔍</button>
             <button class="nav-icon-btn desktop-nav-extra" onclick="showPage('feed')" title="Home">🏠</button>
             <button class="nav-icon-btn desktop-nav-extra" onclick="showPage('messages')" title="Messages">💬<span class="badge" id="navMsgBadge" style="display:none;">0</span></button>
             <button class="nav-icon-btn desktop-nav-extra" onclick="showPage('requests')" title="Friend Requests">👥<span class="badge" id="navReqBadge" style="display:none;">0</span></button>
@@ -3165,7 +3311,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                         <div class="stat" onclick="showPage('profile')"><strong id="sidebarPosts">0</strong><span>Posts</span></div>
                         <div class="stat" onclick="showPage('profile')"><strong id="sidebarFriends">0</strong><span>Friends</span></div>
                     </div>
-                    <div class="online-friends-pill" id="sidebarOnlineFriends" style="display:none;" onclick="showPage('requests'); switchReqTab('friends');">
+                    <div class="online-friends-pill" id="sidebarOnlineFriends" style="display:none;" onclick="openOnlineUsersModal()">
                         <span class="dot"></span><span id="sidebarOnlineCount">0</span> online
                     </div>
                 </div>
@@ -3253,6 +3399,11 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                 <div class="messages-layout">
                     <div class="conversations-panel">
                         <div class="conversations-header">💬 Messages</div>
+                        <div style="padding:8px 12px;border-bottom:1px solid var(--border);">
+                            <input type="text" id="chatSearchInput" placeholder="🔍 Search chats…" 
+                                style="width:100%;padding:9px 14px;border:2px solid var(--border);border-radius:20px;font-size:13px;outline:none;background:var(--bg-soft);color:var(--text);"
+                                oninput="filterConversations(this.value)">
+                        </div>
                         <div class="conversations-list" id="conversationsList"></div>
                     </div>
                     <div class="chat-panel" id="chatPanel">
@@ -3594,6 +3745,49 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     </div>
 </div>
 
+
+<!-- MOBILE SEARCH OVERLAY -->
+<div class="mobile-search-overlay" id="mobileSearchOverlay">
+    <div class="mobile-search-bar">
+        <button class="mobile-search-close" onclick="closeMobileSearch()" aria-label="Close">✕</button>
+        <input type="text" id="mobileSearchInput" placeholder="🔍 Search students, posts, groups..." oninput="handleMobileSearch(this.value)" autocomplete="off">
+    </div>
+    <div class="mobile-search-results" id="mobileSearchResults">
+        <div class="empty-state" style="padding:40px 20px;"><div class="emoji">🔍</div><p>Search for students, posts, or groups</p></div>
+    </div>
+</div>
+
+<!-- ONLINE USERS MODAL -->
+<div class="modal-backdrop" id="onlineUsersModal">
+    <div class="modal" style="max-width:420px;">
+        <div class="modal-header">
+            <h3>🟢 Online now</h3>
+            <button class="close-btn" onclick="closeOnlineUsersModal()">✕</button>
+        </div>
+        <div class="modal-body" id="onlineUsersList" style="max-height:60vh;overflow-y:auto;"></div>
+    </div>
+</div>
+
+<!-- INCOMING CALL SCREEN -->
+<div class="incoming-call-backdrop" id="incomingCallBackdrop">
+    <div class="incoming-call-card">
+        <div class="incoming-call-avatar-wrap" id="incomingCallAvatarWrap"></div>
+        <div class="incoming-call-name" id="incomingCallName">Caller</div>
+        <div class="incoming-call-uni" id="incomingCallUniversity"></div>
+        <div class="incoming-call-type" id="incomingCallType">Incoming call…</div>
+        <div class="incoming-call-actions">
+            <div>
+                <button class="incoming-call-btn decline" onclick="declineIncomingCall(false)" title="Decline">📵</button>
+                <div class="incoming-call-btn-label">Decline</div>
+            </div>
+            <div>
+                <button class="incoming-call-btn accept" onclick="acceptIncomingCall()" title="Accept">📞</button>
+                <div class="incoming-call-btn-label">Accept</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ============================================================
      CALL MODAL
      ============================================================ -->
@@ -3668,6 +3862,10 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
             <div class="form-group"><label>Country</label><input type="text" id="editCountry"></div>
             <div class="form-group"><label>Phone</label><input type="tel" id="editPhone"></div>
             <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;"></textarea></div>
+            <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="editPrivateAccount" style="width:18px;height:18px;accent-color:#667eea;">
+                <label for="editPrivateAccount" style="margin:0;font-weight:600;">🔒 Private account — only friends can see your posts & full profile</label>
+            </div>
             <div class="form-group"><label>LinkedIn URL</label><input type="url" id="editLinkedin" placeholder="https://linkedin.com/in/..."></div>
             <div class="form-group"><label>GitHub URL</label><input type="url" id="editGithub" placeholder="https://github.com/..."></div>
             <div class="form-group"><label>Portfolio / Website</label><input type="url" id="editWebsite" placeholder="https://..."></div>
@@ -5937,6 +6135,8 @@ function openEditProfile() {
     document.getElementById('editCountry').value = currentUser.country || '';
     document.getElementById('editPhone').value = currentUser.phone || '';
     document.getElementById('editBio').value = currentUser.bio || '';
+    const privEl = document.getElementById('editPrivateAccount');
+    if (privEl) privEl.checked = !!currentUser.privateAccount;
     document.getElementById('editLinkedin').value = (currentUser.portfolio && currentUser.portfolio.linkedin) || '';
     document.getElementById('editGithub').value = (currentUser.portfolio && currentUser.portfolio.github) || '';
     document.getElementById('editWebsite').value = (currentUser.portfolio && currentUser.portfolio.website) || '';
@@ -6033,7 +6233,8 @@ async function saveProfile() {
             website: document.getElementById('editWebsite').value.trim()
         },
         mentorOpen: document.getElementById('editMentorOpen').checked,
-        seekingMentor: document.getElementById('editSeekingMentor').checked
+        seekingMentor: document.getElementById('editSeekingMentor').checked,
+        privateAccount: !!(document.getElementById('editPrivateAccount') && document.getElementById('editPrivateAccount').checked)
     };
     if (pendingAvatar === null) upd.avatar = null;
     else if (pendingAvatar !== undefined) upd.avatar = pendingAvatar;
@@ -6100,7 +6301,7 @@ function renderConversations() {
     messages.forEach(m => {
         if (m.fromSnapshot && !snapshotMap.has(m.from)) snapshotMap.set(m.from, m.fromSnapshot);
     });
-    const partners = [...pids]
+    let partners = [...pids]
         .map(id => users.find(u => u.id === id) || snapshotMap.get(id))
         .filter(Boolean)
         .map(u => {
@@ -6108,6 +6309,14 @@ function renderConversations() {
             return { user: u, last: convo[0], unread: convo.filter(m => m.from === u.id && !m.read).length };
         })
         .sort((a,b) => (b.last ? b.last.timestamp : 0) - (a.last ? a.last.timestamp : 0));
+    if (_chatSearchQuery) {
+        partners = partners.filter(p => {
+            const name = (p.user.name || '').toLowerCase();
+            const uni = (p.user.university || '').toLowerCase();
+            const lastTxt = (p.last && p.last.text) ? p.last.text.toLowerCase() : '';
+            return name.includes(_chatSearchQuery) || uni.includes(_chatSearchQuery) || lastTxt.includes(_chatSearchQuery);
+        });
+    }
     if (partners.length === 0) {
         c.innerHTML = '<div class="empty-state" style="padding:30px 15px;"><div class="emoji" style="font-size:36px;">💬</div><p style="font-size:13px;">No conversations yet.</p></div>';
         return;
@@ -6700,6 +6909,10 @@ function renderNotifications() {
         else if (n.type === 'message') { text = '<strong>' + escapeHtml(from.name) + '</strong> sent you a message'; click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
         else if (n.type === 'moderation') { text = '⚠️ ' + escapeHtml(n.text || 'Moderation notice'); click = 'onclick="markNotificationRead(\'' + n.id + '\')"'; }
         else if (n.type === 'invite') { text = '<strong>' + escapeHtml(from.name) + '</strong> invited you to Kampo'; click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'invite\')"'; }
+        else if (n.type === 'call') { text = '📞 <strong>' + escapeHtml(from.name) + '</strong> called you'; click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
+        else if (n.type === 'profile_view') { text = '👀 <strong>' + escapeHtml(from.name) + '</strong> viewed your profile'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
+        else if (n.type === 'invite_joined') '📞 <strong>' + escapeHtml(from.name) + '</strong> called you' + (n.callType ? ' (' + n.callType + ')' : ''); click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
+        else if (n.type === 'profile_view') { text = '👀 <strong>' + escapeHtml(from.name) + '</strong> viewed your profile'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
         else if (n.type === 'invite_joined') { text = '🎉 <strong>' + escapeHtml(from.name) + '</strong> joined via your invite'; click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'invite\')"'; }
         else { text = escapeHtml(n.text || 'New notification'); click = 'onclick="markNotificationRead(\'' + n.id + '\')"'; }
         return '<div class="notif-item' + (n.read ? '' : ' unread') + '" ' + click + '>' + userAvatarHtml(from, 44) + '<div class="n-body"><div class="n-text">' + text + '</div><div class="n-time">' + timeAgo(n.timestamp) + '</div></div></div>';
@@ -7340,6 +7553,10 @@ function openJitsiCall(room, type, title) {
     modal.classList.add('active');
 }
 async function endCall() {
+    if (typeof agoraClient !== 'undefined' && agoraClient) {
+        await endAgoraCall();
+        return;
+    }
     if (currentCall && currentCall.liveId) {
         const l = lives.find(x => x.id === currentCall.liveId);
         if (l && l.userId === currentUser.id) { try { await fbDb.collection('lives').doc(currentCall.liveId).update({ active: false }); } catch (e) {} }
@@ -7405,6 +7622,7 @@ function openUserProfile(uid) {
     if (uid === currentUser.id) { showPage('profile'); return; }
     const u = users.find(x => x.id === uid);
     if (!u) return;
+    recordProfileView(uid);
     const isF = (currentUser.friends||[]).includes(uid);
     const b = friendBtnState(uid);
     const up = posts.filter(p => p.userId === uid);
@@ -7433,6 +7651,166 @@ function closeLightbox(e) {
 /* ============================================================
    SEARCH
    ============================================================ */
+
+/* ========== MOBILE SEARCH ========== */
+function openMobileSearch() {
+    const el = document.getElementById('mobileSearchOverlay');
+    if (!el) return;
+    el.classList.add('active');
+    const input = document.getElementById('mobileSearchInput');
+    if (input) { input.value = ''; setTimeout(() => input.focus(), 80); }
+    const results = document.getElementById('mobileSearchResults');
+    if (results) results.innerHTML = '<div class="empty-state" style="padding:40px 20px;"><div class="emoji">🔍</div><p>Search for students, posts, or groups</p></div>';
+}
+function closeMobileSearch() {
+    const el = document.getElementById('mobileSearchOverlay');
+    if (el) el.classList.remove('active');
+}
+function handleMobileSearch(q) {
+    const results = document.getElementById('mobileSearchResults');
+    if (!results || !currentUser) return;
+    if (!q || !q.trim()) {
+        results.innerHTML = '<div class="empty-state" style="padding:40px 20px;"><div class="emoji">🔍</div><p>Search for students, posts, or groups</p></div>';
+        return;
+    }
+    const lower = q.toLowerCase();
+    const mu = users.filter(u => u.id !== currentUser.id && ((u.name||'').toLowerCase().includes(lower) || (u.university||'').toLowerCase().includes(lower) || (u.country||'').toLowerCase().includes(lower) || (u.course||'').toLowerCase().includes(lower)));
+    const mp = posts.filter(p => (p.content||'').toLowerCase().includes(lower));
+    const mg = groups.filter(g => (g.name||'').toLowerCase().includes(lower));
+    let html = '';
+    if (mu.length) {
+        html += '<h4 style="margin:10px 0 8px;font-size:14px;color:var(--text-mute);">👥 Students</h4>';
+        html += mu.slice(0, 30).map(u => {
+            const b = friendBtnState(u.id);
+            const isF = (currentUser.friends||[]).includes(u.id);
+            return '<div class="suggestion-item">' + userAvatarHtml(u, 40) +
+                '<div class="s-info" onclick="closeMobileSearch(); openUserProfile(\'' + u.id + '\')" style="cursor:pointer;">' +
+                    '<div class="s-name">' + displayName(u) + '</div>' +
+                    '<div class="s-uni">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div>' +
+                '</div>' +
+                (isF ? '<button class="btn-follow following" onclick="closeMobileSearch(); startConversation(\'' + u.id + '\')">💬 Chat</button>' : '<button class="btn-follow ' + b.cls + '" onclick="handleFriendBtn(\'' + u.id + '\')">' + b.label + '</button>') +
+            '</div>';
+        }).join('');
+    }
+    if (mg.length) {
+        html += '<h4 style="margin:20px 0 8px;font-size:14px;color:var(--text-mute);">👪 Groups</h4>';
+        html += mg.slice(0, 15).map(g => '<div class="suggestion-item" onclick="closeMobileSearch(); openGroup(\'' + g.id + '\')" style="cursor:pointer;"><div class="avatar avatar-40" style="border-radius:10px;background:' + (g.cover ? "url('" + g.cover + "') center/cover" : 'linear-gradient(135deg,#667eea,#764ba2)') + ';">' + (g.cover ? '' : '👪') + '</div><div class="s-info"><div class="s-name">' + escapeHtml(g.name) + '</div><div class="s-uni">' + (g.members||[]).length + ' members</div></div></div>').join('');
+    }
+    if (mp.length) {
+        html += '<h4 style="margin:20px 0 8px;font-size:14px;color:var(--text-mute);">📝 Posts</h4>';
+        html += '<p style="color:var(--text-mute);font-size:13px;">' + mp.length + ' matching post(s). Open Feed to browse.</p>';
+    }
+    if (!html) html = '<div class="empty-state"><div class="emoji">🔍</div><p>No results for "' + escapeHtml(q) + '".</p></div>';
+    results.innerHTML = html;
+}
+
+/* ========== ONLINE USERS MODAL ========== */
+function openOnlineUsersModal() {
+    const modal = document.getElementById('onlineUsersModal');
+    const list = document.getElementById('onlineUsersList');
+    if (!modal || !list || !currentUser) return;
+    const online = users.filter(u => u.id !== currentUser.id && isUserOnline(u));
+    const friendIds = new Set(currentUser.friends || []);
+    online.sort((a, b) => {
+        const af = friendIds.has(a.id) ? 0 : 1;
+        const bf = friendIds.has(b.id) ? 0 : 1;
+        if (af !== bf) return af - bf;
+        return (a.name || '').localeCompare(b.name || '');
+    });
+    if (!online.length) {
+        list.innerHTML = '<div class="empty-state"><div class="emoji">😴</div><p>No one is online right now.</p></div>';
+    } else {
+        list.innerHTML = online.map(u => {
+            const isFriend = friendIds.has(u.id);
+            return '<div class="suggestion-item">' +
+                userAvatarHtml(u, 40) +
+                '<div class="s-info" onclick="closeOnlineUsersModal(); openUserProfile(\'' + u.id + '\')" style="cursor:pointer;">' +
+                    '<div class="s-name">' + displayName(u) + (isFriend ? ' · 🤝' : '') + '</div>' +
+                    '<div class="s-uni">' + escapeHtml(u.university || '') + '</div>' +
+                '</div>' +
+                '<button class="btn-follow" onclick="closeOnlineUsersModal(); startConversation(\'' + u.id + '\')">💬</button>' +
+            '</div>';
+        }).join('');
+    }
+    modal.classList.add('active');
+}
+function closeOnlineUsersModal() {
+    const modal = document.getElementById('onlineUsersModal');
+    if (modal) modal.classList.remove('active');
+}
+
+/* ========== PROFILE VIEW NOTIFICATIONS ========== */
+const _recentProfileViews = new Set();
+function recordProfileView(targetUserId) {
+    if (!currentUser || !targetUserId || targetUserId === currentUser.id) return;
+    const key = targetUserId + '_' + currentUser.id;
+    if (_recentProfileViews.has(key)) return;
+    _recentProfileViews.add(key);
+    setTimeout(() => _recentProfileViews.delete(key), 30 * 60 * 1000);
+    try {
+        createNotification(targetUserId, 'profile_view', {
+            fromId: currentUser.id,
+            text: (currentUser.name || 'Someone') + ' viewed your profile'
+        });
+        fbDb.collection('users').doc(targetUserId).update({
+            profileViews: FV.increment(1),
+            lastViewedAt: Date.now()
+        }).catch(() => {});
+    } catch (e) { console.warn('profile view', e); }
+}
+
+/* ========== CHAT SEARCH FILTER ========== */
+let _chatSearchQuery = '';
+function filterConversations(q) {
+    _chatSearchQuery = (q || '').toLowerCase().trim();
+    renderConversations();
+}
+
+/* ========== RINGTONE ========== */
+let ringtoneAudioCtx = null;
+let ringtoneInterval = null;
+function startRingtone() {
+    stopRingtone();
+    try {
+        ringtoneAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const playBeep = () => {
+            if (!ringtoneAudioCtx) return;
+            const osc = ringtoneAudioCtx.createOscillator();
+            const gain = ringtoneAudioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(ringtoneAudioCtx.destination);
+            osc.frequency.value = 880;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.15, ringtoneAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ringtoneAudioCtx.currentTime + 0.4);
+            osc.start(ringtoneAudioCtx.currentTime);
+            osc.stop(ringtoneAudioCtx.currentTime + 0.4);
+            setTimeout(() => {
+                if (!ringtoneAudioCtx) return;
+                const osc2 = ringtoneAudioCtx.createOscillator();
+                const gain2 = ringtoneAudioCtx.createGain();
+                osc2.connect(gain2);
+                gain2.connect(ringtoneAudioCtx.destination);
+                osc2.frequency.value = 1100;
+                osc2.type = 'sine';
+                gain2.gain.setValueAtTime(0.15, ringtoneAudioCtx.currentTime);
+                gain2.gain.exponentialRampToValueAtTime(0.001, ringtoneAudioCtx.currentTime + 0.4);
+                osc2.start(ringtoneAudioCtx.currentTime);
+                osc2.stop(ringtoneAudioCtx.currentTime + 0.4);
+            }, 200);
+        };
+        playBeep();
+        ringtoneInterval = setInterval(playBeep, 1800);
+    } catch (e) { console.warn('ringtone failed', e); }
+}
+function stopRingtone() {
+    if (ringtoneInterval) { clearInterval(ringtoneInterval); ringtoneInterval = null; }
+    if (ringtoneAudioCtx) {
+        try { ringtoneAudioCtx.close(); } catch (e) {}
+        ringtoneAudioCtx = null;
+    }
+}
+
 function handleSearch(q) {
     if (!q.trim()) { showPage('feed'); return; }
     const lower = q.toLowerCase();
@@ -9033,9 +9411,24 @@ function showIncomingCallScreen(call) {
         call.type === 'audio' ? '📞 Incoming audio call…' : '🎥 Incoming video call…';
 
     const backdrop = document.getElementById('incomingCallBackdrop');
-    if (backdrop) backdrop.classList.add('active');
-
-    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 300]);
+    if (backdrop) {
+        backdrop.classList.add('active');
+    } else {
+        showToast((caller.name || 'Someone') + ' is calling you!');
+    }
+    startRingtone();
+    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 300, 200, 300]);
+    try {
+        if (document.visibilityState !== 'visible' && 'Notification' in window && Notification.permission === 'granted') {
+            const n = new Notification((caller.name || 'Someone') + ' is calling', {
+                body: (call.type === 'audio' ? 'Audio' : 'Video') + ' call on Kampo',
+                icon: '/icon-512.png',
+                tag: 'kampo-call-' + (call.id || ''),
+                requireInteraction: true
+            });
+            n.onclick = () => { window.focus(); n.close(); };
+        }
+    } catch (e) {}
 
     clearTimeout(incomingCallTimeout);
     incomingCallTimeout = setTimeout(() => {
@@ -9050,6 +9443,8 @@ function hideIncomingCallScreen() {
     if (backdrop) backdrop.classList.remove('active');
     clearTimeout(incomingCallTimeout);
     incomingCallTimeout = null;
+    stopRingtone();
+    if (navigator.vibrate) navigator.vibrate(0);
 }
 
 async function acceptIncomingCall() {

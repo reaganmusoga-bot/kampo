@@ -10951,7 +10951,13 @@ function getNotifPermission() {
     if (!('Notification' in window)) return 'unsupported';
     return Notification.permission; // 'default' | 'granted' | 'denied'
 }
-
+function updateSidebarNotifDot() {
+    const dot = document.getElementById('sideNotifBlockedDot');
+    if (!dot) return;
+    const perm = getNotifPermission();
+    const blocked = (perm === 'denied');
+    dot.classList.toggle('show', blocked);
+}
 function getNotifPromptState() {
     try { return localStorage.getItem(NOTIF_PROMPT_KEY) || ''; } catch (e) { return ''; }
 }
@@ -11196,22 +11202,6 @@ function switchGuideTab(key, tabEl) {
         '</div>'
     ).join('');
 }
-async function retryNotifPermission() {
-    const perm = getNotifPermission();
-    if (perm === 'granted') {
-        closeNotifGuide();
-        setNotifPromptState('enabled');
-        showToast('✅ Notifications are working!');
-        refreshNotifUI();
-		function updateSidebarNotifDot() {
-    const dot = document.getElementById('sideNotifBlockedDot');
-    if (!dot) return;
-    const perm = getNotifPermission();
-    const blocked = (perm === 'denied');
-    dot.classList.toggle('show', blocked);
-}
-        return;
-    }
     if (perm === 'denied') {
         // Re-check after a moment — user may have just changed it
         showToast('Still blocked — please follow the steps, then reload.');
@@ -11951,7 +11941,6 @@ async function endAgoraCall() {
     if (modal) modal.classList.remove('active');
     const container = document.getElementById('callFrameContainer');
     if (container) container.innerHTML = '';
-}
 }
 console.log('🎥 Agora call engine loaded');
 console.log('✅ Kampo loaded — dark mode + invite + message actions + kmodal + 2000-cap + notification dedupe');

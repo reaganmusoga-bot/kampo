@@ -3628,15 +3628,33 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     cursor: pointer;
 }
 
+
 .agora-conf-ui {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 360px;
+    min-height: 400px;
     background: #0a0a0f;
     display: flex;
     flex-direction: column;
 }
+.agora-conf-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+    align-items: center;
+    background: rgba(0,0,0,0.5);
+}
+.conf-top-pill {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 16px;
+}
+.conf-top-title { max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .agora-conf-grid {
     flex: 1;
     display: grid;
@@ -3654,6 +3672,11 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     min-height: 140px;
     aspect-ratio: 4/3;
 }
+.agora-conf-tile.conf-tile-screen {
+    grid-column: 1 / -1;
+    aspect-ratio: 16/9;
+    min-height: 200px;
+}
 .agora-conf-tile .conf-video {
     width: 100%;
     height: 100%;
@@ -3663,16 +3686,34 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     height: 100%;
     object-fit: cover;
 }
-.agora-conf-tile .conf-label {
+.conf-tile-meta {
     position: absolute;
     left: 8px;
+    right: 8px;
     bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.agora-conf-tile .conf-label {
     background: rgba(0,0,0,0.55);
     color: white;
     font-size: 11px;
     font-weight: 700;
     padding: 4px 8px;
     border-radius: 8px;
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.conf-hand-badge, .conf-mute-badge {
+    background: rgba(0,0,0,0.55);
+    color: white;
+    font-size: 12px;
+    padding: 3px 6px;
+    border-radius: 8px;
+    display: inline-flex;
 }
 .conf-placeholder {
     display: flex;
@@ -3682,14 +3723,46 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     color: rgba(255,255,255,0.5);
     font-size: 13px;
 }
+.conf-avatar-only { font-size: 40px; }
 .agora-conf-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     justify-content: center;
-    padding: 12px;
-    background: rgba(0,0,0,0.75);
+    padding: 12px 10px 14px;
+    background: rgba(0,0,0,0.85);
+    border-top: 1px solid rgba(255,255,255,0.08);
 }
+.conf-ctrl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 56px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.15s, transform 0.15s;
+}
+.conf-ctrl small {
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+.conf-ctrl:hover { background: rgba(255,255,255,0.18); }
+.conf-ctrl:active { transform: scale(0.96); }
+.conf-ctrl.active { background: rgba(102,126,234,0.45); }
+.conf-ctrl.recording { background: rgba(231,76,60,0.55); }
+.conf-ctrl-leave { background: rgba(231,76,60,0.85) !important; }
+@media (max-width: 500px) {
+    .conf-ctrl { min-width: 48px; padding: 6px 8px; font-size: 16px; }
+    .agora-conf-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+}
+
 </style>
 <body>
 
@@ -8300,7 +8373,8 @@ function renderGroupDetail(gid) {
     let acts = '';
     if (isM) {
         acts += '<button class="btn-action btn-action-primary" onclick="openInviteModal(\'' + g.id + '\')">✉️ Invite</button>';
-        acts += '<button class="btn-action btn-action-primary" onclick="startGroupConference(\'' + g.id + '\')">👥 Conference</button>';
+        acts += '<button class="btn-action btn-action-primary" onclick="startGroupConference(\'' + g.id + '\')">👥 Video</button>';
+        acts += '<button class="btn-action btn-action-secondary" onclick="startGroupAudioConference(\'' + g.id + '\')">🎧 Audio</button>';
         if (isA) acts += '<button class="btn-action btn-action-secondary" onclick="openEditGroup(\'' + g.id + '\')">✏️ Edit</button>';
         if (isC) acts += '<button class="btn-action btn-action-secondary" style="background:#fde8e8;color:#e74c3c;" onclick="deleteGroup(\'' + g.id + '\')">🗑️ Delete</button>';
         acts += '<button class="btn-action btn-action-secondary" onclick="leaveGroup(\'' + g.id + '\')">Leave</button>';
@@ -8591,6 +8665,22 @@ function startCall(pid, type) {
     // Now routes to Agora instead of Jitsi
     return startAgoraCall(pid, type);
 }
+
+function startGroupAudioConference(gid) {
+    const g = getGroup(gid);
+    if (!g || !currentUser) return;
+    const room = ('kampo-g-' + String(gid)).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
+    startAgoraConference(room, 'audio', '🎧 ' + (g.name || 'Group'), { groupId: gid });
+    const others = (g.members || []).filter(id => id !== currentUser.id).slice(0, 40);
+    others.forEach(id => {
+        createNotification(id, 'group_message', {
+            fromId: currentUser.id,
+            text: '🎧 Audio conference started in ' + (g.name || 'group') + ' — open the group and join',
+            groupId: gid
+        }).catch(() => {});
+    });
+}
+
 function startGroupConference(gid) {
     const g = getGroup(gid);
     if (!g) return;
@@ -8608,17 +8698,34 @@ function startGroupConference(gid) {
     });
 }
 
-/* ========== AGORA MULTIPARTY CONFERENCE (groups / study — no Jitsi) ========== */
-let conferenceRemoteUsers = {};
 
-function buildConferenceUI() {
+/* ========== AGORA MULTIPARTY CONFERENCE (groups / study) ========== */
+let conferenceRemoteUsers = {};
+let confScreenTrack = null;
+let confRaisedHand = false;
+let confRecMediaRecorder = null;
+let confRecChunks = [];
+let confMyUid = null;
+let confChannelName = null;
+let confIsAudioOnly = false;
+
+function buildConferenceUI(title, isAudioOnly) {
     return (
         '<div class="agora-conf-ui" id="agoraConfUI">' +
+            '<div class="agora-conf-top">' +
+                '<span class="conf-top-pill" id="confParticipantCount">👤 1</span>' +
+                '<span class="conf-top-pill conf-top-title">' + escapeHtml(title || 'Conference') + '</span>' +
+                '<span class="conf-top-pill" id="confHandStatus" style="display:none;">✋ Hand raised</span>' +
+            '</div>' +
             '<div class="agora-conf-grid" id="agoraConfGrid"></div>' +
             '<div class="agora-conf-bar">' +
-                '<button type="button" class="live-action-btn" id="confMuteBtn" onclick="toggleConfMute()">🎤 Mute</button>' +
-                '<button type="button" class="live-action-btn" id="confCamBtn" onclick="toggleConfCam()">🎥 Camera</button>' +
-                '<button type="button" class="live-action-btn" onclick="endCall()" style="background:rgba(231,76,60,0.85);">Leave</button>' +
+                '<button type="button" class="conf-ctrl" id="confMuteBtn" onclick="toggleConfMute()" title="Mute"><span>🎤</span><small>Mute</small></button>' +
+                (isAudioOnly ? '' : '<button type="button" class="conf-ctrl" id="confCamBtn" onclick="toggleConfCam()" title="Camera"><span>🎥</span><small>Camera</small></button>') +
+                (isAudioOnly ? '' : '<button type="button" class="conf-ctrl" id="confScreenBtn" onclick="toggleConfScreenShare()" title="Share screen"><span>🖥️</span><small>Share</small></button>') +
+                '<button type="button" class="conf-ctrl" id="confHandBtn" onclick="toggleConfRaiseHand()" title="Raise hand"><span>✋</span><small>Hand</small></button>' +
+                '<button type="button" class="conf-ctrl" id="confRecBtn" onclick="toggleConfRecording()" title="Record"><span>⏺</span><small>Record</small></button>' +
+                '<button type="button" class="conf-ctrl" onclick="copyConfInvite()" title="Copy invite"><span>🔗</span><small>Invite</small></button>' +
+                '<button type="button" class="conf-ctrl conf-ctrl-leave" onclick="endCall()" title="Leave"><span>📞</span><small>Leave</small></button>' +
             '</div>' +
         '</div>'
     );
@@ -8628,19 +8735,41 @@ function confTileId(uid) {
     return 'conf-tile-' + String(uid);
 }
 
-function ensureConfTile(uid, label) {
+function updateConfParticipantCount() {
+    const el = document.getElementById('confParticipantCount');
+    if (!el) return;
+    const n = 1 + Object.keys(conferenceRemoteUsers || {}).length;
+    el.textContent = '👤 ' + n;
+}
+
+function ensureConfTile(uid, label, opts) {
+    opts = opts || {};
     const grid = document.getElementById('agoraConfGrid');
     if (!grid) return null;
     let tile = document.getElementById(confTileId(uid));
     if (!tile) {
         tile = document.createElement('div');
         tile.id = confTileId(uid);
-        tile.className = 'agora-conf-tile';
-        tile.innerHTML = '<div class="conf-video" id="conf-video-' + uid + '"></div>' +
-            '<div class="conf-label">' + escapeHtml(label || ('User ' + uid)) + '</div>';
+        tile.className = 'agora-conf-tile' + (opts.screen ? ' conf-tile-screen' : '');
+        tile.innerHTML =
+            '<div class="conf-video" id="conf-video-' + uid + '"></div>' +
+            '<div class="conf-tile-meta">' +
+                '<span class="conf-label">' + escapeHtml(label || ('User ' + uid)) + '</span>' +
+                '<span class="conf-hand-badge" id="conf-hand-' + uid + '" style="display:none;">✋</span>' +
+                '<span class="conf-mute-badge" id="conf-mute-' + uid + '" style="display:none;">🔇</span>' +
+            '</div>';
         grid.appendChild(tile);
+    } else if (label) {
+        const lab = tile.querySelector('.conf-label');
+        if (lab) lab.textContent = label;
     }
+    updateConfParticipantCount();
     return document.getElementById('conf-video-' + uid);
+}
+
+function setConfHandBadge(uid, raised) {
+    const b = document.getElementById('conf-hand-' + uid);
+    if (b) b.style.display = raised ? 'inline-flex' : 'none';
 }
 
 async function startAgoraConference(room, type, title, meta) {
@@ -8654,29 +8783,38 @@ async function startAgoraConference(room, type, title, meta) {
     }
 
     const channelName = String(room || ('kampo-conf-' + Date.now())).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
-    const isAudioOnly = type === 'audio';
-    currentCall = { room: channelName, type: type || 'video', title: title || 'Conference', conference: true, meta: meta || {} };
+    confIsAudioOnly = type === 'audio';
+    confChannelName = channelName;
+    confRaisedHand = false;
+    confScreenTrack = null;
+    conferenceRemoteUsers = {};
+
+    currentCall = {
+        room: channelName,
+        type: type || 'video',
+        title: title || 'Conference',
+        conference: true,
+        meta: meta || {}
+    };
 
     const modal = document.getElementById('callModal');
     document.getElementById('callTitle').textContent = title || 'Conference';
-    document.getElementById('callTypeBadge').textContent = 'CONFERENCE';
+    document.getElementById('callTypeBadge').textContent = confIsAudioOnly ? 'AUDIO' : 'CONFERENCE';
     modal.querySelector('.call-close-btn').textContent = 'Leave';
     const container = document.getElementById('callFrameContainer');
-    container.innerHTML = buildConferenceUI();
+    container.innerHTML = buildConferenceUI(title || 'Conference', confIsAudioOnly);
     modal.classList.add('active');
 
     try {
-        const myUid = uidFromString(currentUser.id + '-c');
-        const token = await fetchAgoraToken(channelName, myUid);
+        confMyUid = uidFromString(currentUser.id + '-c');
+        const token = await fetchAgoraToken(channelName, confMyUid);
 
         agoraClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
-        conferenceRemoteUsers = {};
 
         agoraClient.on('user-published', async (user, mediaType) => {
             await agoraClient.subscribe(user, mediaType);
             conferenceRemoteUsers[user.uid] = user;
-            const label = 'Participant';
-            const el = ensureConfTile(user.uid, label);
+            const el = ensureConfTile(user.uid, 'Participant');
             if (mediaType === 'video' && user.videoTrack && el) {
                 el.innerHTML = '';
                 user.videoTrack.play(el);
@@ -8684,6 +8822,7 @@ async function startAgoraConference(room, type, title, meta) {
             if (mediaType === 'audio' && user.audioTrack) {
                 user.audioTrack.play();
             }
+            updateConfParticipantCount();
         });
 
         agoraClient.on('user-unpublished', (user, mediaType) => {
@@ -8697,25 +8836,50 @@ async function startAgoraConference(room, type, title, meta) {
             const tile = document.getElementById(confTileId(user.uid));
             if (tile) tile.remove();
             delete conferenceRemoteUsers[user.uid];
+            updateConfParticipantCount();
         });
 
-        await agoraClient.join(AGORA_APP_ID, channelName, token, myUid);
+        // Data stream for raise-hand signals
+        try {
+            agoraClient.on('stream-message', (uid, data) => {
+                try {
+                    const msg = JSON.parse(String.fromCharCode.apply(null, data));
+                    if (msg && msg.type === 'hand') {
+                        setConfHandBadge(uid, !!msg.raised);
+                    }
+                } catch (e) {}
+            });
+        } catch (e) {}
+
+        await agoraClient.join(AGORA_APP_ID, channelName, token, confMyUid);
 
         agoraLocalTracks = { audio: null, video: null };
-        if (isAudioOnly) {
-            agoraLocalTracks.audio = await AgoraRTC.createMicrophoneAudioTrack();
-            await agoraClient.publish([agoraLocalTracks.audio]);
-        } else {
-            [agoraLocalTracks.audio, agoraLocalTracks.video] = await AgoraRTC.createMicrophoneAndCameraTracks();
-            const localEl = ensureConfTile(myUid, (currentUser.name || 'You') + ' (you)');
+        agoraLocalTracks.audio = await AgoraRTC.createMicrophoneAudioTrack();
+
+        if (!confIsAudioOnly) {
+            agoraLocalTracks.video = await AgoraRTC.createCameraVideoTrack();
+            const localEl = ensureConfTile(confMyUid, (currentUser.name || 'You') + ' (you)');
             if (localEl && agoraLocalTracks.video) {
                 localEl.innerHTML = '';
                 agoraLocalTracks.video.play(localEl);
             }
             await agoraClient.publish([agoraLocalTracks.audio, agoraLocalTracks.video]);
+        } else {
+            ensureConfTile(confMyUid, (currentUser.name || 'You') + ' (you)');
+            const el = document.getElementById('conf-video-' + confMyUid);
+            if (el) el.innerHTML = '<div class="conf-placeholder conf-avatar-only">🎤</div>';
+            await agoraClient.publish([agoraLocalTracks.audio]);
         }
 
-        showToast('Joined conference');
+        // Create data stream for hand signals
+        try {
+            confDataStreamId = await agoraClient.createDataStream({ reliable: true, ordered: true });
+        } catch (e) {
+            confDataStreamId = null;
+        }
+
+        showToast(confIsAudioOnly ? 'Joined audio conference' : 'Joined conference');
+        updateConfParticipantCount();
     } catch (err) {
         console.error('Conference failed', err);
         showToast('❌ Could not join conference: ' + (err.message || err));
@@ -8723,7 +8887,8 @@ async function startAgoraConference(room, type, title, meta) {
     }
 }
 
-// Legacy name kept so any old onclick still works — routes to Agora
+let confDataStreamId = null;
+
 function openJitsiCall(room, type, title) {
     startAgoraConference(room, type, title, {});
 }
@@ -8733,7 +8898,9 @@ function toggleConfMute() {
     const muted = !agoraLocalTracks.audio.muted;
     agoraLocalTracks.audio.setMuted(muted);
     const btn = document.getElementById('confMuteBtn');
-    if (btn) btn.textContent = muted ? '🔇 Unmute' : '🎤 Mute';
+    if (btn) btn.innerHTML = muted ? '<span>🔇</span><small>Unmute</small>' : '<span>🎤</span><small>Mute</small>';
+    const badge = document.getElementById('conf-mute-' + confMyUid);
+    if (badge) badge.style.display = muted ? 'inline-flex' : 'none';
 }
 
 function toggleConfCam() {
@@ -8741,9 +8908,167 @@ function toggleConfCam() {
     const off = !agoraLocalTracks.video.muted;
     agoraLocalTracks.video.setMuted(off);
     const btn = document.getElementById('confCamBtn');
-    if (btn) btn.textContent = off ? '📷 Camera off' : '🎥 Camera';
+    if (btn) btn.innerHTML = off ? '<span>📷</span><small>Cam off</small>' : '<span>🎥</span><small>Camera</small>';
+    if (off) {
+        const el = document.getElementById('conf-video-' + confMyUid);
+        if (el) el.innerHTML = '<div class="conf-placeholder">Camera off</div>';
+    } else if (agoraLocalTracks.video) {
+        const el = document.getElementById('conf-video-' + confMyUid);
+        if (el) {
+            el.innerHTML = '';
+            agoraLocalTracks.video.play(el);
+        }
+    }
 }
 
+async function toggleConfScreenShare() {
+    if (!agoraClient) return;
+    const btn = document.getElementById('confScreenBtn');
+    try {
+        if (confScreenTrack) {
+            await agoraClient.unpublish(confScreenTrack);
+            confScreenTrack.stop();
+            confScreenTrack.close();
+            confScreenTrack = null;
+            if (btn) {
+                btn.classList.remove('active');
+                btn.innerHTML = '<span>🖥️</span><small>Share</small>';
+            }
+            showToast('Screen share stopped');
+            return;
+        }
+        confScreenTrack = await AgoraRTC.createScreenVideoTrack({
+            encoderConfig: '1080p_1'
+        }, 'disable');
+        // createScreenVideoTrack may return track or [video, audio]
+        const track = Array.isArray(confScreenTrack) ? confScreenTrack[0] : confScreenTrack;
+        confScreenTrack = track;
+        await agoraClient.publish(track);
+        const el = ensureConfTile('screen-' + confMyUid, 'Your screen', { screen: true });
+        if (el) {
+            el.innerHTML = '';
+            track.play(el);
+        }
+        track.on('track-ended', async () => {
+            try {
+                if (confScreenTrack) {
+                    await agoraClient.unpublish(confScreenTrack);
+                    confScreenTrack.close();
+                    confScreenTrack = null;
+                }
+            } catch (e) {}
+            const t = document.getElementById(confTileId('screen-' + confMyUid));
+            if (t) t.remove();
+            if (btn) {
+                btn.classList.remove('active');
+                btn.innerHTML = '<span>🖥️</span><small>Share</small>';
+            }
+        });
+        if (btn) {
+            btn.classList.add('active');
+            btn.innerHTML = '<span>🖥️</span><small>Stop</small>';
+        }
+        showToast('Sharing screen');
+    } catch (e) {
+        console.warn(e);
+        showToast('Screen share cancelled or not available');
+        confScreenTrack = null;
+    }
+}
+
+function toggleConfRaiseHand() {
+    confRaisedHand = !confRaisedHand;
+    setConfHandBadge(confMyUid, confRaisedHand);
+    const btn = document.getElementById('confHandBtn');
+    const status = document.getElementById('confHandStatus');
+    if (btn) {
+        btn.classList.toggle('active', confRaisedHand);
+        btn.innerHTML = confRaisedHand ? '<span>✋</span><small>Lower</small>' : '<span>✋</span><small>Hand</small>';
+    }
+    if (status) status.style.display = confRaisedHand ? 'inline-flex' : 'none';
+
+    // Broadcast to others via data stream
+    try {
+        if (agoraClient && confDataStreamId != null) {
+            const payload = JSON.stringify({ type: 'hand', raised: confRaisedHand });
+            const bytes = new Uint8Array(payload.length);
+            for (let i = 0; i < payload.length; i++) bytes[i] = payload.charCodeAt(i);
+            agoraClient.sendStreamMessage(confDataStreamId, bytes);
+        }
+    } catch (e) {
+        console.warn('hand signal', e);
+    }
+    showToast(confRaisedHand ? 'Hand raised ✋' : 'Hand lowered');
+}
+
+async function toggleConfRecording() {
+    const btn = document.getElementById('confRecBtn');
+    if (confRecMediaRecorder && confRecMediaRecorder.state === 'recording') {
+        confRecMediaRecorder.stop();
+        if (btn) {
+            btn.classList.remove('recording');
+            btn.innerHTML = '<span>⏺</span><small>Record</small>';
+        }
+        return;
+    }
+    try {
+        const tracks = [];
+        if (agoraLocalTracks.video && agoraLocalTracks.video.getMediaStreamTrack) {
+            tracks.push(agoraLocalTracks.video.getMediaStreamTrack());
+        }
+        if (agoraLocalTracks.audio && agoraLocalTracks.audio.getMediaStreamTrack) {
+            tracks.push(agoraLocalTracks.audio.getMediaStreamTrack());
+        }
+        if (!tracks.length) {
+            showToast('Nothing to record yet');
+            return;
+        }
+        const stream = new MediaStream(tracks);
+        confRecChunks = [];
+        const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' :
+            (MediaRecorder.isTypeSupported('video/webm') ? 'video/webm' : '');
+        confRecMediaRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+        confRecMediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size) confRecChunks.push(e.data); };
+        confRecMediaRecorder.onstop = () => {
+            const blob = new Blob(confRecChunks, { type: 'video/webm' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'kampo-conference-' + Date.now() + '.webm';
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+            showToast('Recording saved 💾');
+            confRecChunks = [];
+            confRecMediaRecorder = null;
+        };
+        confRecMediaRecorder.start(1000);
+        if (btn) {
+            btn.classList.add('recording');
+            btn.innerHTML = '<span>⏹</span><small>Stop</small>';
+        }
+        showToast('Recording…');
+    } catch (e) {
+        showToast('Recording not available');
+        console.warn(e);
+    }
+}
+
+function copyConfInvite() {
+    const room = confChannelName || (currentCall && currentCall.room) || '';
+    const gid = currentCall && currentCall.meta && currentCall.meta.groupId;
+    let text = 'Join my Kampo conference';
+    if (gid) {
+        text = 'Join our group conference on Kampo — open the group and tap Conference.';
+    } else if (room) {
+        text = 'Kampo conference room: ' + room;
+    }
+    const url = window.location.origin + window.location.pathname + (gid ? '' : '');
+    const full = text + (url ? '\n' + url : '');
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(full).then(() => showToast('Invite copied 🔗')).catch(() => prompt('Copy:', full));
+    } else {
+        prompt('Copy invite:', full);
+    }
+}
 
 async function endCall() {
     if (typeof liveClient !== 'undefined' && liveClient) {
@@ -11270,6 +11595,21 @@ function wireAgoraControls(type) {
 
 /* Clean up when the call ends */
 async function endAgoraCall() {
+    try {
+        if (confRecMediaRecorder && confRecMediaRecorder.state === 'recording') confRecMediaRecorder.stop();
+    } catch (e) {}
+    try {
+        if (confScreenTrack) {
+            try { await agoraClient.unpublish(confScreenTrack); } catch (e) {}
+            confScreenTrack.stop();
+            confScreenTrack.close();
+            confScreenTrack = null;
+        }
+    } catch (e) {}
+    confRaisedHand = false;
+    conferenceRemoteUsers = {};
+    confDataStreamId = null;
+
     // Mark any call doc where I'm a participant as ended
     try {
         const [fromCalls, toCalls] = await Promise.all([

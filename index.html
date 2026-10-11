@@ -8949,7 +8949,6 @@ function startIncomingCallListener() {
             });
         }, err => console.warn('incoming calls listener', err));
 }
-
 function stopIncomingCallListener() {
     if (incomingCallUnsub) {
         try { incomingCallUnsub(); } catch (e) {}

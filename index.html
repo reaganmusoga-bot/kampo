@@ -3420,6 +3420,9 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
             <!-- MORE PAGE -->
             <div class="page" id="page-more">
                 <div class="sidebar-card" style="padding:18px;">
+					<button id="androidInstallBtn" onclick="triggerAndroidInstall()" style="display:none; width:100%; padding:14px; border:none; border-radius:10px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; font-weight:700; font-size:15px; cursor:pointer; margin-bottom:14px;">
+  📲 Install Kampo on your phone
+</button>
                     <h3 style="margin:0 0 14px;font-size:16px;text-transform:none;letter-spacing:0;color:var(--text);">✨ Explore Kampo</h3>
                     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;">
                         <button class="hub-card" onclick="showPage('events')"><span>📅</span><strong>Events</strong><small>Campus hangouts</small></button>
@@ -8785,6 +8788,23 @@ console.log('📱 Device check:', {
     standalone: isStandalone(),
     needsInstall: isIOSInBrowser()
 });
+	function triggerAndroidInstall() {
+    if (window.deferredInstallPrompt) {
+        window.deferredInstallPrompt.prompt();
+        window.deferredInstallPrompt.userChoice.then((choice) => {
+            if (choice.outcome === 'accepted') {
+                console.log('✅ User accepted install');
+            } else {
+                console.log('User dismissed install');
+            }
+            window.deferredInstallPrompt = null;
+            const btn = document.getElementById('androidInstallBtn');
+            if (btn) btn.style.display = 'none';
+        });
+    } else {
+        showToast('Open the Chrome menu (⋮) and tap "Install app"');
+    }
+}
 	/* ============================================================
    AGORA CALL ENGINE
    ============================================================ */

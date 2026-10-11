@@ -557,6 +557,23 @@ html[data-theme="dark"] img { filter: brightness(0.94); }
 .btn-post:not(:disabled):hover { transform:translateY(-1px) scale(1.02); box-shadow:0 6px 18px rgba(102,126,234,0.35); }
 .btn-post:not(:disabled):active { transform: translateY(0) scale(0.98); }
 .btn-post:disabled { opacity:0.5; cursor:not-allowed; }
+.post-actions-stacked {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+}
+.post-actions-stacked .action-btns {
+    width: 100%;
+    justify-content: flex-start;
+}
+.btn-post-full {
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    letter-spacing: 0.2px;
+}
+
 
 /* ============================================================
    POST CARD
@@ -1397,6 +1414,124 @@ html[data-theme="dark"] .admin-pill { background: rgba(217,119,6,0.25); color: #
 .modal-footer .btn-cancel { background: var(--bg-sunken); color: var(--text); }
 .modal-footer .btn-save { background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
 
+
+/* Edit profile — professional layout */
+.edit-profile-modal {
+    max-width: 560px;
+    width: 100%;
+}
+.edit-profile-body {
+    padding: 8px 4px 16px;
+}
+.ep-section {
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-soft);
+}
+.ep-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.ep-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-mute);
+    margin-bottom: 14px;
+}
+.ep-photos-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.ep-photo-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.ep-photo-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+.ep-photo-meta strong {
+    font-size: 14px;
+    color: var(--text);
+}
+.ep-photo-meta span {
+    font-size: 12px;
+    color: var(--text-mute);
+}
+.ep-photo-btns {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+.ep-btn {
+    background: var(--primary-soft);
+    color: var(--primary-text);
+    border: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+}
+.ep-btn:hover { filter: brightness(0.97); }
+.ep-btn-ghost {
+    background: var(--bg-sunken);
+    color: var(--text-mute);
+}
+.ep-cover-preview {
+    width: 120px;
+    height: 68px;
+    border-radius: 12px;
+    background: var(--bg-soft);
+    border: 2px dashed var(--border);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.ep-cover-placeholder {
+    color: var(--text-faint);
+    font-size: 12px;
+}
+.ep-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+}
+.ep-grid .form-group { margin-bottom: 0; }
+.ep-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+.ep-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+}
+.ep-check input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+@media (max-width: 600px) {
+    .ep-grid { grid-template-columns: 1fr; }
+    .edit-profile-modal { max-width: 100%; margin: 0 8px; }
+}
 .edit-avatar-section {
     display:flex; align-items:center; gap:20px;
     padding-bottom:20px;
@@ -3340,7 +3475,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                     <div class="user-menu-divider"></div>
                     <button class="user-menu-item" onclick="userMenuAction('profile')">
                         <span class="um-icon">👤</span>
-                        <span>View Profile</span>
+                        <span>My Account</span>
                     </button>
                     <button class="user-menu-item" onclick="userMenuAction('edit')">
                         <span class="um-icon">✏️</span>
@@ -3457,7 +3592,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                         <div class="form-group" style="margin-bottom:6px;"><input type="text" id="pollOpt3" placeholder="Option 3 (optional)"></div>
                         <button type="button" class="action-btn" onclick="clearPollBuilder()">Remove poll</button>
                     </div>
-                    <div class="post-actions">
+                    <div class="post-actions post-actions-stacked">
                         <div class="action-btns">
                             <button class="action-btn" id="photoBtn" onclick="triggerPhotoUpload()" title="Add photo"><span>📷</span><span class="btn-label">Photo</span></button>
                             <button class="action-btn" id="videoBtn" onclick="triggerVideoUpload()" title="Add video"><span>🎥</span><span class="btn-label">Video</span></button>
@@ -3467,7 +3602,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                             <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleMediaSelect(event, 'image')">
                             <input type="file" id="videoInput" accept="video/*" style="display:none;" onchange="handleMediaSelect(event, 'video')">
                         </div>
-                        <button class="btn-post" id="postBtn" onclick="createPost()" disabled>Post</button>
+                        <button class="btn-post btn-post-full" id="postBtn" onclick="createPost()" disabled>Post</button>
                     </div>
                 </div>
 
@@ -3886,79 +4021,124 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
      EDIT PROFILE MODAL
      ============================================================ -->
 <div class="modal-backdrop" id="editProfileModal">
-    <div class="modal">
-        <div class="modal-header"><h3>✏️ Edit Profile</h3><button class="close-btn" onclick="closeEditProfile()">✕</button></div>
-        <div class="modal-body">
-            <div class="edit-avatar-section">
-                <div class="edit-avatar-preview avatar avatar-100" id="editAvatarPreview">U</div>
-                <div class="edit-avatar-actions">
-                    <h4>Profile Photo</h4><p>Tap to upload a clear photo of yourself</p>
-                    <button onclick="triggerAvatarUpload()">📷 Change</button>
-                    <button onclick="removeAvatar()" id="removeAvatarBtn" style="display:none;">🗑️ Remove</button>
+    <div class="modal edit-profile-modal">
+        <div class="modal-header">
+            <h3>My Account</h3>
+            <button class="close-btn" onclick="closeEditProfile()">✕</button>
+        </div>
+        <div class="modal-body edit-profile-body">
+
+            <!-- Photos -->
+            <div class="ep-section">
+                <div class="ep-section-title">Photos</div>
+                <div class="ep-photos-row">
+                    <div class="ep-photo-card">
+                        <div class="edit-avatar-preview avatar avatar-100" id="editAvatarPreview">U</div>
+                        <div class="ep-photo-meta">
+                            <strong>Profile photo</strong>
+                            <span>Clear photo of yourself</span>
+                            <div class="ep-photo-btns">
+                                <button type="button" class="ep-btn" onclick="triggerAvatarUpload()">Change</button>
+                                <button type="button" class="ep-btn ep-btn-ghost" onclick="removeAvatar()" id="removeAvatarBtn" style="display:none;">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ep-photo-card">
+                        <div class="edit-avatar-preview ep-cover-preview" id="editCoverPreview">
+                            <span class="ep-cover-placeholder">No cover</span>
+                        </div>
+                        <div class="ep-photo-meta">
+                            <strong>Cover photo</strong>
+                            <span>Optional banner image</span>
+                            <div class="ep-photo-btns">
+                                <button type="button" class="ep-btn" onclick="triggerCoverUpload()">Change</button>
+                                <button type="button" class="ep-btn ep-btn-ghost" onclick="removeCover()" id="removeCoverBtn" style="display:none;">Remove</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="edit-avatar-section" style="align-items:flex-start;">
-                <div class="edit-avatar-preview" id="editCoverPreview" style="width:140px;height:80px;border-radius:12px;background:var(--bg-soft);border:2px dashed var(--border);">
-                    <span style="color:var(--text-faint);font-size:13px;">No cover</span>
+
+            <!-- Personal -->
+            <div class="ep-section">
+                <div class="ep-section-title">Personal</div>
+                <div class="ep-grid">
+                    <div class="form-group"><label>Full name</label><input type="text" id="editName" autocomplete="name"></div>
+                    <div class="form-group"><label>Date of birth</label><input type="date" id="editDob" max="2015-12-31"></div>
+                    <div class="form-group"><label>Gender</label>
+                        <select id="editGender">
+                            <option value="">Select…</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="prefer_not">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Country</label><input type="text" id="editCountry"></div>
+                    <div class="form-group"><label>Phone</label><input type="tel" id="editPhone"></div>
                 </div>
-                <div class="edit-avatar-actions">
-                    <h4>Cover Photo</h4><p>Optional banner image for your profile</p>
-                    <button onclick="triggerCoverUpload()">🖼️ Change</button>
-                    <button onclick="removeCover()" id="removeCoverBtn" style="display:none;">🗑️ Remove</button>
+                <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;" placeholder="A short introduction"></textarea></div>
+            </div>
+
+            <!-- Academic / Professional -->
+            <div class="ep-section">
+                <div class="ep-section-title">Education & work</div>
+                <div class="ep-grid">
+                    <div class="form-group"><label>I am a…</label>
+                        <select id="editAccountType" onchange="toggleEditStudentFields()">
+                            <option value="student">Current student</option>
+                            <option value="alumni">Alumni / Graduated</option>
+                            <option value="professional">Working professional</option>
+                            <option value="educator">Educator / Lecturer</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>University / Institution</label><input type="text" id="editUniversity"></div>
+                    <div class="form-group" id="editCourseGroup"><label>Course / Programme</label><input type="text" id="editCourse"></div>
+                    <div class="form-group" id="editYearGroup"><label>Academic year</label>
+                        <select id="editYear">
+                            <option value="">Select year…</option>
+                            <option>Year 1</option><option>Year 2</option><option>Year 3</option>
+                            <option>Year 4</option><option>Year 5</option><option>Year 6</option>
+                            <option>Postgraduate</option><option>PhD</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="editGradYearGroup" style="display:none;"><label>Graduation year</label><input type="number" id="editGradYear" placeholder="Year" min="1970" max="2035"></div>
+                    <div class="form-group" id="editOccupationGroup" style="display:none;"><label>Job title</label><input type="text" id="editOccupation"></div>
+                    <div class="form-group" id="editCompanyGroup" style="display:none;"><label>Organisation</label><input type="text" id="editCompany"></div>
                 </div>
             </div>
-            <div class="form-group"><label>Full Name</label><input type="text" id="editName"></div>
-            <div class="form-group"><label>Date of Birth</label><input type="date" id="editDob" max="2015-12-31"></div>
-            <div class="form-group"><label>Gender</label>
-                <select id="editGender">
-                    <option value="">Select...</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                    <option value="prefer_not">Prefer not to say</option>
-                </select>
+
+            <!-- Links -->
+            <div class="ep-section">
+                <div class="ep-section-title">Links</div>
+                <div class="ep-grid">
+                    <div class="form-group"><label>LinkedIn</label><input type="url" id="editLinkedin" placeholder="LinkedIn profile URL"></div>
+                    <div class="form-group"><label>GitHub</label><input type="url" id="editGithub" placeholder="GitHub profile URL"></div>
+                    <div class="form-group"><label>Website</label><input type="url" id="editWebsite" placeholder="Website URL"></div>
+                </div>
             </div>
-            <div class="form-group"><label>I am a...</label>
-                <select id="editAccountType" onchange="toggleEditStudentFields()">
-                    <option value="student">🎓 Current student</option>
-                    <option value="alumni">🎖 Alumni / Graduated</option>
-                    <option value="professional">💼 Working professional</option>
-                    <option value="educator">📚 Educator / Lecturer</option>
-                </select>
+
+            <!-- Privacy & mentoring -->
+            <div class="ep-section">
+                <div class="ep-section-title">Privacy & mentoring</div>
+                <div class="form-group">
+                    <label>Account privacy</label>
+                    <select id="editPrivateAccount">
+                        <option value="public">Public — anyone on Kampo can see your posts</option>
+                        <option value="private">Private — only friends can see your posts & full profile</option>
+                    </select>
+                    <small>You can change this anytime</small>
+                </div>
+                <div class="ep-checks">
+                    <label class="ep-check"><input type="checkbox" id="editMentorOpen"> Open to mentoring others</label>
+                    <label class="ep-check"><input type="checkbox" id="editSeekingMentor"> Looking for a mentor</label>
+                </div>
             </div>
-            <div class="form-group"><label>University / Institution</label><input type="text" id="editUniversity"></div>
-            <div class="form-group" id="editCourseGroup"><label>Course / Program</label><input type="text" id="editCourse"></div>
-            <div class="form-group" id="editYearGroup"><label>Academic Year</label>
-                <select id="editYear">
-                    <option value="">Select year...</option>
-                    <option>Year 1</option><option>Year 2</option><option>Year 3</option>
-                    <option>Year 4</option><option>Year 5</option><option>Year 6</option>
-                    <option>Postgraduate</option><option>PhD</option>
-                </select>
-            </div>
-            <div class="form-group" id="editGradYearGroup" style="display:none;"><label>Graduation Year</label><input type="number" id="editGradYear" placeholder="Year" min="1970" max="2035"></div>
-            <div class="form-group" id="editOccupationGroup" style="display:none;"><label>Occupation / Job Title</label><input type="text" id="editOccupation" placeholder="Job title"></div>
-            <div class="form-group" id="editCompanyGroup" style="display:none;"><label>Company / Organisation</label><input type="text" id="editCompany" placeholder="Organisation"></div>
-            <div class="form-group"><label>Country</label><input type="text" id="editCountry"></div>
-            <div class="form-group"><label>Phone</label><input type="tel" id="editPhone"></div>
-            <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" style="resize:vertical;min-height:80px;"></textarea></div>
-            <div class="form-group">
-                <label>Account privacy</label>
-                <select id="editPrivateAccount">
-                    <option value="public">🌍 Public — anyone on Kampo can see your posts</option>
-                    <option value="private">🔒 Private — only friends can see your posts & full profile</option>
-                </select>
-                <small>You can change this anytime</small>
-            </div>
-            <div class="form-group"><label>LinkedIn URL</label><input type="url" id="editLinkedin" placeholder="LinkedIn profile URL"></div>
-            <div class="form-group"><label>GitHub URL</label><input type="url" id="editGithub" placeholder="GitHub profile URL"></div>
-            <div class="form-group"><label>Portfolio / Website</label><input type="url" id="editWebsite" placeholder="Website URL"></div>
-            <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="editMentorOpen" style="width:auto;"> Open to mentoring students</label></div>
-            <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="editSeekingMentor" style="width:auto;"> Looking for a mentor</label></div>
+
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeEditProfile()">Cancel</button>
-            <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+            <button class="btn-save" onclick="saveProfile()">Save changes</button>
         </div>
     </div>
 </div>
@@ -5861,6 +6041,10 @@ function updateProfileUI() {
     document.getElementById('sidebarFriends').textContent = (currentUser.friends || []).length;
     document.getElementById('profilePosts').textContent = myPosts.length;
     document.getElementById('profileFriends').textContent = (currentUser.friends || []).length;
+    const folEl = document.getElementById('profileFollowers');
+    const fingEl = document.getElementById('profileFollowing');
+    if (folEl) folEl.textContent = (currentUser.followers || []).length;
+    if (fingEl) fingEl.textContent = (currentUser.following || []).length;
     const onlineFriends = (currentUser.friends || []).map(id => users.find(u => u.id === id)).filter(u => u && isUserOnline(u)).length;
     const onlineEl = document.getElementById('profileOnlineFriends');
     if (onlineEl) onlineEl.textContent = onlineFriends;
@@ -6994,6 +7178,7 @@ function renderNotifications() {
         else if (n.type === 'moderation') { text = '⚠️ ' + escapeHtml(n.text || 'Moderation notice'); click = 'onclick="markNotificationRead(\'' + n.id + '\')"'; }
         else if (n.type === 'invite') { text = '<strong>' + escapeHtml(from.name) + '</strong> invited you to Kampo'; click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'invite\')"'; }
         else if (n.type === 'call') { text = '📞 <strong>' + escapeHtml(from.name) + '</strong> called you'; click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
+        else if (n.type === 'follow') { text = '<strong>' + escapeHtml(from.name) + '</strong> started following you'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
         else if (n.type === 'profile_view') { text = '👀 <strong>' + escapeHtml(from.name) + '</strong> viewed your profile'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
         else if (n.type === 'invite_joined') { text = '🎉 <strong>' + escapeHtml(from.name) + '</strong> joined via your invite'; click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'invite\')"'; }
         else { text = escapeHtml(n.text || 'New notification'); click = 'onclick="markNotificationRead(\'' + n.id + '\')"'; }
@@ -7173,13 +7358,55 @@ async function renderRequests() {
         const resolved = await resolveUsersByIds(ids);
         const fr = ids.map(id => resolved[id]).filter(Boolean);
         if (fr.length === 0) { c.innerHTML = '<div class="empty-state"><div class="emoji">👥</div><p>No friends yet.</p></div>'; return; }
-        c.innerHTML = fr.map(u => '<div class="request-item">' + userAvatarHtml(u, 52) +
-            '<div class="r-info"><div class="r-name">' + displayName(u) + '</div>' +
+        c.innerHTML = fr.map(u => '<div class="request-item request-item-stacked">' + userAvatarHtml(u, 52) +
+            '<div class="r-body"><div class="r-info"><div class="r-name">' + displayName(u) + '</div>' +
             '<div class="r-uni">' + escapeHtml(u.university||'') + '</div></div>' +
-            '<div class="r-actions"><button class="btn-accept" onclick="startConversation(\'' + u.id + '\')" title="Message">💬 Chat</button>' +
-            '<button class="btn-decline" onclick="removeFriend(\'' + u.id + '\')">Remove</button></div></div>').join('');
+            '<div class="r-actions"><button class="btn-accept" onclick="startConversation(\'' + u.id + '\')" title="Message">💬 Message</button>' +
+            '<button class="btn-decline" onclick="removeFriend(\'' + u.id + '\')">Remove</button></div></div></div>').join('');
     }
 }
+
+/* ========== FOLLOW SYSTEM ========== */
+function isFollowing(userId) {
+    return (currentUser.following || []).includes(userId);
+}
+function followBtnState(id) {
+    if (isFollowing(id)) return { label: 'Following', cls: 'following' };
+    return { label: 'Follow', cls: '' };
+}
+async function toggleFollow(userId) {
+    if (!currentUser || !userId || userId === currentUser.id) return;
+    const following = currentUser.following || [];
+    const isF = following.includes(userId);
+    try {
+        if (isF) {
+            await fbDb.collection('users').doc(currentUser.id).update({ following: FV.arrayRemove(userId) });
+            await fbDb.collection('users').doc(userId).update({ followers: FV.arrayRemove(currentUser.id) });
+            currentUser.following = following.filter(id => id !== userId);
+            showToast('Unfollowed');
+        } else {
+            await fbDb.collection('users').doc(currentUser.id).update({ following: FV.arrayUnion(userId) });
+            await fbDb.collection('users').doc(userId).update({ followers: FV.arrayUnion(currentUser.id) });
+            currentUser.following = [...following, userId];
+            try {
+                await createNotification(userId, 'follow', {
+                    fromId: currentUser.id,
+                    text: (currentUser.name || 'Someone') + ' started following you'
+                });
+            } catch (e) {}
+            showToast('Following ✓');
+        }
+        // Refresh profile if open
+        const feed = document.getElementById('feedContainer');
+        if (feed && feed.innerHTML.includes(userId)) {
+            // soft refresh of profile view if viewing that user
+        }
+    } catch (e) {
+        showToast('Could not update follow');
+        console.warn(e);
+    }
+}
+
 function friendBtnState(id) {
     if ((currentUser.friends||[]).includes(id)) return { label:'Friends', cls:'following' };
     if ((currentUser.sentRequests||[]).includes(id)) return { label:'Requested', cls:'requested' };
@@ -7713,7 +7940,7 @@ function openUserProfile(uid) {
     document.getElementById('page-feed').classList.add('active');
     const cs = u.cover ? "background-image:url('" + u.cover + "');background-size:cover;background-position:center;" : '';
     const ah = u.avatar ? '<img src="' + u.avatar + '">' : getInitials(u.name);
-    c.innerHTML = '<div class="profile-header"><div class="profile-cover" style="' + cs + '"></div><div class="profile-info"><div class="profile-avatar-container"><div class="avatar avatar-profile-big">' + ah + '</div></div><div class="profile-name-row"><div><div class="profile-name">' + displayName(u, true) + '</div><div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div><div class="profile-academic">' + accountTypePill(u) + (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') + (u.accountType === 'student' && u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') + (u.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(u.gradYear)) + '</span>' : '') + (u.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(u.occupation) + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</span>' : '') + '</div></div></div><div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div><div class="profile-stats"><div class="stat"><strong>' + up.length + '</strong><span>Posts</span></div><div class="stat"><strong>' + (u.friends||[]).length + '</strong><span>Friends</span></div></div><div class="profile-actions">' + (isF ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')" title="Message">💬 Chat</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\').then(()=>showPage(\'feed\'));">Remove</button>' : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') + '<button class="btn-action btn-action-secondary" onclick="blockUser(\'' + u.id + '\')">🚫 Block</button><button class="btn-action btn-action-secondary" onclick="openReportModal(\'user\',\'' + u.id + '\')">🚩 Report</button><button class="btn-action btn-action-secondary" onclick="openUserProfile"><button class="btn-call audio" onclick="startAgoraCall(\'' + u.id + '\', \'audio\')">📞 Audio</button><button class="btn-call video" onclick="startAgoraCall(\'' + u.id + '\', \'video\')">🎥 Video</button></div>' + (up.length > 0 ? up.map(p => renderPost(p, false)).join('') : '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>');
+    c.innerHTML = '<div class="profile-header"><div class="profile-cover" style="' + cs + '"></div><div class="profile-info"><div class="profile-avatar-container"><div class="avatar avatar-profile-big">' + ah + '</div></div><div class="profile-name-row"><div><div class="profile-name">' + displayName(u, true) + '</div><div class="profile-university">' + escapeHtml(u.university||'') + ' • ' + escapeHtml(u.country||'') + '</div><div class="profile-academic">' + accountTypePill(u) + (u.course ? '<span class="academic-pill">📚 ' + escapeHtml(u.course) + '</span>' : '') + (u.accountType === 'student' && u.year ? '<span class="academic-pill">🎓 ' + escapeHtml(u.year) + '</span>' : '') + (u.gradYear ? '<span class="academic-pill">📅 Class of ' + escapeHtml(String(u.gradYear)) + '</span>' : '') + (u.occupation ? '<span class="academic-pill">💼 ' + escapeHtml(u.occupation) + (u.company ? ' @ ' + escapeHtml(u.company) : '') + '</span>' : '') + '</div></div></div><div class="profile-bio">' + escapeHtml(u.bio||'No bio yet.') + '</div><div class="profile-stats"><div class="stat"><strong>' + up.length + '</strong><span>Posts</span></div><div class="stat"><strong>' + (u.followers||[]).length + '</strong><span>Followers</span></div><div class="stat"><strong>' + (u.following||[]).length + '</strong><span>Following</span></div><div class="stat"><strong>' + (u.friends||[]).length + '</strong><span>Friends</span></div></div><div class="profile-actions">' + '<button class="btn-action ' + (isFollowing(u.id) ? 'btn-action-secondary' : 'btn-action-primary') + '" onclick="toggleFollow(\'' + u.id + '\').then(()=>openUserProfile(\'' + u.id + '\'))">' + (isFollowing(u.id) ? '✓ Following' : '+ Follow') + '</button>' + (isF ? '<button class="btn-action btn-action-primary" onclick="startConversation(\'' + u.id + '\')" title="Message">💬 Chat</button><button class="btn-action btn-action-secondary" onclick="removeFriend(\'' + u.id + '\').then(()=>showPage(\'feed\'));">Remove</button>' : '<button class="btn-action btn-action-primary" onclick="handleFriendBtn(\'' + u.id + '\');openUserProfile(\'' + u.id + '\');">' + b.label + '</button>') + '<button class="btn-action btn-action-secondary" onclick="blockUser(\'' + u.id + '\')">🚫 Block</button><button class="btn-action btn-action-secondary" onclick="openReportModal(\'user\',\'' + u.id + '\')">🚩 Report</button><button class="btn-action btn-action-secondary" onclick="openUserProfile"><button class="btn-call audio" onclick="startAgoraCall(\'' + u.id + '\', \'audio\')">📞 Audio</button><button class="btn-call video" onclick="startAgoraCall(\'' + u.id + '\', \'video\')">🎥 Video</button></div>' + (up.length > 0 ? up.map(p => renderPost(p, false)).join('') : '<div class="empty-state"><div class="emoji">📝</div><p>No posts yet.</p></div>');
     window.scrollTo(0, 0);
 }
 

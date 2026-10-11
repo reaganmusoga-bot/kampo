@@ -8898,11 +8898,15 @@ async function startAgoraCall(partnerId, type) {
                 showToast(partner.name.split(' ')[0] + ' declined');
                 try { callStatusWatcher(); } catch (e) {}
                 setTimeout(() => endAgoraCall(), 500);
-            } else if (data.status === 'missed' || data.status === 'busy') {
-                showToast(partner.name.split(' ')[0] + (data.status === 'busy' ? ' is on another call' : ' didn\'t answer'));
-                try { callStatusWatcher(); } catch (e) {}
-                setTimeout(() => endAgoraCall(), 500);
-            }
+} else if (data.status === 'missed' || data.status === 'busy') {
+    showToast(partner.name.split(' ')[0] + (data.status === 'busy' ? ' is on another call' : ' didn\'t answer'));
+    try { callStatusWatcher(); } catch (e) {}
+    setTimeout(() => endAgoraCall(), 500);
+} else if (data.status === 'ended') {
+    showToast('Call ended');
+    try { callStatusWatcher(); } catch (e) {}
+    setTimeout(() => endAgoraCall(), 300);
+}
         });
         showToast('Call started — waiting for ' + partner.name.split(' ')[0] + '…');
 
@@ -9011,6 +9015,100 @@ async function acceptIncomingCall() {
     currentIncomingCall = null;
     startAgoraCallAsReceiver(call.from, call.type, call.channel);
 }
+	/* ============================================================
+   AGORA — receiver joins an existing call
+   ============================================================ */
+async function startAgoraCallAsReceiver(partnerId, type, channelName) {
+    const partner = users.find(u => u.id === partnerId);
+    if (!partner) { showToast('User not found'); return; }
+    const myUid = uidFromString(currentUser.id);
+
+    // Open the call modal for the receiver
+    const modal = document.getElementById('callModal');
+    const container = document.getElementById('callFrameContainer');
+    document.getElementById('callTitle').textContent =
+        (type === 'audio' ? '📞 Audio' : '🎥 Video') + ' · ' + partner.name.split(' ')[0];
+    document.getElementById('callTypeBadge').textContent = type.toUpperCase();
+    modal.querySelector('.call-close-btn').textContent = 'End Call';
+    container.innerHTML = buildAgoraCallUI(type, partner);
+    modal.classList.add('active');
+
+    try {
+        // 1. Fetch token from our serverless function
+        const token = await fetchAgoraToken(channelName, myUid);
+
+        // 2. Create Agora client
+        agoraClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+        agoraCurrentChannel = channelName;
+        agoraCurrentUid = myUid;
+
+        // 3. Listen for the caller's tracks BEFORE joining
+        agoraClient.on('user-published', handleAgoraUserPublished);
+        agoraClient.on('user-unpublished', handleAgoraUserUnpublished);
+        agoraClient.on('user-left', handleAgoraUserLeft);
+
+        // 4. Join the channel
+        await agoraClient.join(AGORA_APP_ID, channelName, token, myUid);
+
+        // 5. Create and publish our own tracks
+        if (type === 'video') {
+            [agoraLocalTracks.audio, agoraLocalTracks.video] =
+                await AgoraRTC.createMicrophoneAndCameraTracks();
+        } else {
+            agoraLocalTracks.audio = await AgoraRTC.createMicrophoneAudioTrack();
+            agoraLocalTracks.video = null;
+        }
+
+        // 6. Play our video/avatar into the local slot
+        const localSlot = document.getElementById('agoraLocalVideo');
+        if (localSlot) {
+            if (agoraLocalTracks.video) {
+                agoraLocalTracks.video.play('agoraLocalVideo');
+            } else {
+                localSlot.innerHTML = '<div class="agora-audio-only">' +
+                    userAvatarHtml(currentUser, 100) +
+                    '<div class="agora-audio-label">' + escapeHtml(currentUser.name) + ' (you)</div>' +
+                '</div>';
+            }
+        }
+
+        // 7. Publish our tracks
+        const tracksToPublish = [agoraLocalTracks.audio];
+        if (agoraLocalTracks.video) tracksToPublish.push(agoraLocalTracks.video);
+        await agoraClient.publish(tracksToPublish);
+
+        // 8. Wire the mute / camera / end buttons
+        wireAgoraControls(type);
+
+        // 9. Watch the call doc — if the caller hangs up, close our modal too
+        try {
+            const latestCall = await fbDb.collection('calls')
+                .where('from', '==', partnerId)
+                .where('to', '==', currentUser.id)
+                .where('status', '==', 'accepted')
+                .limit(1).get();
+            if (!latestCall.empty) {
+                const callId = latestCall.docs[0].id;
+                const receiverWatcher = fbDb.collection('calls').doc(callId).onSnapshot(snap => {
+                    if (!snap.exists) return;
+                    const data = snap.data();
+                    if (data.status === 'ended') {
+                        try { receiverWatcher(); } catch (e) {}
+                        showToast('Call ended');
+                        setTimeout(() => endAgoraCall(), 300);
+                    }
+                });
+            }
+        } catch (e) { console.warn('receiver ended watcher failed', e); }
+
+        showToast('Connected to ' + partner.name.split(' ')[0]);
+
+    } catch (err) {
+        console.error('Agora receiver-join failed:', err);
+        showToast('❌ Could not join call: ' + err.message);
+        await endAgoraCall();
+    }
+}
 
 async function declineIncomingCall(silent) {
     const call = currentIncomingCall;
@@ -9118,20 +9216,27 @@ function wireAgoraControls(type) {
 
 /* Clean up when the call ends */
 async function endAgoraCall() {
-	    // Mark any active call document as ended
+    // Mark any call doc where I'm a participant as ended
     try {
-        const activeCalls = await fbDb.collection('calls')
-            .where('from', '==', currentUser.id)
-            .where('status', 'in', ['ringing', 'accepted'])
-            .get();
-        activeCalls.forEach(d => d.ref.update({ status: 'ended', endedAt: Date.now() }));
-    } catch (e) {}
+        const [fromCalls, toCalls] = await Promise.all([
+            fbDb.collection('calls').where('from', '==', currentUser.id).where('status', 'in', ['ringing','accepted']).get(),
+            fbDb.collection('calls').where('to', '==', currentUser.id).where('status', 'in', ['ringing','accepted']).get()
+        ]);
+        const now = Date.now();
+        const updates = [];
+        fromCalls.forEach(d => updates.push(d.ref.update({ status: 'ended', endedAt: now })));
+        toCalls.forEach(d => updates.push(d.ref.update({ status: 'ended', endedAt: now })));
+        await Promise.all(updates);
+    } catch (e) { console.warn('endAgoraCall: failed to mark calls ended', e); }
+
+    // ── Cleanup local tracks ──
     try {
         if (agoraLocalTracks.audio) { agoraLocalTracks.audio.stop(); agoraLocalTracks.audio.close(); }
         if (agoraLocalTracks.video) { agoraLocalTracks.video.stop(); agoraLocalTracks.video.close(); }
     } catch (e) {}
     agoraLocalTracks = { audio: null, video: null };
 
+    // ── Leave the channel ──
     try {
         if (agoraClient) {
             await agoraClient.leave();

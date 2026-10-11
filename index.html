@@ -7370,6 +7370,7 @@ function renderNotifications() {
         else if (n.type === 'message') { text = '<strong>' + escapeHtml(from.name) + '</strong> sent you a message'; click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
         else if (n.type === 'moderation') { text = '⚠️ ' + escapeHtml(n.text || 'Moderation notice'); click = 'onclick="markNotificationRead(\'' + n.id + '\')"'; }
         else if (n.type === 'invite') { text = '<strong>' + escapeHtml(from.name) + '</strong> invited you to Kampo'; click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'invite\')"'; }
+        else if (n.type === 'live') { text = '🔴 <strong>' + escapeHtml(from.name) + '</strong> is live' + (n.text && n.text.includes(':') ? ': ' + escapeHtml(n.text.split(':').slice(1).join(':').trim()) : ''); click = 'onclick="markNotificationRead(\'' + n.id + '\');' + (n.liveId ? 'openLiveStream(\'' + n.liveId + '\')' : 'showPage(\'feed\')') + '"'; }
         else if (n.type === 'call') { text = '📞 <strong>' + escapeHtml(from.name) + '</strong> called you'; click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
         else if (n.type === 'follow') { text = '<strong>' + escapeHtml(from.name) + '</strong> started following you'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
         else if (n.type === 'profile_view') { text = '👀 <strong>' + escapeHtml(from.name) + '</strong> viewed your profile'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
@@ -8102,8 +8103,18 @@ async function startLive() {
     const mode = document.querySelector('input[name="liveMode"]:checked').value;
     try {
         const ref = await fbDb.collection('lives').add({ userId: currentUser.id, title, type, mode, room: 'kampo-live-' + currentUser.id + '-' + Date.now(), startedAt: Date.now(), active: true, likes: [], viewerCount: 0 });
+        // Notify friends so they can join
+        const friends = currentUser.friends || [];
+        const preview = (currentUser.name || 'Someone') + ' is live: ' + title;
+        await Promise.all(friends.slice(0, 60).map(fid =>
+            createNotification(fid, 'live', {
+                fromId: currentUser.id,
+                liveId: ref.id,
+                text: preview
+            }).catch(() => {})
+        ));
         closeLiveSetup();
-        showToast('You are LIVE! 🔴');
+        showToast('You are LIVE! 🔴 Friends notified');
         setTimeout(() => openLiveStream(ref.id), 400);
     } catch (e) { showToast('❌ Could not start stream.'); }
 }
@@ -8878,8 +8889,45 @@ function renderAdminUsers() {
         '</div>';
     }).join('');
 }
-async function adminSetVerified(uid, value) { try { await fbDb.collection('users').doc(uid).update({ verified: !!value }); showToast(value ? 'Blue tick added ✓' : 'Blue tick removed'); } catch (e) { showToast('❌ ' + e.message); } }
-async function adminSetBadge(uid, value) { try { const badge = value === 'none' ? null : value; await fbDb.collection('users').doc(uid).update({ badge: badge }); showToast(badge ? ('Badge set: ' + badge) : 'Extra badge removed'); } catch (e) { showToast('❌ ' + e.message); } }
+async function adminSetVerified(uid, value) {
+    if (!currentUser || currentUser.role !== 'admin') {
+        showToast('❌ Admin only');
+        return;
+    }
+    try {
+        await fbDb.collection('users').doc(uid).update({ verified: !!value });
+        const u = users.find(x => x.id === uid);
+        if (u) u.verified = !!value;
+        showToast(value ? 'Blue tick added ✓' : 'Blue tick removed');
+        if (typeof renderAdminUsers === 'function') renderAdminUsers();
+    } catch (e) {
+        console.error(e);
+        const msg = (e && e.code === 'permission-denied')
+            ? 'Firestore blocked this. Update security rules so admins can set verified.'
+            : (e.message || 'Failed');
+        showToast('❌ ' + msg);
+    }
+}
+async function adminSetBadge(uid, value) {
+    if (!currentUser || currentUser.role !== 'admin') {
+        showToast('❌ Admin only');
+        return;
+    }
+    try {
+        const badge = value === 'none' ? null : value;
+        await fbDb.collection('users').doc(uid).update({ badge: badge });
+        const u = users.find(x => x.id === uid);
+        if (u) u.badge = badge;
+        showToast(badge ? ('Badge set: ' + badge) : 'Extra badge removed');
+        if (typeof renderAdminUsers === 'function') renderAdminUsers();
+    } catch (e) {
+        console.error(e);
+        const msg = (e && e.code === 'permission-denied')
+            ? 'Firestore blocked this. Update security rules so admins can set badge.'
+            : (e.message || 'Failed');
+        showToast('❌ ' + msg);
+    }
+}
 async function adminSuspend(uid) {
     const r = await kmodal.prompt('The user will be unable to log in until reactivated.', {
         title: '🚫 Suspend user',

@@ -1207,6 +1207,68 @@ html[data-theme="dark"] .btn-call.conference { background: rgba(245,158,11,0.2);
     }
 }
 .request-item .r-actions { display:flex; gap:8px; flex-shrink:0; flex-wrap:wrap; }
+
+/* Icon-only friend actions */
+.icon-action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-soft);
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.15s;
+}
+.icon-action-btn:hover { background: var(--bg-hover); transform: scale(1.06); }
+.icon-action-btn:active { transform: scale(0.96); }
+.icon-action-btn.icon-action-danger:hover { background: rgba(231,76,60,0.12); }
+
+/* Name + verified badge alignment in lists */
+.request-item .r-info .r-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    display: flex !important;
+    align-items: center;
+    min-width: 0;
+    text-overflow: clip;
+}
+.request-item .r-info .r-name .name-with-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+}
+.request-item .r-info .r-name .name-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+.request-item .r-info .r-name .verified-badge,
+.request-item .r-info .r-name .badge-gold,
+.request-item .r-info .r-name .badge-official,
+.request-item .r-info .r-name .badge-educator {
+    flex-shrink: 0;
+    margin-left: 2px;
+    position: relative;
+    top: 0;
+}
+.request-item .r-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    align-items: center;
+}
 .btn-accept {
     background:linear-gradient(135deg,#667eea,#764ba2);
     color:white; border:none;
@@ -2007,7 +2069,8 @@ html[data-theme="dark"] .admin-pill { background: rgba(217,119,6,0.25); color: #
 .badge-gold.lg svg,
 .badge-official.lg svg,
 .badge-educator.lg svg { width: 22px; height: 22px; }
-.name-with-badge { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 1px; }
+.name-with-badge { display: inline-flex; align-items: center; flex-wrap: nowrap; gap: 3px; vertical-align: middle; }
+.name-with-badge .name-text { min-width: 0; }
 
 .account-type-pill {
     display: inline-flex; align-items: center; gap: 4px;
@@ -3602,7 +3665,7 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                             <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleMediaSelect(event, 'image')">
                             <input type="file" id="videoInput" accept="video/*" style="display:none;" onchange="handleMediaSelect(event, 'video')">
                         </div>
-                        <button class="btn-post btn-post-full" id="postBtn" onclick="createPost()" disabled>Post</button>
+                        <button type="button" class="btn-post btn-post-full" id="postBtn" onclick="createPost()" disabled>Post</button>
                     </div>
                 </div>
 
@@ -4692,7 +4755,7 @@ function accountTypePill(user) {
 }
 function displayName(user, large) {
     if (!user) return 'Unknown';
-    return '<span class="name-with-badge">' + escapeHtml(user.name || 'Unknown') + userBadgeHtml(user, large) + '</span>';
+    return '<span class="name-with-badge"><span class="name-text">' + escapeHtml(user.name || 'Unknown') + '</span>' + userBadgeHtml(user, large) + '</span>';
 }
 function portfolioLinksHtml(user) {
     if (!user || !user.portfolio) return '';
@@ -6182,12 +6245,16 @@ function getPollPayload() {
     return { question: q, options };
 }
 async function createPost() {
-    if (!requireVerification()) return;
-    if (!checkRateLimit('post')) return;
-    if (!(await checkServerRateLimit('post'))) return;
+    if (!requireVerification()) { showToast('⚠️ Verify your email to post'); return; }
+    if (!checkRateLimit('post')) { showToast('⏳ Slow down — try again in a moment'); return; }
+    try {
+        if (!(await checkServerRateLimit('post'))) { showToast('⏳ Too many posts — wait a bit'); return; }
+    } catch (rlErr) { console.warn('rate limit check', rlErr); }
     const content = document.getElementById('postContent').value.trim();
     const poll = getPollPayload();
-    if (!content && !pendingPostMedia && !poll) return;
+    if (!content && !pendingPostMedia && !poll) { showToast('Write something or add media first'); return; }
+    const btn = document.getElementById('postBtn');
+    if (btn) btn.disabled = true;
     setBusy(true);
     try {
         const ref = await fbDb.collection('posts').add({
@@ -7358,11 +7425,13 @@ async function renderRequests() {
         const resolved = await resolveUsersByIds(ids);
         const fr = ids.map(id => resolved[id]).filter(Boolean);
         if (fr.length === 0) { c.innerHTML = '<div class="empty-state"><div class="emoji">👥</div><p>No friends yet.</p></div>'; return; }
-        c.innerHTML = fr.map(u => '<div class="request-item request-item-stacked">' + userAvatarHtml(u, 52) +
-            '<div class="r-body"><div class="r-info"><div class="r-name">' + displayName(u) + '</div>' +
+        c.innerHTML = fr.map(u => '<div class="request-item">' + userAvatarHtml(u, 52) +
+            '<div class="r-info"><div class="r-name">' + displayName(u) + '</div>' +
             '<div class="r-uni">' + escapeHtml(u.university||'') + '</div></div>' +
-            '<div class="r-actions"><button class="btn-accept" onclick="startConversation(\'' + u.id + '\')" title="Message">💬 Message</button>' +
-            '<button class="btn-decline" onclick="removeFriend(\'' + u.id + '\')">Remove</button></div></div></div>').join('');
+            '<div class="r-actions">' +
+            '<button class="icon-action-btn" onclick="startConversation(\'' + u.id + '\')" title="Message" aria-label="Message">💬</button>' +
+            '<button class="icon-action-btn icon-action-danger" onclick="removeFriend(\'' + u.id + '\')" title="Remove friend" aria-label="Remove">🗑️</button>' +
+            '</div></div>').join('');
     }
 }
 

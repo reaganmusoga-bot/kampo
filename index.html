@@ -3763,6 +3763,60 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
     .agora-conf-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 }
 
+
+/* Conference UI — keep controls always visible */
+.call-frame-container {
+    flex: 1;
+    position: relative;
+    background: #000;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.agora-conf-ui {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    background: #0a0a0f;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+.agora-conf-top {
+    flex-shrink: 0;
+    z-index: 5;
+}
+.agora-conf-grid {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    padding: 10px 10px 88px 10px !important;
+}
+.agora-conf-bar {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 30 !important;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    padding: 10px 10px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    background: rgba(10,10,16,0.96) !important;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+.conf-ctrl {
+    pointer-events: auto !important;
+}
 </style>
 <body>
 
@@ -8853,6 +8907,16 @@ async function startAgoraConference(room, type, title, meta) {
 
         await agoraClient.join(AGORA_APP_ID, channelName, token, confMyUid);
 
+        agoraClient.on('connection-state-change', (cur, prev, reason) => {
+            console.log('Conference connection:', prev, '->', cur, reason || '');
+            if (cur === 'DISCONNECTED' || cur === 'DISCONNECTING') {
+                const bar = document.getElementById('agoraConfUI');
+                if (bar) {
+                    showToast('Connection lost — try rejoining');
+                }
+            }
+        });
+
         agoraLocalTracks = { audio: null, video: null };
         agoraLocalTracks.audio = await AgoraRTC.createMicrophoneAudioTrack();
 
@@ -8871,15 +8935,37 @@ async function startAgoraConference(room, type, title, meta) {
             await agoraClient.publish([agoraLocalTracks.audio]);
         }
 
-        // Create data stream for hand signals
+        // Data stream optional (raise-hand); never fail the conference if unsupported
+        confDataStreamId = null;
         try {
-            confDataStreamId = await agoraClient.createDataStream({ reliable: true, ordered: true });
+            if (typeof agoraClient.createDataStream === 'function') {
+                confDataStreamId = await agoraClient.createDataStream({ reliable: true, ordered: true });
+            }
         } catch (e) {
+            console.warn('Data stream unavailable', e);
             confDataStreamId = null;
         }
 
         showToast(confIsAudioOnly ? 'Joined audio conference' : 'Joined conference');
         updateConfParticipantCount();
+        // Keep controls pinned after tracks start
+        setTimeout(() => {
+            const ui = document.getElementById('agoraConfUI');
+            const bar = ui && ui.querySelector('.agora-conf-bar');
+            if (bar) {
+                bar.style.display = 'flex';
+                bar.style.opacity = '1';
+                bar.style.visibility = 'visible';
+                bar.style.zIndex = '30';
+            }
+        }, 500);
+        setTimeout(() => {
+            const bar = document.querySelector('#agoraConfUI .agora-conf-bar');
+            if (bar) {
+                bar.style.display = 'flex';
+                bar.style.opacity = '1';
+            }
+        }, 2500);
     } catch (err) {
         console.error('Conference failed', err);
         showToast('❌ Could not join conference: ' + (err.message || err));

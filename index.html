@@ -11202,8 +11202,16 @@ function switchGuideTab(key, tabEl) {
         '</div>'
     ).join('');
 }
+async function retryNotifPermission() {
+    const perm = getNotifPermission();
+    if (perm === 'granted') {
+        closeNotifGuide();
+        setNotifPromptState('enabled');
+        showToast('✅ Notifications are working!');
+        refreshNotifUI();
+        return;
+    }
     if (perm === 'denied') {
-        // Re-check after a moment — user may have just changed it
         showToast('Still blocked — please follow the steps, then reload.');
         return;
     }

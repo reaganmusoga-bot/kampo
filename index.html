@@ -8531,7 +8531,20 @@ function startCall(pid, type) {
 function startGroupConference(gid) {
     const g = getGroup(gid);
     if (!g) return;
-    openJitsiCall('kampo-group-' + gid, 'video', '👥 ' + g.name);
+    if (!currentUser) return;
+    // Room id must stay stable so everyone joins the same conference
+    const room = ('kampo-g-' + String(gid)).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
+    openJitsiCall(room, 'video', '👥 ' + (g.name || 'Group'));
+    // Notify other members
+    const others = (g.members || []).filter(id => id !== currentUser.id).slice(0, 40);
+    const title = (g.name || 'Group') + ' conference started';
+    others.forEach(id => {
+        createNotification(id, 'group_message', {
+            fromId: currentUser.id,
+            text: '📹 ' + title + ' — open the group and tap Conference',
+            groupId: gid
+        }).catch(() => {});
+    });
 }
 function openJitsiCall(room, type, title) {
     currentCall = { room, type, title };
@@ -8539,12 +8552,43 @@ function openJitsiCall(room, type, title) {
     document.getElementById('callTitle').textContent = title;
     document.getElementById('callTypeBadge').textContent = type.toUpperCase();
     modal.querySelector('.call-close-btn').textContent = 'End Call';
-    const domain = 'meet.jit.si';
-    const config = ['#userInfo.displayName="' + encodeURIComponent('"' + currentUser.name + '"') + '"', '#config.startWithAudioMuted=false', type === 'audio' ? '#config.startWithVideoMuted=true' : '#config.startWithVideoMuted=false', '#config.prejoinPageEnabled=false', '#config.disableDeepLinking=true', '#config.enableWelcomePage=false'].join('&');
-    const url = 'https://' + domain + '/' + room + config;
+
+    // Sanitize room id (Jitsi allows alphanumeric, dashes, underscores)
+    const safeRoom = String(room || 'kampo-room').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) || 'kampo-room';
+
+    // Display name: NO extra quotes inside encodeURIComponent (that broke JSON parse)
+    const rawName = (currentUser && currentUser.name) ? String(currentUser.name) : 'Kampo User';
+    const safeName = rawName.replace(/[\u0000-\u001f\\"]/g, '').slice(0, 40) || 'Kampo User';
+
+    // Hash must be: #key=value&key=value  (only ONE leading #)
+    const hashParts = [
+        'userInfo.displayName="' + encodeURIComponent(safeName) + '"',
+        'config.prejoinPageEnabled=false',
+        'config.disableDeepLinking=true',
+        'config.enableWelcomePage=false',
+        'config.requireDisplayName=false',
+        'config.startWithAudioMuted=false',
+        type === 'audio' ? 'config.startWithVideoMuted=true' : 'config.startWithVideoMuted=false',
+        'interfaceConfig.DISABLE_JOIN_LEAVE_NOTIFICATIONS=true'
+    ];
+    const url = 'https://meet.jit.si/' + safeRoom + '#' + hashParts.join('&');
+
     const container = document.getElementById('callFrameContainer');
-    container.innerHTML = '<div class="call-loading"><div class="spinner"></div><div>Connecting…</div><div style="font-size:12px;opacity:0.6;text-align:center;padding:0 20px;word-break:break-all;">Share: <code style="font-size:11px;color:#667eea;">https://' + domain + '/' + room + '</code></div></div><iframe id="jitsiFrame" src="' + url + '" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>';
-    setTimeout(() => { const i = document.getElementById('jitsiFrame'); if (i) i.addEventListener('load', () => { const l = container.querySelector('.call-loading'); if (l) l.style.display = 'none'; }); }, 100);
+    container.innerHTML =
+        '<div class="call-loading"><div class="spinner"></div><div>Joining conference…</div>' +
+        '<div style="font-size:12px;opacity:0.65;text-align:center;padding:8px 16px;">Allow camera & microphone when asked</div></div>' +
+        '<iframe id="jitsiFrame" src="' + url + '" allow="camera; microphone; fullscreen; display-capture; autoplay" ' +
+        'style="width:100%;height:100%;border:0;border-radius:12px;background:#000;"></iframe>';
+
+    setTimeout(() => {
+        const frame = document.getElementById('jitsiFrame');
+        if (frame) {
+            frame.addEventListener('load', () => {
+                const loading = container.querySelector('.call-loading');
+                if (loading) loading.style.display = 'none';
+            });
+        }
+    }, 50);
     modal.classList.add('active');
 }
 async function endCall() {

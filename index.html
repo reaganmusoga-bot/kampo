@@ -3817,7 +3817,32 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
 .conf-ctrl {
     pointer-events: auto !important;
 }
-</style>
+
+.campus-feed-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+}
+.campus-feed-link {
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.c-muted { font-size: 12px; opacity: 0.8; margin-right: 4px; }</style>
 <body>
 
 <div class="auth-loading" id="authLoading"><div class="spinner"></div></div>
@@ -4415,6 +4440,11 @@ html[data-theme="dark"] .notif-blocked-banner .nb-title { color: #fbbf24; }
                         <input type="text" id="adminSearchInput" placeholder="🔍 Search users..." style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:var(--bg-soft);color:var(--text);" oninput="renderAdminUsers()">
                     </div>
                     <div id="adminUsersList" style="margin-top:14px;"></div>
+                </div>
+                <div class="sidebar-card" style="padding:20px;margin-top:16px;">
+                    <h3 style="text-transform:none;letter-spacing:0;font-size:16px;color:var(--text);">🚩 Reports queue</h3>
+                    <p style="font-size:13px;color:var(--text-soft);margin:6px 0 12px;">Review user reports. Hide posts or suspend accounts in one click.</p>
+                    <div id="adminReportsList"><p style="color:var(--text-mute);font-size:13px;">Loading…</p></div>
                 </div>
             </div>
 
@@ -6815,11 +6845,33 @@ async function createPost() {
     } catch (e) { showToast('❌ Failed: ' + e.message); }
     finally { setBusy(false); }
 }
+
+function campusFeedBannerHtml() {
+    const uni = (currentUser && currentUser.university) || '';
+    if (!uni) return '';
+    return '<div class="campus-feed-banner" id="campusFeedBanner">' +
+        '<span>🏫 Prioritising posts from <strong>' + escapeHtml(uni) + '</strong></span>' +
+        '<button type="button" class="campus-feed-link" onclick="showPage(\'students\')">Find classmates</button>' +
+        '</div>';
+}
+
 function renderFeed() {
     const c = document.getElementById('feedContainer');
     const blocked = new Set((currentUser && currentUser.blocked) || []);
     const isAdmin = currentUser && currentUser.role === 'admin';
-    const fp = posts.filter(p => !p.groupId && !blocked.has(p.userId) && (isAdmin || !p.hidden));
+    let fp = posts.filter(p => !p.groupId && !blocked.has(p.userId) && (isAdmin || !p.hidden));
+    // Campus-first: posts from same university surface higher
+    const myUni = ((currentUser && currentUser.university) || '').toLowerCase().trim();
+    if (myUni) {
+        fp = fp.slice().sort((a, b) => {
+            const aU = users.find(u => u.id === a.userId);
+            const bU = users.find(u => u.id === b.userId);
+            const aSame = aU && (aU.university || '').toLowerCase().trim() === myUni ? 1 : 0;
+            const bSame = bU && (bU.university || '').toLowerCase().trim() === myUni ? 1 : 0;
+            if (aSame !== bSame) return bSame - aSame;
+            return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+    }
 
     if (fp.length === 0 && posts.length === 0) {
         c.innerHTML = Array(3).fill(0).map(() => `
@@ -6842,7 +6894,7 @@ function renderFeed() {
         c.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><p>No posts yet</p><div style="font-size:13px;margin-top:6px;">Be the first to share something with the community</div></div>';
         return;
     }
-    c.innerHTML = fp.map(p => renderPost(p, false)).join('');
+    c.innerHTML = campusFeedBannerHtml() + fp.map(p => renderPost(p, false)).join('');
     renderSetupChecklist();
 }
 function renderPost(post, inGroup) {
@@ -7807,6 +7859,10 @@ async function createNotification(toId, type, extra) {
             follow: prefs.follows !== false
         };
         if (prefMap[type] === false) return;
+        if (type === 'group_message' && extra && extra.groupId) {
+            const mutedG = (recip && recip.mutedGroups) || [];
+            if (mutedG.includes(extra.groupId)) return;
+        }
 
         if (type === 'message') {
             const muted = (recip && recip.mutedChats) || [];
@@ -8200,12 +8256,13 @@ function handleFriendBtn(id) {
    ============================================================ */
 function updateBadges() {
     if (!currentUser) return;
-    const u = messages.filter(m => m.to === currentUser.id && !m.read).length;
+    const muted = new Set(currentUser.mutedChats || []);
+    const u = messages.filter(m => m.to === currentUser.id && !m.read && !muted.has(m.from)).length;
     const r = (currentUser.friendRequests||[]).length;
     const n = notifications.filter(x => !x.read).length;
     let gb = 0;
     groups.forEach(g => { if ((g.admins||[]).includes(currentUser.id)) gb += (g.joinRequests||[]).length; });
-    ['navMsgBadge','sideMsgBadge'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = u; el.style.display = u > 0 ? 'inline-block' : 'none'; } });
+    ['navMsgBadge','sideMsgBadge'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = u > 99 ? '99+' : String(u); el.style.display = u > 0 ? 'inline-block' : 'none'; } });
     ['navReqBadge','sideReqBadge'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = r; el.style.display = r > 0 ? 'inline-block' : 'none'; } });
     ['navNotifBadge','sideNotifBadge','umNotifBadge'].forEach(id => {
         const el = document.getElementById(id);
@@ -8427,6 +8484,7 @@ function renderGroupDetail(gid) {
     let acts = '';
     if (isM) {
         acts += '<button class="btn-action btn-action-primary" onclick="openInviteModal(\'' + g.id + '\')">✉️ Invite</button>';
+        acts += '<button class="btn-action btn-action-secondary" onclick="toggleMuteGroup(\'' + g.id + '\')">' + (isGroupMuted(g.id) ? '🔔 Unmute' : '🔇 Mute') + '</button>';
         acts += '<button class="btn-action btn-action-primary" onclick="startGroupConference(\'' + g.id + '\')">👥 Video</button>';
         acts += '<button class="btn-action btn-action-secondary" onclick="startGroupAudioConference(\'' + g.id + '\')">🎧 Audio</button>';
         if (isA) acts += '<button class="btn-action btn-action-secondary" onclick="openEditGroup(\'' + g.id + '\')">✏️ Edit</button>';
@@ -8735,6 +8793,30 @@ function startGroupAudioConference(gid) {
     });
 }
 
+
+function isGroupMuted(gid) {
+    return ((currentUser && currentUser.mutedGroups) || []).includes(gid);
+}
+async function toggleMuteGroup(gid) {
+    if (!currentUser || !gid) return;
+    const muted = currentUser.mutedGroups || [];
+    const isMuted = muted.includes(gid);
+    try {
+        if (isMuted) {
+            await fbDb.collection('users').doc(currentUser.id).update({ mutedGroups: FV.arrayRemove(gid) });
+            currentUser.mutedGroups = muted.filter(id => id !== gid);
+            showToast('Group notifications on 🔔');
+        } else {
+            await fbDb.collection('users').doc(currentUser.id).update({ mutedGroups: FV.arrayUnion(gid) });
+            currentUser.mutedGroups = [...muted, gid];
+            showToast('Group muted 🔇');
+        }
+        if (activeGroup === gid) renderGroupDetail(gid);
+    } catch (e) {
+        showToast('Could not update group mute');
+    }
+}
+
 function startGroupConference(gid) {
     const g = getGroup(gid);
     if (!g) return;
@@ -8783,6 +8865,26 @@ function buildConferenceUI(title, isAudioOnly) {
             '</div>' +
         '</div>'
     );
+}
+
+
+function displayNameFromAgoraUid(uid) {
+    const n = Number(uid);
+    // Conference joins with uidFromString(userId + '-c')
+    // 1:1 may use uidFromString(userId)
+    for (let i = 0; i < users.length; i++) {
+        const u = users[i];
+        if (!u || !u.id) continue;
+        if (uidFromString(u.id + '-c') === n || uidFromString(u.id) === n || uidFromString(u.id + '-live') === n) {
+            return (u.name || 'User').split(' ')[0];
+        }
+    }
+    if (currentUser) {
+        if (uidFromString(currentUser.id + '-c') === n || uidFromString(currentUser.id) === n) {
+            return (currentUser.name || 'You').split(' ')[0];
+        }
+    }
+    return 'Participant';
 }
 
 function confTileId(uid) {
@@ -8868,7 +8970,7 @@ async function startAgoraConference(room, type, title, meta) {
         agoraClient.on('user-published', async (user, mediaType) => {
             await agoraClient.subscribe(user, mediaType);
             conferenceRemoteUsers[user.uid] = user;
-            const el = ensureConfTile(user.uid, 'Participant');
+            const el = ensureConfTile(user.uid, displayNameFromAgoraUid(user.uid));
             if (mediaType === 'video' && user.videoTrack && el) {
                 el.innerHTML = '';
                 user.videoTrack.play(el);
@@ -8968,7 +9070,7 @@ async function startAgoraConference(room, type, title, meta) {
         }, 2500);
     } catch (err) {
         console.error('Conference failed', err);
-        showToast('❌ Could not join conference: ' + (err.message || err));
+        showToast('❌ ' + friendlyMediaError(err));
         try { await endAgoraCall(); } catch (e) {}
     }
 }
@@ -9215,7 +9317,7 @@ async function startLive() {
         closeLiveSetup();
         showToast('You are LIVE! 🔴 Friends notified');
         setTimeout(() => openLiveStream(ref.id), 400);
-    } catch (e) { showToast('❌ Could not start stream.'); }
+    } catch (e) { showToast('❌ Could not start live. Check camera permission and try again.'); }
 }
 
 /* ============================================================
@@ -9315,7 +9417,7 @@ async function openLiveStream(lid) {
         await startAgoraLive(l, isHost);
     } catch (err) {
         console.error('Live start failed', err);
-        showToast('❌ Could not join live: ' + (err.message || err));
+        showToast('❌ ' + friendlyMediaError(err));
         await endLiveStream();
     }
 }
@@ -9947,6 +10049,93 @@ async function suspendFromReport(reportId) {
 /* ============================================================
    ADMIN
    ============================================================ */
+
+function startReportsListener() {
+    if (!currentUser || currentUser.role !== 'admin') return;
+    if (unsubReports) return;
+    unsubReports = fbDb.collection('reports').orderBy('timestamp', 'desc').limit(50)
+        .onSnapshot(snap => {
+            reports = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+            if (activePage === 'admin') renderAdminReports();
+        }, err => {
+            console.warn('reports listener', err);
+            // fallback without orderBy
+            unsubReports = fbDb.collection('reports').limit(50).onSnapshot(snap => {
+                reports = snap.docs.map(d => ({ ...d.data(), id: d.id }))
+                    .sort((a,b) => (b.timestamp||0)-(a.timestamp||0));
+                if (activePage === 'admin') renderAdminReports();
+            }, e2 => console.warn(e2));
+        });
+}
+
+function renderAdminReports() {
+    const c = document.getElementById('adminReportsList');
+    if (!c) return;
+    if (!reports.length) {
+        c.innerHTML = '<p style="color:var(--text-mute);font-size:13px;text-align:center;padding:16px;">No reports yet.</p>';
+        return;
+    }
+    c.innerHTML = reports.slice(0, 40).map(r => {
+        const from = getUser(r.from) || { name: 'User' };
+        const status = r.status || 'pending';
+        const targetLabel = (r.targetType || 'item') + ' · ' + String(r.targetId || '').slice(0, 12);
+        let actions = '';
+        if (status === 'pending') {
+            if (r.targetType === 'post') {
+                actions += '<button class="btn-action btn-action-secondary" onclick="adminHideReportedPost(\'' + r.targetId + '\',\'' + r.id + '\')">Hide post</button>';
+            }
+            if (r.targetType === 'user') {
+                actions += '<button class="btn-action btn-action-secondary" style="color:#e74c3c;" onclick="adminSuspendFromReport(\'' + r.targetId + '\',\'' + r.id + '\')">Suspend user</button>';
+            }
+            actions += '<button class="btn-action btn-action-primary" onclick="adminResolveReport(\'' + r.id + '\',\'resolved\')">Resolve</button>';
+            actions += '<button class="btn-action btn-action-secondary" onclick="adminResolveReport(\'' + r.id + '\',\'dismissed\')">Dismiss</button>';
+        }
+        return '<div class="admin-report-card" style="border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--bg-soft);">' +
+            '<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
+                '<div><strong>' + escapeHtml(from.name || 'User') + '</strong> reported <code style="font-size:11px;">' + escapeHtml(targetLabel) + '</code></div>' +
+                '<span style="font-size:11px;font-weight:700;color:' + (status === 'pending' ? '#e67e22' : 'var(--text-mute)') + ';">' + escapeHtml(status) + '</span>' +
+            '</div>' +
+            '<div style="font-size:13px;margin-top:6px;color:var(--text);"><strong>Reason:</strong> ' + escapeHtml(r.reason || '') + '</div>' +
+            (r.details ? '<div style="font-size:12px;color:var(--text-mute);margin-top:4px;">' + escapeHtml(r.details) + '</div>' : '') +
+            '<div style="font-size:11px;color:var(--text-faint);margin-top:6px;">' + timeAgo(r.timestamp) + '</div>' +
+            (actions ? '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">' + actions + '</div>' : '') +
+        '</div>';
+    }).join('');
+}
+
+async function adminResolveReport(reportId, status) {
+    try {
+        await fbDb.collection('reports').doc(reportId).update({ status: status, resolvedAt: Date.now(), resolvedBy: currentUser.id });
+        showToast(status === 'resolved' ? 'Report resolved' : 'Report dismissed');
+    } catch (e) {
+        showToast('❌ ' + (e.message || 'Failed'));
+    }
+}
+
+async function adminHideReportedPost(postId, reportId) {
+    try {
+        await fbDb.collection('posts').doc(postId).update({ hidden: true, hiddenAt: Date.now(), hiddenBy: currentUser.id });
+        await fbDb.collection('reports').doc(reportId).update({ status: 'resolved', action: 'hide_post', resolvedAt: Date.now(), resolvedBy: currentUser.id });
+        showToast('Post hidden');
+        if (typeof renderFeed === 'function') renderFeed();
+    } catch (e) {
+        showToast('❌ ' + (e.message || 'Failed'));
+    }
+}
+
+async function adminSuspendFromReport(userId, reportId) {
+    const ok = await kmodal.confirm('Suspend this user for violating community rules?', { title: 'Suspend user?', confirmText: 'Suspend', danger: true });
+    if (!ok) return;
+    try {
+        await fbDb.collection('users').doc(userId).update({ status: 'suspended', suspendedAt: Date.now(), suspendedBy: currentUser.id, suspendReason: 'Report action' });
+        await fbDb.collection('reports').doc(reportId).update({ status: 'resolved', action: 'suspend', resolvedAt: Date.now(), resolvedBy: currentUser.id });
+        showToast('User suspended');
+        if (typeof renderAdminUsers === 'function') renderAdminUsers();
+    } catch (e) {
+        showToast('❌ ' + (e.message || 'Failed'));
+    }
+}
+
 function renderAdminIfVisible() {
     if (!currentUser || currentUser.role !== 'admin') return;
     if (activePage !== 'admin') return;
@@ -9956,6 +10145,8 @@ function renderAdminIfVisible() {
     document.getElementById('adminSuspended').textContent = users.filter(u => u.status === 'suspended').length;
     updateAdminPendingCount();
     renderAdminUsers();
+    if (typeof startReportsListener === 'function') startReportsListener();
+    if (typeof renderAdminReports === 'function') renderAdminReports();
 }
 function renderAdminUsers() {
     const c = document.getElementById('adminUsersList');
@@ -10881,13 +11072,14 @@ async function acceptNotifPrompt() {
     }
     refreshNotifUI();
 	function refreshNotifUI() {
-    updateSidebarNotifDot();          // ← add this
-    // ... existing code below ...
-    if (activePage === 'notifications') {
-        renderNotifications();
+    try {
+        if (typeof updateSidebarNotifDot === 'function') updateSidebarNotifDot();
+        if (typeof updateBadges === 'function') updateBadges();
+        if (activePage === 'notifications') renderNotifications();
+        if (activePage === 'messages' && typeof renderConversations === 'function') renderConversations();
+    } catch (e) {
+        console.warn('refreshNotifUI', e);
     }
-    // ... rest of the function ...
-}
 }
 
 async function requestNotifPermission() {
@@ -11222,6 +11414,27 @@ function uidFromString(str) {
    AGORA CALL ENGINE — start/end functions
    ============================================================ */
 
+
+function friendlyMediaError(err) {
+    const msg = String((err && (err.message || err.code || err)) || '').toLowerCase();
+    if (msg.includes('permission') || msg.includes('notallowed') || msg.includes('denied')) {
+        return 'Camera or microphone permission denied. Allow access in browser settings and try again.';
+    }
+    if (msg.includes('notfound') || msg.includes('devices')) {
+        return 'No camera/microphone found. Plug one in or check system settings.';
+    }
+    if (msg.includes('token') || msg.includes('401') || msg.includes('invalid')) {
+        return 'Could not get a call token. Check your connection or try again in a moment.';
+    }
+    if (msg.includes('timeout') || msg.includes('network') || msg.includes('disconnected')) {
+        return 'Network issue. Check your connection and rejoin.';
+    }
+    if (msg.includes('device in use') || msg.includes('trackstart')) {
+        return 'Camera/mic is in use by another app. Close it and try again.';
+    }
+    return (err && err.message) ? err.message : 'Something went wrong. Please try again.';
+}
+
 async function startAgoraCall(partnerId, type) {
     // type: 'audio' or 'video'
     if (!currentUser || !partnerId) return;
@@ -11256,7 +11469,7 @@ async function startAgoraCall(partnerId, type) {
             });
         } catch (ne) { console.warn('call notif', ne); }
     } catch (e) {
-        showToast('❌ Could not place call: ' + e.message);
+        showToast('❌ ' + friendlyMediaError(e));
         return;
     }
     // Open the call modal first so the user sees the loading state
@@ -11738,6 +11951,7 @@ async function endAgoraCall() {
     if (modal) modal.classList.remove('active');
     const container = document.getElementById('callFrameContainer');
     if (container) container.innerHTML = '';
+}
 }
 console.log('🎥 Agora call engine loaded');
 console.log('✅ Kampo loaded — dark mode + invite + message actions + kmodal + 2000-cap + notification dedupe');

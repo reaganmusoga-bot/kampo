@@ -6911,8 +6911,6 @@ function renderNotifications() {
         else if (n.type === 'invite') { text = '<strong>' + escapeHtml(from.name) + '</strong> invited you to Kampo'; click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'invite\')"'; }
         else if (n.type === 'call') { text = '📞 <strong>' + escapeHtml(from.name) + '</strong> called you'; click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
         else if (n.type === 'profile_view') { text = '👀 <strong>' + escapeHtml(from.name) + '</strong> viewed your profile'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
-        else if (n.type === 'invite_joined') '📞 <strong>' + escapeHtml(from.name) + '</strong> called you' + (n.callType ? ' (' + n.callType + ')' : ''); click = 'onclick="markNotificationRead(\'' + n.id + '\');startConversation(\'' + n.from + '\')"'; }
-        else if (n.type === 'profile_view') { text = '👀 <strong>' + escapeHtml(from.name) + '</strong> viewed your profile'; click = 'onclick="markNotificationRead(\'' + n.id + '\');openUserProfile(\'' + n.from + '\')"'; }
         else if (n.type === 'invite_joined') { text = '🎉 <strong>' + escapeHtml(from.name) + '</strong> joined via your invite'; click = 'onclick="markNotificationRead(\'' + n.id + '\');showPage(\'invite\')"'; }
         else { text = escapeHtml(n.text || 'New notification'); click = 'onclick="markNotificationRead(\'' + n.id + '\')"'; }
         return '<div class="notif-item' + (n.read ? '' : ' unread') + '" ' + click + '>' + userAvatarHtml(from, 44) + '<div class="n-body"><div class="n-text">' + text + '</div><div class="n-time">' + timeAgo(n.timestamp) + '</div></div></div>';

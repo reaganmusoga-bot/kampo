@@ -11918,7 +11918,7 @@ async function endAgoraCall() {
         if (agoraLocalTracks.video) { agoraLocalTracks.video.stop(); agoraLocalTracks.video.close(); }
     } catch (e) {}
     agoraLocalTracks = { audio: null, video: null };
-
+	
     // ── Leave the channel ──
     try {
         if (agoraClient) {

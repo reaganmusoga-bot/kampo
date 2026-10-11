@@ -59,6 +59,23 @@
     });
   }
 </script>
+	<!-- PWA install prompt capture -->
+<script>
+  window.deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.deferredInstallPrompt = e;
+    console.log('✅ Android install prompt ready');
+    const btn = document.getElementById('androidInstallBtn');
+    if (btn) btn.style.display = 'block';
+  });
+  window.addEventListener('appinstalled', () => {
+    console.log('✅ Kampo installed');
+    window.deferredInstallPrompt = null;
+    const btn = document.getElementById('androidInstallBtn');
+    if (btn) btn.style.display = 'none';
+  });
+</script>
 <style>
 /* ============================================================
    THEME VARIABLES

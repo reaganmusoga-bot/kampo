@@ -1984,6 +1984,123 @@ html[data-theme="dark"] .admin-pill { background: rgba(217,119,6,0.25); color: #
 /* ============================================================
    LIVE
    ============================================================ */
+
+/* Live stream enhanced UI */
+.live-agora-ui {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #0a0a0f;
+    display: flex;
+    flex-direction: column;
+}
+.live-video-stage {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.live-video-stage > div[id^="livePlayer"] {
+    width: 100%;
+    height: 100%;
+}
+.live-video-stage video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.live-top-meta {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 5;
+    pointer-events: none;
+}
+.live-top-meta .live-pill {
+    pointer-events: auto;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.live-pill.live-on {
+    background: #e74c3c;
+}
+.live-pill.live-on .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: white;
+    animation: livePulse 1s infinite;
+}
+.live-bottom-bar {
+    padding: 12px 16px 16px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+}
+.live-action-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s, transform 0.15s;
+}
+.live-action-btn:hover { background: rgba(255,255,255,0.22); }
+.live-action-btn:active { transform: scale(0.96); }
+.live-action-btn.liked { background: rgba(231,76,60,0.35); border-color: rgba(231,76,60,0.5); }
+.live-action-btn.recording { background: rgba(231,76,60,0.5); animation: livePulse 1s infinite; }
+.live-like-burst {
+    position: absolute;
+    bottom: 80px;
+    right: 24px;
+    font-size: 28px;
+    animation: likeFloat 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 6;
+}
+@keyframes likeFloat {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(1.4); }
+}
+.live-viewer-count {
+    margin-left: auto;
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    font-weight: 600;
+}
+.live-waiting-host {
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    padding: 40px;
+}
+.live-waiting-host .emoji { font-size: 48px; margin-bottom: 12px; }
 .live-strip {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     border-radius: 12px; padding: 12px 16px;
@@ -6013,6 +6130,15 @@ async function startListeners() {
         }, e => console.warn('modlog', e));
     }
 	startIncomingCallListener();
+    // Deep link to a live stream
+    try {
+        const _lp = new URLSearchParams(window.location.search).get('live');
+        if (_lp) {
+            setTimeout(() => {
+                if (lives.find(x => x.id === _lp && x.active)) openLiveStream(_lp);
+            }, 1500);
+        }
+    } catch (e) {}
 }
 function stopListeners() {
     [unsubUsers, unsubPosts, unsubMessagesTo, unsubMessagesFrom, unsubGroups, unsubStories, unsubLives, unsubMyDoc, unsubNotifications, unsubReports, unsubModLog].forEach(u => {
@@ -7931,6 +8057,12 @@ function openJitsiCall(room, type, title) {
     modal.classList.add('active');
 }
 async function endCall() {
+    if (typeof liveClient !== 'undefined' && liveClient) {
+        const wasHost = liveIsHost;
+        await endLiveStream();
+        showToast(wasHost ? 'Live ended' : 'Left live');
+        return;
+    }
     if (typeof agoraClient !== 'undefined' && agoraClient) {
         await endAgoraCall();
         return;
@@ -7969,29 +8101,341 @@ async function startLive() {
     const type = document.querySelector('input[name="liveType"]:checked').value;
     const mode = document.querySelector('input[name="liveMode"]:checked').value;
     try {
-        const ref = await fbDb.collection('lives').add({ userId: currentUser.id, title, type, mode, room: 'kampo-live-' + currentUser.id + '-' + Date.now(), startedAt: Date.now(), active: true });
+        const ref = await fbDb.collection('lives').add({ userId: currentUser.id, title, type, mode, room: 'kampo-live-' + currentUser.id + '-' + Date.now(), startedAt: Date.now(), active: true, likes: [], viewerCount: 0 });
         closeLiveSetup();
         showToast('You are LIVE! 🔴');
         setTimeout(() => openLiveStream(ref.id), 400);
     } catch (e) { showToast('❌ Could not start stream.'); }
 }
-function openLiveStream(lid) {
-    const l = lives.find(x => x.id === lid);
-    if (!l) return;
-    const b = getUser(l.userId);
-    const isM = l.userId === currentUser.id;
-    const canB = isM || l.mode === 'group';
-    const url = 'https://meet.jit.si/' + l.room + '#userInfo.displayName="' + encodeURIComponent(currentUser.name) + '"&config.prejoinPageEnabled=false&config.disableDeepLinking=true&config.enableWelcomePage=false' + (canB ? '&config.startWithAudioMuted=false&config.startWithVideoMuted=false' : '&config.startWithAudioMuted=true&config.startWithVideoMuted=true');
-    currentCall = { room: l.room, type: 'video', title: '🔴 LIVE', liveId: l.id };
-    const modal = document.getElementById('callModal');
-    document.getElementById('callTitle').textContent = '🔴 ' + l.title + ' · ' + b.name.split(' ')[0];
-    document.getElementById('callTypeBadge').textContent = canB ? 'BROADCAST' : 'WATCHING';
-    modal.querySelector('.call-close-btn').textContent = isM ? 'End Live' : 'Leave';
-    const c = document.getElementById('callFrameContainer');
-    c.innerHTML = '<div class="call-loading"><div class="spinner"></div><div>Joining…</div></div><iframe id="jitsiFrame" src="' + url + '" allow="camera; microphone; fullscreen; autoplay; display-capture"></iframe>';
-    setTimeout(() => { const i = document.getElementById('jitsiFrame'); if (i) i.addEventListener('load', () => { const x = c.querySelector('.call-loading'); if (x) x.style.display = 'none'; }); }, 100);
-    modal.classList.add('active');
+
+/* ============================================================
+   LIVE STREAM — Agora (no Jitsi)
+   ============================================================ */
+let liveClient = null;
+let liveLocalTracks = { audio: null, video: null };
+let liveCurrentId = null;
+let liveIsHost = false;
+let liveLikesUnsub = null;
+let liveRecMediaRecorder = null;
+let liveRecChunks = [];
+let liveRecStream = null;
+
+function buildLiveUI(live, hostUser, isHost) {
+    const likes = (live.likes || []).length;
+    const liked = (live.likes || []).includes(currentUser.id);
+    const viewers = live.viewerCount || 0;
+    return (
+        '<div class="live-agora-ui" id="liveAgoraUI">' +
+            '<div class="live-video-stage" id="liveVideoStage">' +
+                '<div id="livePlayerMain" style="width:100%;height:100%;">' +
+                    '<div class="live-waiting-host"><div class="emoji">📡</div><div>' + (isHost ? 'Starting your camera…' : 'Connecting to stream…') + '</div></div>' +
+                '</div>' +
+                '<div class="live-top-meta">' +
+                    '<span class="live-pill live-on"><span class="dot"></span> LIVE</span>' +
+                    '<span class="live-pill">' + escapeHtml(live.title || 'Live') + '</span>' +
+                    '<span class="live-pill" id="liveViewerPill">👁 ' + viewers + '</span>' +
+                '</div>' +
+                '<div id="liveLikeBursts"></div>' +
+            '</div>' +
+            '<div class="live-bottom-bar">' +
+                '<button class="live-action-btn' + (liked ? ' liked' : '') + '" id="liveLikeBtn" onclick="toggleLiveLike()">' +
+                    (liked ? '❤️' : '🤍') + ' <span id="liveLikeCount">' + likes + '</span>' +
+                '</button>' +
+                '<button class="live-action-btn" onclick="shareLive()">' + '📤 Share</button>' +
+                (isHost ? '<button class="live-action-btn" id="liveRecBtn" onclick="toggleLiveRecording()">⏺ Record</button>' : '') +
+                (isHost ? '<button class="live-action-btn" id="liveMuteBtn" onclick="toggleLiveMute()">🎤</button>' : '') +
+                (isHost ? '<button class="live-action-btn" id="liveCamBtn" onclick="toggleLiveCamera()">🎥</button>' : '') +
+                '<span class="live-viewer-count" id="liveHostLabel">' + escapeHtml((hostUser && hostUser.name) || 'Host') + '</span>' +
+            '</div>' +
+        '</div>'
+    );
 }
+
+async function openLiveStream(lid) {
+    const l = lives.find(x => x.id === lid);
+    if (!l) { showToast('Live not found'); return; }
+    if (agoraClient || liveClient) {
+        showToast('Finish your current call or live first');
+        return;
+    }
+    const hostUser = getUser(l.userId) || { name: 'Host' };
+    const isHost = l.userId === currentUser.id;
+    liveCurrentId = lid;
+    liveIsHost = isHost;
+    currentCall = { room: l.room || ('kampo-live-' + lid), type: 'video', title: '🔴 LIVE', liveId: l.id };
+
+    const modal = document.getElementById('callModal');
+    document.getElementById('callTitle').textContent = '🔴 ' + (l.title || 'Live') + ' · ' + ((hostUser.name || 'Host').split(' ')[0]);
+    document.getElementById('callTypeBadge').textContent = isHost ? 'BROADCAST' : 'WATCHING';
+    modal.querySelector('.call-close-btn').textContent = isHost ? 'End Live' : 'Leave';
+    const c = document.getElementById('callFrameContainer');
+    c.innerHTML = buildLiveUI(l, hostUser, isHost);
+    modal.classList.add('active');
+
+    // Watch likes / live doc updates
+    if (liveLikesUnsub) { try { liveLikesUnsub(); } catch (e) {} }
+    liveLikesUnsub = fbDb.collection('lives').doc(lid).onSnapshot(snap => {
+        if (!snap.exists) return;
+        const data = snap.data();
+        const likes = data.likes || [];
+        const countEl = document.getElementById('liveLikeCount');
+        const btn = document.getElementById('liveLikeBtn');
+        if (countEl) countEl.textContent = likes.length;
+        if (btn) {
+            const liked = likes.includes(currentUser.id);
+            btn.classList.toggle('liked', liked);
+            btn.innerHTML = (liked ? '❤️' : '🤍') + ' <span id="liveLikeCount">' + likes.length + '</span>';
+        }
+        const vp = document.getElementById('liveViewerPill');
+        if (vp && data.viewerCount != null) vp.textContent = '👁 ' + data.viewerCount;
+        if (data.active === false && !liveIsHost) {
+            showToast('Live has ended');
+            setTimeout(() => endLiveStream(), 600);
+        }
+    }, err => console.warn('live watch', err));
+
+    // Increment viewer count (best-effort)
+    if (!isHost) {
+        try {
+            await fbDb.collection('lives').doc(lid).update({ viewerCount: FV.increment(1) });
+        } catch (e) {}
+    }
+
+    try {
+        await startAgoraLive(l, isHost);
+    } catch (err) {
+        console.error('Live start failed', err);
+        showToast('❌ Could not join live: ' + (err.message || err));
+        await endLiveStream();
+    }
+}
+
+async function startAgoraLive(live, isHost) {
+    const channelName = (live.room || ('kampo-live-' + live.id)).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
+    const myUid = uidFromString(currentUser.id + '-live');
+    const token = await fetchAgoraToken(channelName, myUid);
+
+    liveClient = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+    await liveClient.setClientRole(isHost ? 'host' : 'audience');
+
+    liveClient.on('user-published', async (user, mediaType) => {
+        await liveClient.subscribe(user, mediaType);
+        if (mediaType === 'video') {
+            const stage = document.getElementById('livePlayerMain');
+            if (stage) {
+                stage.innerHTML = '';
+                user.videoTrack.play('livePlayerMain');
+            }
+        }
+        if (mediaType === 'audio') {
+            user.audioTrack.play();
+        }
+    });
+    liveClient.on('user-unpublished', (user, mediaType) => {
+        if (mediaType === 'video') {
+            const stage = document.getElementById('livePlayerMain');
+            if (stage) stage.innerHTML = '<div class="live-waiting-host"><div class="emoji">📷</div><div>Host camera off</div></div>';
+        }
+    });
+    liveClient.on('user-left', () => {
+        if (!liveIsHost) {
+            const stage = document.getElementById('livePlayerMain');
+            if (stage) stage.innerHTML = '<div class="live-waiting-host"><div class="emoji">📴</div><div>Host left the stream</div></div>';
+        }
+    });
+
+    await liveClient.join(AGORA_APP_ID, channelName, token, myUid);
+
+    if (isHost) {
+        [liveLocalTracks.audio, liveLocalTracks.video] = await AgoraRTC.createMicrophoneAndCameraTracks();
+        const stage = document.getElementById('livePlayerMain');
+        if (stage) {
+            stage.innerHTML = '';
+            liveLocalTracks.video.play('livePlayerMain');
+        }
+        await liveClient.publish([liveLocalTracks.audio, liveLocalTracks.video]);
+        showToast('You are LIVE 🔴');
+    } else {
+        showToast('Watching live…');
+    }
+}
+
+async function toggleLiveLike() {
+    if (!liveCurrentId || !currentUser) return;
+    try {
+        const ref = fbDb.collection('lives').doc(liveCurrentId);
+        const snap = await ref.get();
+        if (!snap.exists) return;
+        const likes = snap.data().likes || [];
+        if (likes.includes(currentUser.id)) {
+            await ref.update({ likes: FV.arrayRemove(currentUser.id) });
+        } else {
+            await ref.update({ likes: FV.arrayUnion(currentUser.id) });
+            // floating heart
+            const wrap = document.getElementById('liveLikeBursts');
+            if (wrap) {
+                const el = document.createElement('div');
+                el.className = 'live-like-burst';
+                el.textContent = '❤️';
+                wrap.appendChild(el);
+                setTimeout(() => el.remove(), 1000);
+            }
+        }
+    } catch (e) {
+        showToast('Could not like');
+        console.warn(e);
+    }
+}
+
+async function shareLive() {
+    if (!liveCurrentId) return;
+    const l = lives.find(x => x.id === liveCurrentId);
+    const title = (l && l.title) ? l.title : 'Live on Kampo';
+    const url = window.location.origin + window.location.pathname + '?live=' + encodeURIComponent(liveCurrentId);
+    const text = '🔴 Watch my live on Kampo: ' + title;
+    try {
+        if (navigator.share) {
+            await navigator.share({ title: title, text: text, url: url });
+            showToast('Shared');
+            return;
+        }
+    } catch (e) {
+        if (e && e.name === 'AbortError') return;
+    }
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text + '\n' + url);
+            showToast('Link copied 📋');
+        } else {
+            prompt('Copy this live link:', url);
+        }
+    } catch (e) {
+        prompt('Copy this live link:', url);
+    }
+}
+
+async function toggleLiveRecording() {
+    if (!liveIsHost) return;
+    const btn = document.getElementById('liveRecBtn');
+    if (liveRecMediaRecorder && liveRecMediaRecorder.state === 'recording') {
+        liveRecMediaRecorder.stop();
+        if (btn) { btn.classList.remove('recording'); btn.textContent = '⏺ Record'; }
+        return;
+    }
+    try {
+        // Prefer the published camera/mic tracks when available
+        const tracks = [];
+        if (liveLocalTracks.video && liveLocalTracks.video.getMediaStreamTrack) {
+            tracks.push(liveLocalTracks.video.getMediaStreamTrack());
+        }
+        if (liveLocalTracks.audio && liveLocalTracks.audio.getMediaStreamTrack) {
+            tracks.push(liveLocalTracks.audio.getMediaStreamTrack());
+        }
+        if (!tracks.length) {
+            liveRecStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        } else {
+            liveRecStream = new MediaStream(tracks);
+        }
+        liveRecChunks = [];
+        const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' :
+                     (MediaRecorder.isTypeSupported('video/webm') ? 'video/webm' : '');
+        liveRecMediaRecorder = new MediaRecorder(liveRecStream, mime ? { mimeType: mime } : undefined);
+        liveRecMediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size) liveRecChunks.push(e.data); };
+        liveRecMediaRecorder.onstop = () => {
+            const blob = new Blob(liveRecChunks, { type: 'video/webm' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'kampo-live-' + (liveCurrentId || Date.now()) + '.webm';
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+            showToast('Recording saved 💾');
+            liveRecChunks = [];
+            liveRecMediaRecorder = null;
+            // Don't stop live tracks — only stop extra getUserMedia stream
+            if (liveRecStream && liveRecStream.getTracks) {
+                // Only stop tracks that aren't the Agora ones
+                // Safer: leave Agora tracks alone; stop only if we created a fresh stream
+            }
+            liveRecStream = null;
+        };
+        liveRecMediaRecorder.start(1000);
+        if (btn) { btn.classList.add('recording'); btn.textContent = '⏹ Stop'; }
+        showToast('Recording started');
+    } catch (e) {
+        console.warn(e);
+        showToast('Recording not available: ' + (e.message || 'permission denied'));
+    }
+}
+
+function toggleLiveMute() {
+    if (!liveLocalTracks.audio) return;
+    const muted = !liveLocalTracks.audio.muted;
+    liveLocalTracks.audio.setMuted(muted);
+    const btn = document.getElementById('liveMuteBtn');
+    if (btn) btn.textContent = muted ? '🔇' : '🎤';
+}
+function toggleLiveCamera() {
+    if (!liveLocalTracks.video) return;
+    const off = !liveLocalTracks.video.muted;
+    liveLocalTracks.video.setMuted(off);
+    const btn = document.getElementById('liveCamBtn');
+    if (btn) btn.textContent = off ? '📷' : '🎥';
+}
+
+async function endLiveStream() {
+    // Stop recording if active
+    try {
+        if (liveRecMediaRecorder && liveRecMediaRecorder.state === 'recording') {
+            liveRecMediaRecorder.stop();
+        }
+    } catch (e) {}
+
+    if (liveLikesUnsub) {
+        try { liveLikesUnsub(); } catch (e) {}
+        liveLikesUnsub = null;
+    }
+
+    // Host marks live ended
+    if (liveIsHost && liveCurrentId) {
+        try {
+            await fbDb.collection('lives').doc(liveCurrentId).update({
+                active: false,
+                endedAt: Date.now()
+            });
+        } catch (e) {}
+    } else if (liveCurrentId && currentUser) {
+        try {
+            await fbDb.collection('lives').doc(liveCurrentId).update({
+                viewerCount: FV.increment(-1)
+            });
+        } catch (e) {}
+    }
+
+    try {
+        if (liveLocalTracks.audio) { liveLocalTracks.audio.stop(); liveLocalTracks.audio.close(); }
+        if (liveLocalTracks.video) { liveLocalTracks.video.stop(); liveLocalTracks.video.close(); }
+    } catch (e) {}
+    liveLocalTracks = { audio: null, video: null };
+
+    try {
+        if (liveClient) {
+            await liveClient.leave();
+            liveClient.removeAllListeners();
+        }
+    } catch (e) {}
+    liveClient = null;
+    liveCurrentId = null;
+    liveIsHost = false;
+
+    const modal = document.getElementById('callModal');
+    if (modal) modal.classList.remove('active');
+    const container = document.getElementById('callFrameContainer');
+    if (container) container.innerHTML = '';
+    currentCall = null;
+    renderLiveStrip();
+}
+
+
 
 /* ============================================================
    USER PROFILE
@@ -9632,6 +10076,14 @@ async function startAgoraCall(partnerId, type) {
             createdAt: Date.now(),
             callerSnapshot: snapshotUser(currentUser)
         });
+        try {
+            await createNotification(partnerId, 'call', {
+                fromId: currentUser.id,
+                text: (currentUser.name || 'Someone') + ' is calling you (' + (type === 'audio' ? 'audio' : 'video') + ')',
+                callId: callDocRef.id,
+                callType: type
+            });
+        } catch (ne) { console.warn('call notif', ne); }
     } catch (e) {
         showToast('❌ Could not place call: ' + e.message);
         return;

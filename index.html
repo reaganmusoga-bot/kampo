@@ -11077,15 +11077,6 @@ async function acceptNotifPrompt() {
         }
     }
     refreshNotifUI();
-	function refreshNotifUI() {
-    try {
-        if (typeof updateSidebarNotifDot === 'function') updateSidebarNotifDot();
-        if (typeof updateBadges === 'function') updateBadges();
-        if (activePage === 'notifications') renderNotifications();
-        if (activePage === 'messages' && typeof renderConversations === 'function') renderConversations();
-    } catch (e) {
-        console.warn('refreshNotifUI', e);
-    }
 }
 
 async function requestNotifPermission() {
@@ -11229,20 +11220,24 @@ async function retryNotifPermission() {
 
 /* ---- 4. UI REFRESH ---- */
 function refreshNotifUI() {
-    // Re-render notifications page so the blocked banner updates
-    if (activePage === 'notifications') {
-        renderNotifications();
-    }
-    // Update the user-menu label if present
-    const menuItem = document.querySelector('.user-menu-item[data-action="notif-settings"]');
-    if (menuItem) {
-        const perm = getNotifPermission();
-        const label = menuItem.querySelector('.um-label');
-        if (label) {
-            if (perm === 'granted') label.textContent = 'Notification Settings ✓';
-            else if (perm === 'denied') label.textContent = 'Notification Settings (blocked)';
-            else label.textContent = 'Notification Settings';
+    try {
+        if (typeof updateSidebarNotifDot === 'function') updateSidebarNotifDot();
+        if (typeof updateBadges === 'function') updateBadges();
+        if (activePage === 'notifications') renderNotifications();
+        if (activePage === 'messages' && typeof renderConversations === 'function') renderConversations();
+        // Update the user-menu label if present
+        const menuItem = document.querySelector('.user-menu-item[data-action="notif-settings"]');
+        if (menuItem) {
+            const perm = getNotifPermission();
+            const label = menuItem.querySelector('.um-label');
+            if (label) {
+                if (perm === 'granted') label.textContent = 'Notification Settings ✓';
+                else if (perm === 'denied') label.textContent = 'Notification Settings (blocked)';
+                else label.textContent = 'Notification Settings';
+            }
         }
+    } catch (e) {
+        console.warn('refreshNotifUI', e);
     }
 }
 
@@ -11324,7 +11319,8 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-// Initial dot state on load setTimeout(updateSidebarNotifDot, 500);  console.log('🔔 Notification permission UI loaded');
+setTimeout(updateSidebarNotifDot, 500);
+console.log('🔔 Notification permission UI loaded');
 	/* ============================================================
    DEVICE DETECTION (for iOS notification flow)
    ============================================================ */
